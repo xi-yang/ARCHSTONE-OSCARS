@@ -1,0 +1,34 @@
+---
+- id: "juniper-mx"
+  services: 
+    - id:               eompls
+      configGenerator:  "net.es.oscars.pss.eompls.junos.MXConfigGen"
+    
+    - id:               stub
+      configGenerator: "net.es.oscars.pss.stub.StubConfigGen"
+            
+- id: "cisco-ios"
+  services: 
+    - id:               eompls
+      configGenerator:  "net.es.oscars.pss.eompls.ios.IOSConfigGen"
+    
+    - id:               stub
+      configGenerator: "net.es.oscars.pss.stub.StubConfigGen"
+            
+
+- id: "alu-sr"
+  services: 
+    - id:               eompls
+      configGenerator:  "net.es.oscars.pss.eompls.alu.SRConfigGen"
+    
+    - id:               stub
+      configGenerator: "net.es.oscars.pss.stub.StubConfigGen"
+
+- id: "alu-sr-presetqos"
+  services: 
+    - id:               eompls
+      configGenerator:  "net.es.oscars.pss.eompls.alu.SRPresetQosConfigGen"
+    
+    - id:               stub
+      configGenerator: "net.es.oscars.pss.stub.StubConfigGen"
+            

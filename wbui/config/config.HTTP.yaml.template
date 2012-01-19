@@ -1,0 +1,8 @@
+---
+http:
+    warFile:	'/oscars-war/oscars-war-OSCARS_VERSION.war'
+
+wbui:
+    userName: 'oscars'
+    sessionName: 'oscarssess'
+    secureCookie: '0'
