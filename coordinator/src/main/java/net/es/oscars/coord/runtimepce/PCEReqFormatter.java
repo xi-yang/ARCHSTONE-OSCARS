@@ -208,9 +208,13 @@ public class PCEReqFormatter {
                 swcapInfo.setVlanRangeAvailability(UNTAGGED);
             }
         }
-        swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
-        link.setSwitchingCapabilityDescriptors(swcap);
         
+       if (link.getSwitchingCapabilityDescriptors().size() == 0) {
+           swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
+           link.getSwitchingCapabilityDescriptors().add(swcap);
+       } else {
+          link.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(swcapInfo);
+       }
         return this.createHop(link);
     }
     

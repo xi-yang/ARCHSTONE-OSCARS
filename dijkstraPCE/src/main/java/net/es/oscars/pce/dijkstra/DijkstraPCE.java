@@ -202,8 +202,9 @@ public class DijkstraPCE {
             evaluator.commit(path, inputTopo);
         }
         
+        // Assume there is one and only one ISCD per link
         this.log.info(netLogger.end(event, 
-                "topoLink="+ pceData.getTopology().getDomain().get(0).getNode().get(0).getPort().get(0).getLink().get(0).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability()));
+                "topoLink="+ pceData.getTopology().getDomain().get(0).getNode().get(0).getPort().get(0).getLink().get(0).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability()));
         
         return pceData;
     }

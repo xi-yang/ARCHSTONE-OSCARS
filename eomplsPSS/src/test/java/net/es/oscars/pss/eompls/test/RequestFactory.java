@@ -211,8 +211,13 @@ public class RequestFactory {
         link.setId(linkId);
         ssi.setSuggestedVLANRange(vlan);
         ssi.setVlanRangeAvailability(vlan);
-        scp.setSwitchingCapabilitySpecificInfo(ssi);
-        link.setSwitchingCapabilityDescriptors(scp);
+        if (link.getSwitchingCapabilityDescriptors().size() == 0) {
+            scp.setSwitchingCapabilitySpecificInfo(ssi);
+            link.getSwitchingCapabilityDescriptors().add(scp);
+        } else {
+           link.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(ssi);
+        }
+
         hop.setLink(link);
         return hop;
     }

@@ -152,12 +152,12 @@ public class SC11_SRConfigGen implements DeviceConfigGenerator {
             // forward direction
             log.debug("forward");
             ifceName = srcRes.getPortId();
-            resvVlan = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            resvVlan = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
         } else {
             // reverse direction
             log.debug("reverse");
             ifceName = dstRes.getPortId();
-            resvVlan = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            resvVlan = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
         }
         
         ALUNameGenerator ng = ALUNameGenerator.getInstance();
@@ -302,14 +302,14 @@ public class SC11_SRConfigGen implements DeviceConfigGenerator {
             // forward direction
             log.debug("forward");
             ifceName = srcRes.getPortId();
-            resvVlan = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            resvVlan = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
             lspOriginDeviceId = srcRes.getNodeId();
             lspTargetDeviceId = dstRes.getNodeId();
         } else {
             // reverse direction
             log.debug("reverse");
             ifceName = dstRes.getPortId();
-            resvVlan = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            resvVlan = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
             lspOriginDeviceId = dstRes.getNodeId();
             lspTargetDeviceId = srcRes.getNodeId();
             reverse = true;

@@ -5,11 +5,11 @@
     xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
     xmlns:com = "http://oscars.es.net/OSCARS/common"
     xmlns:oscars = "http://oscars.es.net/OSCARS/06"
-    xmlns:ctrlp = "http://ogf.org/schema/network/topology/ctrlPlane/20080828/"
+    xmlns:ctrlp = "http://ogf.org/schema/network/topology/ctrlPlane/20110826/"
     elementFormDefault = "qualified" >
 
     <!-- duplicated in several modules -->
-    <xsd:import namespace="http://ogf.org/schema/network/topology/ctrlPlane/20080828/" 
+    <xsd:import namespace="http://ogf.org/schema/network/topology/ctrlPlane/20110826/" 
         schemaLocation="../nmtopo-ctrlp.xsd" />
     <xsd:import namespace="http://oscars.es.net/OSCARS/common" 
         schemaLocation="../common.xsd" />

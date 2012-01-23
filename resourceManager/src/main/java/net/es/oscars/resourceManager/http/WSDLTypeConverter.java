@@ -460,7 +460,8 @@ public class WSDLTypeConverter {
     public static List<PathElemParam> convertCtrlPlaneLink(CtrlPlaneLinkContent link) {
 
     List<PathElemParam> pathElemParams = new ArrayList<PathElemParam>();
-    CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors();
+    // Assume there is one and only one ISCD
+    CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors().get(0);
     String switchingcapType = swcap.getSwitchingcapType();
     CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = 
                         swcap.getSwitchingCapabilitySpecificInfo();
@@ -911,8 +912,15 @@ public class WSDLTypeConverter {
                  }
              }
              
-             swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
-             link.setSwitchingCapabilityDescriptors(swcap);
+             //swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
+             //link.setSwitchingCapabilityDescriptors(swcap);
+             if (link.getSwitchingCapabilityDescriptors().size() == 0) {
+                 swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
+                 link.getSwitchingCapabilityDescriptors().add(swcap);
+                 
+             } else {
+                link.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(swcapInfo);
+             }
              hop.setLink(link);
          }
          

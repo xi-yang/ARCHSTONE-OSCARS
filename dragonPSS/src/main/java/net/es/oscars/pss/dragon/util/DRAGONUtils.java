@@ -200,7 +200,7 @@ public class DRAGONUtils {
             }
             CtrlPlaneLinkContent link = hop.getLink();
             if(link == null){ continue; }
-            if(link.getSwitchingCapabilityDescriptors().getSwitchingcapType().equalsIgnoreCase("tdm")){
+            if(link.getSwitchingCapabilityDescriptors().size() > 0 && link.getSwitchingCapabilityDescriptors().get(0).getSwitchingcapType().equalsIgnoreCase("tdm")){
                 isSonet = true;
                 break;
             }

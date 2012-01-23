@@ -131,12 +131,12 @@ public class IOSConfigGen implements DeviceConfigGenerator {
             // forward direction
             log.debug("forward");
             ifceName = srcRes.getPortId();
-            ifceVlan = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            ifceVlan = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
         } else {
             // reverse direction
             log.debug("reverse");
             ifceName = dstRes.getPortId();
-            ifceVlan = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            ifceVlan = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
         }
 
         Map root = new HashMap();
@@ -237,15 +237,15 @@ public class IOSConfigGen implements DeviceConfigGenerator {
             // forward direction
             log.debug("forward");
             ifceName = srcRes.getPortId();
-            ifceVlan = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
-            egressVlan = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            ifceVlan = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            egressVlan = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
             lspTargetDeviceId = dstRes.getNodeId();
         } else {
             // reverse direction
             log.debug("reverse");
             ifceName = dstRes.getPortId();
-            ifceVlan = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
-            egressVlan = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            ifceVlan = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            egressVlan = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
             lspTargetDeviceId = srcRes.getNodeId();
             reverse = true;
         }

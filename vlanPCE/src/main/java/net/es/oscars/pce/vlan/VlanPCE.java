@@ -150,7 +150,8 @@ public class VlanPCE {
             }
             String hopElemId = NMWGParserUtil.normalizeURN(NMWGParserUtil.getURN(hop));
             reqElemMap.put(hopElemId, hop);
-            String vlanRange = hop.getLink().getSwitchingCapabilityDescriptors()
+            // Assume there is one and only one ISCD
+            String vlanRange = hop.getLink().getSwitchingCapabilityDescriptors().get(0)
                                 .getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability();
             
             if(vlanRange != null){
@@ -186,7 +187,8 @@ public class VlanPCE {
                 if(!this.isVlanHop(hop)){
                     continue;
                 }
-                CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = hop.getLink().getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo();
+                // Assume there is one and only one ISCD
+                CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = hop.getLink().getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo();
                 try{
                     //Check if hop in local domain
                     String domainId = NMWGParserUtil.normalizeURN(NMWGParserUtil.getURN(hop, NMWGParserUtil.DOMAIN_TYPE));
@@ -235,7 +237,8 @@ public class VlanPCE {
                 for(CtrlPlanePortContent port : node.getPort()){
                     ArrayList<CtrlPlaneLinkContent> linksToRemove = new ArrayList<CtrlPlaneLinkContent>();
                     for(CtrlPlaneLinkContent link : port.getLink()){
-                        CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors();
+                        // Assume there is one and only one ISCD
+                        CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors().get(0);
                         
                         String fullLinkId = NMWGParserUtil.normalizeURN(link.getId());
                         if(!this.localDomain.equals(currDomainId) &&
@@ -303,20 +306,22 @@ public class VlanPCE {
             CtrlPlaneHopContent hop) throws OSCARSServiceException {
         //check if hop has swcap info
         if(hop.getLink() == null || 
-                hop.getLink().getSwitchingCapabilityDescriptors() == null ||
-                hop.getLink().getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo() == null){
+                hop.getLink().getSwitchingCapabilityDescriptors().size() == 0 ||
+                hop.getLink().getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo() == null){
             return;
         }
         
-        CtrlPlaneSwitchingCapabilitySpecificInfo hopSwcapInfo = hop.getLink().getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo();
+        // Assume there is one and only one ISCD
+        CtrlPlaneSwitchingCapabilitySpecificInfo hopSwcapInfo = hop.getLink().getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo();
         
         //make sure link fields are not null - if they are then this is not applicable to leave
-        if(link.getSwitchingCapabilityDescriptors() == null || 
-               link.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo() == null){
+        if(link.getSwitchingCapabilityDescriptors().size() == 0 || 
+               link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo() == null){
             throw new OSCARSServiceException("Switching capability constraints provided for link that doesn't have any capabilities.");
         }
         
-        CtrlPlaneSwitchingCapabilitySpecificInfo linkSwcapInfo = link.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo();
+        // Assume there is one and only one ISCD
+        CtrlPlaneSwitchingCapabilitySpecificInfo linkSwcapInfo = link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo();
         
         /* NOTE: If either of the below fields are null we still want 
          * to set them. This is so we don't reset MPLS considerations 
@@ -330,9 +335,9 @@ public class VlanPCE {
     }
 
     private boolean isVlanLink(CtrlPlaneLinkContent link) {
-        if(link.getSwitchingCapabilityDescriptors() == null || 
-                link.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo() == null ||
-                link.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability() == null){
+        if(link.getSwitchingCapabilityDescriptors().size() == 0 || 
+                link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo() == null ||
+                link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability() == null){
             return false;
         }
         return true;

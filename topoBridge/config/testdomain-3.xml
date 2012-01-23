@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <topology 
-    xmlns="http://ogf.org/schema/network/topology/ctrlPlane/20080828/" 
+    xmlns="http://ogf.org/schema/network/topology/ctrlPlane/20110826/" 
     id="testdomain-3-topology">
     
     <idcId>https://testdomain-3/axis2/services/OSCARS</idcId>

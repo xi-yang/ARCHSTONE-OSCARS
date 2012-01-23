@@ -765,7 +765,8 @@ public final class IDCTest {
                     CtrlPlaneLinkContent link = ctrlHop.getLink();
                     String vlanRangeAvail = "any";
                     if (link != null ) {
-                        CtrlPlaneSwcapContent swcap= link.getSwitchingCapabilityDescriptors();
+                        // Assume there is one and only one ISCD
+                        CtrlPlaneSwcapContent swcap= link.getSwitchingCapabilityDescriptors().get(0);
                         if (swcap != null) {
                             CtrlPlaneSwitchingCapabilitySpecificInfo specInfo = swcap.getSwitchingCapabilitySpecificInfo();
                             if (specInfo != null) {

@@ -181,15 +181,15 @@ public class MXConfigGen implements DeviceConfigGenerator {
             // forward direction
             log.debug("forward");
             ifceName = srcRes.getPortId();
-            ifceVlan = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
-            egressVlan = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            ifceVlan = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            egressVlan = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
             lspTargetDeviceId = dstRes.getNodeId();
         } else {
             // reverse direction
             log.debug("reverse");
             ifceName = dstRes.getPortId();
-            ifceVlan = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
-            egressVlan = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            ifceVlan = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            egressVlan = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
             lspTargetDeviceId = srcRes.getNodeId();
             reverse = true;
         }
@@ -356,13 +356,13 @@ public class MXConfigGen implements DeviceConfigGenerator {
             // forward direction
             log.debug("forward");
             ifceName = srcRes.getPortId();
-            ifceVlan = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            ifceVlan = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
             lspTargetDeviceId = dstRes.getNodeId();
         } else {
             // reverse direction
             log.debug("reverse");
             ifceName = dstRes.getPortId();
-            ifceVlan = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+            ifceVlan = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
             lspTargetDeviceId = srcRes.getNodeId();
         }
         policingFilterName      = ng.getFilterName(gri, "policing");
@@ -472,8 +472,8 @@ public class MXConfigGen implements DeviceConfigGenerator {
         
         ifceAName       = srcRes.getPortId();
         ifceZName       = dstRes.getPortId();
-        ifceAVlan       = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
-        ifceZVlan       = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+        ifceAVlan       = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+        ifceZVlan       = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
         
         policerName     = ng.getPolicerName(gri);
         ifceADesc       = ng.getInterfaceDescription(gri, bandwidth);
@@ -555,8 +555,8 @@ public class MXConfigGen implements DeviceConfigGenerator {
         
         ifceAName       = srcRes.getPortId();
         ifceZName       = dstRes.getPortId();
-        ifceAVlan       = ingressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
-        ifceZVlan       = egressLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+        ifceAVlan       = ingressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
+        ifceZVlan       = egressLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange();
         policerName     = ng.getPolicerName(gri);
         iswitchName     = ng.getIswitchTerm(gri);
         

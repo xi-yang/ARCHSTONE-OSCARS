@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CtrlPlane:topology xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20080828/" id="testdomain-2">
+<CtrlPlane:topology xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20110826/" id="testdomain-2">
   <xsd:documentation xmlns:xsd="http://www.w3.org/2001/XMLSchema" lang="en"> 
            This defines a  four node topology with the following links
                    |-->link1:node3

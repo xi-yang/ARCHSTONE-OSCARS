@@ -353,7 +353,8 @@ public class QueryReservation extends HttpServlet {
             for (CtrlPlaneHopContent hop: hops){
                 CtrlPlaneLinkContent link = hop.getLink();
                 String vlanRangeAvail = "0";
-                CtrlPlaneSwcapContent swcap= link.getSwitchingCapabilityDescriptors();
+                // Assume there is one and only one ISCD
+                CtrlPlaneSwcapContent swcap= link.getSwitchingCapabilityDescriptors().get(0);
                 if (swcap != null) {
                     CtrlPlaneSwitchingCapabilitySpecificInfo specInfo = swcap.getSwitchingCapabilitySpecificInfo();
                     if (specInfo != null) {
@@ -463,7 +464,8 @@ public class QueryReservation extends HttpServlet {
         CtrlPlaneLinkContent link = hops.get(0).getLink();
         layer2Info.setSrcEndpoint(link.getId());
         String vlanRangeAvail = "any";
-        CtrlPlaneSwcapContent swcap= link.getSwitchingCapabilityDescriptors();
+        // Assume there is one and only one ISCD
+        CtrlPlaneSwcapContent swcap= link.getSwitchingCapabilityDescriptors().get(0);
         if (swcap != null) {
             CtrlPlaneSwitchingCapabilitySpecificInfo specInfo = swcap.getSwitchingCapabilitySpecificInfo();
             if (specInfo != null) {
@@ -484,7 +486,8 @@ public class QueryReservation extends HttpServlet {
         link = hops.get(hops.size()-1).getLink();
         layer2Info.setDestEndpoint(link.getId());
         vlanRangeAvail = "any";
-        swcap= link.getSwitchingCapabilityDescriptors();
+        // Assume there is one and only one ISCD
+        swcap= link.getSwitchingCapabilityDescriptors().get(0);
         if (swcap != null) {
             CtrlPlaneSwitchingCapabilitySpecificInfo specInfo = swcap.getSwitchingCapabilitySpecificInfo();
             if (specInfo != null) {

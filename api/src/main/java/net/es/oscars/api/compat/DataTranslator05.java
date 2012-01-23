@@ -644,14 +644,15 @@ public class DataTranslator05 {
              * Check here if the swicthingCapType is blank...
              */
             if(hop06.getLink() != null && 
-                    hop06.getLink().getSwitchingCapabilityDescriptors() != null && 
-                    "".equals(hop06.getLink().getSwitchingCapabilityDescriptors().getSwitchingcapType())){
+                    hop06.getLink().getSwitchingCapabilityDescriptors().size() != 0 && 
+                    "".equals(hop06.getLink().getSwitchingCapabilityDescriptors().get(0).getSwitchingcapType())){
                 /*...if it is blank AND it has VLAN information then set it to l2sc/ethernet.'
                    0.5 does something similar when it exports data from mysql. If its not a
                    link with VLANs then its ok to leave it blank currently */
-                if(hop06.getLink().getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability() != null){
-                    hop06.getLink().getSwitchingCapabilityDescriptors().setSwitchingcapType("l2sc");
-                    hop06.getLink().getSwitchingCapabilityDescriptors().setEncodingType("ethernet");
+                // Assume there is one and only one ISCD
+                if(hop06.getLink().getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability() != null){
+                    hop06.getLink().getSwitchingCapabilityDescriptors().get(0).setSwitchingcapType("l2sc");
+                    hop06.getLink().getSwitchingCapabilityDescriptors().get(0).setEncodingType("ethernet");
                 }
             }
         }

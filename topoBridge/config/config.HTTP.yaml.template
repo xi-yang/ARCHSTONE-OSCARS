@@ -5,7 +5,7 @@ soap:
 topoBridge:
     domainPrefix:   'urn:ogf:network:domain='
     nsAbbr:         'CtrlPlane'
-    nsUri:          'http://ogf.org/schema/network/topology/ctrlPlane/20080828/'
+    nsUri:          'http://ogf.org/schema/network/topology/ctrlPlane/20110826/'
     cacheSeconds:   300
     #uncomment below to register with a topology service
     #registerUrl:    'http://dcn-ts.internet2.edu:8012/perfSONAR_PS/services/topology'

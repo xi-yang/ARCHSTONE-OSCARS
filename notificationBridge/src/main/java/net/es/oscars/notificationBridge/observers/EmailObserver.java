@@ -335,10 +335,11 @@ public class EmailObserver implements Observer{
         int i = 0;
         for(CtrlPlaneHopContent hop : path.getHop()){
             detailPath[i] = NMWGParserUtil.getURN(hop);
-            if(hop.getLink() != null && hop.getLink().getSwitchingCapabilityDescriptors() != null
-                    && hop.getLink().getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo() != null
-                    &&  hop.getLink().getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability() != null ){
-                String vlan = hop.getLink().getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability();
+            // Assume there is one and only one ISCD per link
+            if(hop.getLink() != null && hop.getLink().getSwitchingCapabilityDescriptors().size() > 0 
+                    && hop.getLink().getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo() != null
+                    &&  hop.getLink().getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability() != null ){
+                String vlan = hop.getLink().getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability();
                 detailPath[i] += vlan.equals("0") ? "UNTAGGED" : vlan;
             }
             i++;

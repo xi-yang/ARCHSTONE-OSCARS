@@ -3,12 +3,12 @@
     targetNamespace =       "http://oscars.es.net/OSCARS/pss"
     xmlns:tns =             "http://oscars.es.net/OSCARS/pss"
     xmlns:xsd =             "http://www.w3.org/2001/XMLSchema"
-    xmlns:ctrlp =           "http://ogf.org/schema/network/topology/ctrlPlane/20080828/"
+    xmlns:ctrlp =           "http://ogf.org/schema/network/topology/ctrlPlane/20110826/"
     xmlns:oscars =          "http://oscars.es.net/OSCARS/06"
     xmlns:authP=            "http://oscars.es.net/OSCARS/authParams"
     elementFormDefault =    "qualified" >
 
-    <xsd:import namespace="http://ogf.org/schema/network/topology/ctrlPlane/20080828/"
+    <xsd:import namespace="http://ogf.org/schema/network/topology/ctrlPlane/20110826/"
         schemaLocation="../nmtopo-ctrlp.xsd" />
     <xsd:import namespace="http://oscars.es.net/OSCARS/06"
         schemaLocation="../api/OSCARS-0.6.xsd" />

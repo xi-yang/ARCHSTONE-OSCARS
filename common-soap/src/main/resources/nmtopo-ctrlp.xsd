@@ -3,232 +3,588 @@
 <xs:schema 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     elementFormDefault="qualified" 
-    targetNamespace="http://ogf.org/schema/network/topology/ctrlPlane/20080828/" 
-    xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20080828/">
-  
+    targetNamespace="http://ogf.org/schema/network/topology/ctrlPlane/20110826/" 
+    xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20110826/">
+	
     <xs:annotation>
-      <xs:documentation>
-        WARNING: THIS IS NOT THE OFFICIAL SCHEMA DOCUMENT FOR THE NMWG CONTROL PLANE TOPOLOGY SCHEMA.
-        This document is used by OSCARS to generate Java classes with Axis2. Due to some software
-        limitations this version of the schema is used to generate those classes. It assumes all 
-        elements are given in the order defined because it uses xsd:sequence elements instead of
-        xsd:choice elements. It also does not yet include the bidirectionalPath element. The Path 
-        element is that most heavily used by OSCARS and for XML requests that use more of the 
-        topology schema it is recommended a non Axis2 cient is used for best results. 
-      </xs:documentation>
+		<xs:documentation>
+			WARNING: THIS IS NOT THE OFFICIAL SCHEMA DOCUMENT FOR THE NMWG CONTROL PLANE TOPOLOGY SCHEMA.
+			
+			Version 1 of this document is used by OSCARS to generate Java classes with Axis2. Due to some 
+			software limitations this version of the schema is used to generate those classes. It assumes 
+			all elements are given in the order defined because it uses xsd:sequence elements instead of
+			xsd:choice elements. It also does not yet include the bidirectionalPath element. The Path 
+			element is that most heavily used by OSCARS and for XML requests that use more of the 
+			topology schema it is recommended a non Axis2 cient is used for best results. 
+			
+			Extended by ARCHSTONE Project, version 2 of this document is to describe mutli-layer
+			/ multi-region network (MLN/MRN) topology as well as NSI service topology.
+		</xs:documentation>
     </xs:annotation>
     
-  <!-- Topology -->
-  <xs:element name="topology" type="CtrlPlane:CtrlPlaneTopologyContent"/>
-  
-  <xs:complexType name="CtrlPlaneTopologyContent">
-    <xs:sequence>
-      <xs:element name="idcId" type="xs:string"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:path"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:domain"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="domainSignature" 
-        type="CtrlPlane:CtrlPlaneDomainSignatureContent"/>
-    </xs:sequence>
-    <xs:attribute name="id" use="required" type="xs:string"/>
-  </xs:complexType>
-  
-  <!-- Domain -->
-  <xs:element name="domain" type="CtrlPlane:CtrlPlaneDomainContent"/>
-  
-  <xs:complexType name="CtrlPlaneDomainContent">
-      <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:node"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:port"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:link"/>
-    </xs:sequence>
-    <xs:attribute name="id" use="required" type="xs:string"/>
-  </xs:complexType>
-  
-  <!-- Node -->
-  <xs:element name="node" type="CtrlPlane:CtrlPlaneNodeContent"/>
-  
-  <xs:complexType name="CtrlPlaneNodeContent">
-      <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
-        <xs:element minOccurs="0" name="address" type="CtrlPlane:CtrlPlaneAddressContent" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:port"/>
-      </xs:sequence>
-      <xs:attribute name="id" use="required" type="xs:string"/>
-  </xs:complexType>
-  
-  <!-- Port -->
-  <xs:element name="port" type="CtrlPlane:CtrlPlanePortContent" />
-  
-  <xs:complexType name="CtrlPlanePortContent">
-      <xs:sequence>
-        <!-- <xs:group ref="CtrlPlane:CtrlPlaneCapacityContent"/> -->
-        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
-        <xs:element minOccurs="0" name="capacity" type="xs:string"/>
-        <xs:element minOccurs="0" name="maximumReservableCapacity" type="xs:string"/>
-        <xs:element minOccurs="0" name="minimumReservableCapacity" type="xs:string"/>
-        <xs:element minOccurs="0" name="granularity" type="xs:string"/>
-        <xs:element minOccurs="0" name="unreservedCapacity" type="xs:string"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:link"/>
-      </xs:sequence>
-      <xs:attribute name="id" use="required" type="xs:string"/>
-  </xs:complexType>
-  
-  
-  <!-- Link -->
-  <xs:element name="link" type="CtrlPlane:CtrlPlaneLinkContent" />
-  
-  <xs:complexType name="CtrlPlaneLinkContent">
-      <xs:sequence>
-        <xs:element minOccurs="0" name="remoteLinkId" type="xs:string" />
-        <xs:element name="trafficEngineeringMetric" type="xs:string"/>        
-        <!-- <xs:group ref="CtrlPlane:CtrlPlaneCapacityContent"/> -->
-        <xs:element minOccurs="0" name="capacity" type="xs:string"/>
-        <xs:element minOccurs="0" name="maximumReservableCapacity" type="xs:string"/>
-        <xs:element minOccurs="0" name="minimumReservableCapacity" type="xs:string"/>
-        <xs:element minOccurs="0" name="granularity" type="xs:string"/>
-        <xs:element minOccurs="0" name="unreservedCapacity" type="xs:string"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" 
-            name="linkProtectionTypes" type="xs:string"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="administrativeGroups" 
-            type="CtrlPlane:CtrlPlaneAdministrativeGroup"/>
-        <xs:element name="SwitchingCapabilityDescriptors" type="CtrlPlane:CtrlPlaneSwcapContent"/>
-      </xs:sequence>
-      <xs:attribute name="id" use="required" type="xs:string"/>
-  </xs:complexType>
-    
-  <!-- Path -->
-  <xs:element name="path" type="CtrlPlane:CtrlPlanePathContent" />
-  
-  <xs:complexType name="CtrlPlanePathContent">
-      <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="hop" type="CtrlPlane:CtrlPlaneHopContent" />
-      </xs:sequence>
-      <xs:attribute name="id" use="required" type="xs:string"/>
-      <xs:attribute name="direction" use="optional" type="xs:string"/>
-  </xs:complexType>
-  
-  <xs:complexType name="CtrlPlaneHopContent">
-      <xs:sequence>
-        <xs:element minOccurs="0" name="domainIdRef" type="xs:string" />
-        <xs:element minOccurs="0" name="nodeIdRef" type="xs:string" />
-        <xs:element minOccurs="0" name="portIdRef" type="xs:string" />
-        <xs:element minOccurs="0" name="linkIdRef" type="xs:string" />
-        <xs:element minOccurs="0" ref="CtrlPlane:domain"/>
-        <xs:element minOccurs="0" ref="CtrlPlane:node"/>
-        <xs:element minOccurs="0" ref="CtrlPlane:port"/>
-        <xs:element minOccurs="0" ref="CtrlPlane:link"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="nextHop" 
-                    type="CtrlPlane:CtrlPlaneNextHopContent" />
-      </xs:sequence>
-      <xs:attribute name="id" use="required" type="xs:string"/>
-  </xs:complexType>
-  
-  <xs:complexType name="CtrlPlaneNextHopContent">
-    <xs:simpleContent>
-        <xs:extension base="xs:string">
-            <xs:attribute use="optional" name="weight" type="xs:int"/>
-            <xs:attribute use="optional" name="optional" type="xs:boolean"/>
-        </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-  
-  <xs:complexType name="Lifetime">
-      <xs:sequence>
-        <xs:element name="start" type="CtrlPlane:TimeContent" minOccurs="0"/>
-        <xs:element name="end" type="CtrlPlane:TimeContent" minOccurs="0"/>
-        <xs:element name="duration" type="CtrlPlane:Duration" minOccurs="0"/>
-      </xs:sequence>
-      <xs:attribute name="id" use="required" type="xs:string"/>
-      <xs:attribute name="direction" use="optional" type="xs:string"/>
-  </xs:complexType>
-  
-  <xs:complexType name="TimeContent">
-    <xs:simpleContent>
-        <xs:extension base="xs:string">
-            <xs:attribute use="required" name="type" type="xs:string"/>
-        </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-  
-  <xs:complexType name="Duration">
-    <xs:simpleContent>
-        <xs:extension base="xs:string">
-            <xs:attribute use="required" name="type" type="xs:string"/>
-        </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-  
-  <!-- Misc Types -->
-  <xs:complexType name="CtrlPlaneDomainSignatureContent">
-    <xs:attribute name="domainId" use="required" type="xs:string"/>
-     <!-- Further content will be defined by DICE -->
-  </xs:complexType>
-  
-  <xs:complexType name="CtrlPlaneAddressContent">
-    <xs:simpleContent>
-        <xs:extension base="xs:string">
-            <xs:attribute use="optional" name="value" type="xs:string"/>
-            <xs:attribute use="optional" name="type" type="xs:string"/>
-        </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-  
-  <xs:complexType name="CtrlPlaneSwcapContent">
-    <xs:sequence>
-      <xs:element name="switchingcapType" type="xs:string" />
-      <xs:element name="encodingType" type="xs:string" />
-      <xs:element name="switchingCapabilitySpecificInfo" 
-        type="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo"/>
-    </xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="CtrlPlaneAdministrativeGroup">
-    <xs:sequence>
-      <xs:element name="group" type="xs:int"/>
-      <xs:element minOccurs="0" name="groupID" type="xs:string"/>
-    </xs:sequence>
-  </xs:complexType>
-   
-  <xs:complexType name="CtrlPlaneSwitchingCapabilitySpecificInfo">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="capability" type="xs:string"/>
-      <!-- <xs:group ref="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo_l2sc"/> -->
-      <xs:element  minOccurs="0" name="interfaceMTU" type="xs:int"/>
-      <xs:element minOccurs="0" name="vlanRangeAvailability" type="xs:string"/>
-      <xs:element minOccurs="0" name="suggestedVLANRange" type="xs:string"/>
-      <xs:element minOccurs="0" name="vlanTranslation" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
+	<!-- Topology -->
+	<xs:element name="topology" type="CtrlPlane:CtrlPlaneTopologyContent"/>
+	
+	<xs:complexType name="CtrlPlaneTopologyContent">
+		<xs:sequence>
+			<xs:element name="idcId" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:path"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:domain"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="domainSignature" 
+				type="CtrlPlane:CtrlPlaneDomainSignatureContent"/>
 
-  <!-- Axis2 does not support groups so remove for now
-  <xs:group name="CtrlPlaneSwitchingCapabilityDescriptor">
-    <xs:sequence>
-        <xs:element name="switchingcapType" type="xs:string" />
-        <xs:element name="encodingType" type="xs:string" />
-        <xs:element name="switchingCapabilitySpecificInfo" 
-            type="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo"/>
-    </xs:sequence>
-  </xs:group> -->
-  
-  <!-- Axis2 does not support groups so remove for now
-  <xs:group name="CtrlPlaneSwitchingCapabilitySpecificInfo_l2sc">
-    <xs:sequence>
-       <xs:element name="interfaceMTU" form="unqualified" type="xs:int"/>
-       <xs:element name="vlanRangeAvailability" form="unqualified" type="xs:string"/>
-    </xs:sequence>
-  </xs:group> -->
-  
- <!-- Axis2 does not support groups so remove for now
-  <xs:group name="CtrlPlaneCapacityContent">
-    <xs:sequence>
-        <xs:element ref="CtrlPlane:capacity"/>
-        <xs:element ref="CtrlPlane:maximumReservableCapacity"/>
-        <xs:element ref="CtrlPlane:minimumReservableCapacity"/>
-        <xs:element ref="CtrlPlane:granularity"/>
-        <xs:element ref="CtrlPlane:unreservedCapacity"/>
-    </xs:sequence>
-  </xs:group> -->
-  
+			<!-- Optional relation element for service topology description -->
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:relation"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+	</xs:complexType>
+	
+	<!-- Domain -->
+	<xs:element name="domain" type="CtrlPlane:CtrlPlaneDomainContent"/>
+	
+	<xs:complexType name="CtrlPlaneDomainContent">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:node"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:port"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:link"/>
+
+			<!-- Abstract connectivity for service topology description -->
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextDomainId" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextNodeId" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextPortId" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+	</xs:complexType>
+	
+	<!-- Node -->
+	<xs:element name="node" type="CtrlPlane:CtrlPlaneNodeContent"/>
+	
+	<xs:complexType name="CtrlPlaneNodeContent">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
+			<xs:element minOccurs="0" name="address" type="CtrlPlane:CtrlPlaneAddressContent" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:port"/>
+
+			<!-- Node-level <capability> elements: <ResourcePool> (with sub-level ResourceBlock) 
+				and <CrossConnect>. Plus use <Relation> elemenemts when needed.
+				By default, no <capability> element implies no constraint at node level. -->
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:capability"/>
+
+			<!-- Abstract connectivity for service topology description -->
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextDomainId" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextNodeId" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextPortId" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+	</xs:complexType>
+	
+	<!-- Port -->
+	<xs:element name="port" type="CtrlPlane:CtrlPlanePortContent" />
+	
+	<xs:complexType name="CtrlPlanePortContent">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
+			<xs:element minOccurs="0" name="capacity" type="xs:string"/>
+			<xs:element minOccurs="0" name="maximumReservableCapacity" type="xs:string"/>
+			<xs:element minOccurs="0" name="minimumReservableCapacity" type="xs:string"/>
+			<xs:element minOccurs="0" name="granularity" type="xs:string"/>
+			<xs:element minOccurs="0" name="unreservedCapacity" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:link"/>
+
+			<!-- Abstract connectivity for service topology description -->
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextDomainId" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextNodeId" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextPortId" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+	</xs:complexType>
+	
+	
+	<!-- Link -->
+	<xs:element name="link" type="CtrlPlane:CtrlPlaneLinkContent" />
+	
+	<xs:complexType name="CtrlPlaneLinkContent">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="remoteLinkId" type="xs:string" />
+			<xs:element name="trafficEngineeringMetric" type="xs:string"/>        
+			<xs:element minOccurs="0" name="capacity" type="xs:string"/>
+			<xs:element minOccurs="0" name="maximumReservableCapacity" type="xs:string"/>
+			<xs:element minOccurs="0" name="minimumReservableCapacity" type="xs:string"/>
+			<xs:element minOccurs="0" name="granularity" type="xs:string"/>
+			<xs:element minOccurs="0" name="unreservedCapacity" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" 
+				name="linkProtectionTypes" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="administrativeGroups" 
+				type="CtrlPlane:CtrlPlaneAdministrativeGroup"/>
+            <!-- Should have changed SwitchingCapabilityDescriptors into switchingCapabilityDescriptor.
+                 But keep it unchanged for now for backward compatibility.  -->
+			<xs:element minOccurs="1" maxOccurs="unbounded" name="SwitchingCapabilityDescriptors" 
+				type="CtrlPlane:CtrlPlaneSwcapContent"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="adjustmentCapabilityDescriptor" 
+				type="CtrlPlane:CtrlPlaneAdcapContent"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+	</xs:complexType>
+    
+	<!-- Path -->
+	<xs:element name="path" type="CtrlPlane:CtrlPlanePathContent" />
+	
+	<xs:complexType name="CtrlPlanePathContent">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="hop" type="CtrlPlane:CtrlPlaneHopContent" />
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="direction" use="optional" type="xs:string"/>
+	</xs:complexType>
+	
+	<xs:complexType name="CtrlPlaneHopContent">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="domainIdRef" type="xs:string" />
+			<xs:element minOccurs="0" name="nodeIdRef" type="xs:string" />
+			<xs:element minOccurs="0" name="portIdRef" type="xs:string" />
+			<xs:element minOccurs="0" name="linkIdRef" type="xs:string" />
+			<xs:element minOccurs="0" ref="CtrlPlane:domain"/>
+			<xs:element minOccurs="0" ref="CtrlPlane:node"/>
+			<xs:element minOccurs="0" ref="CtrlPlane:port"/>
+			<xs:element minOccurs="0" ref="CtrlPlane:link"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nextHop" 
+				type="CtrlPlane:CtrlPlaneNextHopContent" />
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+	</xs:complexType>
+	
+	<xs:complexType name="CtrlPlaneNextHopContent">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute use="optional" name="weight" type="xs:int"/>
+				<xs:attribute use="optional" name="optional" type="xs:boolean"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="Lifetime">
+		<xs:sequence>
+			<xs:element name="start" type="CtrlPlane:TimeContent" minOccurs="0"/>
+			<xs:element name="end" type="CtrlPlane:TimeContent" minOccurs="0"/>
+			<xs:element name="duration" type="CtrlPlane:Duration" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="direction" use="optional" type="xs:string"/>
+	</xs:complexType>
+	
+	<xs:complexType name="TimeContent">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute use="required" name="type" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="Duration">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute use="required" name="type" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<!-- Misc Types -->
+	<xs:complexType name="CtrlPlaneDomainSignatureContent">
+		<xs:attribute name="domainId" use="required" type="xs:string"/>
+		<!-- Further content will be defined by DICE -->
+	</xs:complexType>
+	
+	<xs:complexType name="CtrlPlaneAddressContent">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute use="optional" name="value" type="xs:string"/>
+				<xs:attribute use="optional" name="type" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="CtrlPlaneSwcapContent">
+		<xs:sequence>
+			<xs:element name="switchingcapType" type="xs:string" />
+			<xs:element name="encodingType" type="xs:string" />
+			<!-- v2 extension -->
+			<xs:element minOccurs="0" name="capacity" type="xs:string"/>
+			<xs:element minOccurs="0" name="granularity" type="xs:string"/>
+			<xs:element minOccurs="0" name="switchingCapabilitySpecificInfo" 
+				type="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="CtrlPlaneAdministrativeGroup">
+		<xs:sequence>
+			<xs:element name="group" type="xs:int"/>
+			<xs:element minOccurs="0" name="groupID" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!-- V2 Extension for Multi-Layer/Multi-Region Networks -->
+	<xs:complexType name="CtrlPlaneSwitchingCapabilitySpecificInfo">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="pscSpecificInfo" type="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo_psc"/>
+				<xs:element name="l2scSpecificInfo" type="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo_l2sc"/>
+				<xs:element name="tdmSpecificInfo" type="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo_tdm"/>
+				<xs:element name="lscSpecificInfo" type="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo_lsc"/>
+				<xs:element name="openflowSpecificInfo" type="CtrlPlane:CtrlPlaneSwitchingCapabilitySpecificInfo_openflow"/>
+			</xs:choice>
+			<!-- Optional vendor-specific info -->
+			<xs:element minOccurs="0" name="vendorSpecificInfo" type="CtrlPlane:CtrlPlaneSwcapVendorSpecificInfo"/>
+			<!-- The following five elements are for backward compatibility -->
+			<xs:element minOccurs="0" name="capability" type="xs:string"/>
+			<xs:element minOccurs="0" name="interfaceMTU" type="xs:int"/>
+			<xs:element minOccurs="0" name="vlanRangeAvailability" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedVLANRange" type="xs:string"/>
+			<xs:element minOccurs="0" name="vlanTranslation" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="CtrlPlaneSwitchingCapabilitySpecificInfo_psc">
+		<xs:sequence>
+			<!-- lspHierarchy: psc-1 through psc-4 -->
+			<xs:element name="lspHierarchy" type="xs:string"/>
+			<xs:element name="interfaceMTU" type="xs:int"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="CtrlPlaneSwitchingCapabilitySpecificInfo_l2sc">
+		<xs:sequence>
+			<xs:element name="interfaceMTU" type="xs:int"/>
+			<xs:element minOccurs="0" name="vlanRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedVlanSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedVlanSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="vlanTranslation" type="xs:boolean" default="false"/>
+			<!-- TBD: Add QinQ and Carrier Ethernet parameters -->
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="CtrlPlaneSwitchingCapabilitySpecificInfo_tdm">
+		<xs:sequence>
+			<!-- concatenationType: sts1 / 50mbps or sts3c / 150mbps -->
+			<xs:element name="concatenationType" type="xs:string"/>
+			<!-- timeslotRangeSet listed by sts1 timeslots 
+				 hierachy among timeslots can be ignored in modern SONET/SDH -->
+			<xs:element minOccurs="0" name="timeslotRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedTimeslotSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedTimeslotSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="tsiEnabled" type="xs:boolean" default="true"/>
+			<xs:element minOccurs="0" name="vcatEnabled" type="xs:boolean" default="true"/>			
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="CtrlPlaneSwitchingCapabilitySpecificInfo_lsc">
+		<xs:sequence>
+			<!-- channelRepresentation: itu-channel-grid, frequency-ghz, wavelength-nm -->
+			<xs:element name="channelRepresentation" type="xs:string"/>
+			<xs:element minOccurs="0" name="wavelengthRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedWavelengthSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedWavelengthSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="wavelengthConversionEnabled" type="xs:boolean" default="false"/>
+			<!-- TBD: wavelength conversion pool info -->
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Strawman openflow specific info -->
+	<xs:complexType name="CtrlPlaneSwitchingCapabilitySpecificInfo_openflow">
+		<xs:sequence>
+			<!-- Available flow space on the port/link. not present = 'all' -->
+			<xs:element minOccurs="0" name="etherSrceRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="etherDstRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="etherTypeRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="vlanIdRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="ipSrcRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="ipDstRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="ipProtoRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="tcpUdpSrcRangeSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="tcpUdpDstRangeSet" type="xs:string"/>
+			<!-- used space by flow tables -->
+			<xs:element minOccurs="0" name="usedEtherSrceSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedEtherDstSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedVlanIdSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedIpSrcSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedIpDstSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedIpProtoSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedTcpUdpSrcSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="usedTcpUdpDstSet" type="xs:string"/>
+			<!-- Suggested flow assignment for inter-domain/region negotiation -->
+			<xs:element minOccurs="0" name="suggestedEtherSrceSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedEtherDstSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedVlanIdSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedIpSrcSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedIpDstSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedIpProtoSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedTcpUdpSrcSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="suggestedTcpUdpDstSet" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Definition of vendor-specific info -->
+	<xs:complexType name="CtrlPlaneSwcapVendorSpecificInfo">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="cienaOTNSpecificInfo" type="CtrlPlane:CtrlPlaneSwcapVendorSpecificInfo_ciena_otn"/>
+				<xs:element name="infineraDTNSpecificInfo" type="CtrlPlane:CtrlPlaneSwcapVendorSpecificInfo_infinera_dtn"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="CtrlPlaneSwcapVendorSpecificInfo_ciena_otn">
+		<xs:sequence>
+			<!-- Capacity: otu0 (1.2G) or otu1 (2.5G) or otu2 (10G 8xODU0) or otu3 (40G 32xODU0) or otu4 (100G 80xODU0) -->
+			<xs:choice>
+				<xs:element name="OTU0" type="CtrlPlane:OTNData_OTU0"/>
+				<xs:element name="OTU1" type="CtrlPlane:OTNData_OTU1"/>
+				<xs:element name="OTU2" type="CtrlPlane:OTNData_OTU2"/>
+				<xs:element name="OTU3" type="CtrlPlane:OTNData_OTU3"/>
+				<xs:element name="OTU3" type="CtrlPlane:OTNData_OTU4"/>
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="usedOTU0" type="CtrlPlane:OTNData_OTU0"/>
+				<xs:element name="usedOTU1" type="CtrlPlane:OTNData_OTU1"/>
+				<xs:element name="usedOTU2" type="CtrlPlane:OTNData_OTU2"/>
+				<xs:element name="usedOTU3" type="CtrlPlane:OTNData_OTU3"/>
+				<xs:element name="usedOTU4" type="CtrlPlane:OTNData_OTU4"/>
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="suggestedOTU0" type="CtrlPlane:OTNData_OTU0"/>
+				<xs:element name="suggestedOTU1" type="CtrlPlane:OTNData_OTU1"/>
+				<xs:element name="suggestedusedOTU2" type="CtrlPlane:OTNData_OTU2"/>
+				<xs:element name="suggestedusedOTU3" type="CtrlPlane:OTNData_OTU3"/>
+				<xs:element name="suggestedusedOTU4" type="CtrlPlane:OTNData_OTU4"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="CtrlPlaneSwcapVendorSpecificInfo_infinera_dtn">
+		<xs:sequence>
+			<!-- Capacity: edge: single Och; trunk: set of Waveband -->
+			<xs:choice>
+				<xs:element name="tributaryInfo" type="CtrlPlane:OTNData_Infinera_TributaryModuleInfo"/>
+				<xs:element name="wavebandMuxInfo" type="CtrlPlane:OTNData_Infinera_WavebandModuleInfo"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_OTU0">
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_OTU1">
+		<xs:choice minOccurs="0">
+			<!-- Ciena prepiotary 16 OPVCs (16x150M) in OTU1 -->
+			<xs:element minOccurs="0" name="OPVCSet" type="xs:string"/>
+			<xs:element minOccurs="0" name="OTU0Set" type="xs:string"/>
+		</xs:choice>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_OTU2">
+		<xs:choice minOccurs="0">
+			<xs:element minOccurs="0" name="OTU0Set" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="OTU1" type="CtrlPlane:OTNData_OTU1"/>
+		</xs:choice>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<!-- contain: payload or signal type say 'ethernet' or lower-order containers e.g. '4xOtu1' -->
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_OTU3">
+		<xs:choice minOccurs="0">
+			<xs:element minOccurs="0" name="OTU0Set" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="OTU1" type="CtrlPlane:OTNData_OTU1"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="OTU2" type="CtrlPlane:OTNData_OTU2"/>
+		</xs:choice>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_OTU4">
+		<xs:choice minOccurs="0">
+			<xs:element minOccurs="0" name="OTU0Set" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="OTU1" type="CtrlPlane:OTNData_OTU1"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="OTU2" type="CtrlPlane:OTNData_OTU2"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="OTU3" type="CtrlPlane:OTNData_OTU3"/>
+		</xs:choice>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_Infinera_TributaryModuleInfo">
+		<!-- Capacity: otu1 or otu2 or otu3 or otu4 -->
+		<xs:sequence>
+		<xs:choice>
+			<xs:element name="OTU1" type="CtrlPlane:OTNData_OTU1"/>
+			<xs:element name="OTU2" type="CtrlPlane:OTNData_OTU2"/>
+			<xs:element name="OTU3" type="CtrlPlane:OTNData_OTU3"/>
+			<xs:element name="OTU4" type="CtrlPlane:OTNData_OTU4"/>
+		</xs:choice>
+		<xs:choice>
+			<xs:element name="usedOTU1" type="CtrlPlane:OTNData_OTU1"/>
+			<xs:element name="usedOTU2" type="CtrlPlane:OTNData_OTU2"/>
+			<xs:element name="usedOTU3" type="CtrlPlane:OTNData_OTU3"/>
+			<xs:element name="usedOTU4" type="CtrlPlane:OTNData_OTU4"/>
+		</xs:choice>
+		<xs:choice>
+			<xs:element name="suggestedOTU1" type="CtrlPlane:OTNData_OTU1"/>
+			<xs:element name="suggestedusedOTU2" type="CtrlPlane:OTNData_OTU2"/>
+			<xs:element name="suggestedusedOTU3" type="CtrlPlane:OTNData_OTU3"/>
+			<xs:element name="suggestedusedOTU4" type="CtrlPlane:OTNData_OTU4"/>
+		</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="model" use="optional" type="xs:string"/>
+		<!-- contains: payload or optical signal type -->
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_Infinera_WavebandModuleInfo">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="OCG" type="CtrlPlane:OTNData_Infinera_OCG"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="usedOCG" type="CtrlPlane:OTNData_Infinera_OCG"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="suggestedOCG" type="CtrlPlane:OTNData_Infinera_OCG"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="model" use="optional" type="xs:string"/>
+		<!-- contains: 4xOcg or 8xOcg -->
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_Infinera_OCG">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="OCh" type="CtrlPlane:OTNData_Infinera_OCh"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<!-- contains: 10xOch -->
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="OTNData_Infinera_OCh">
+		<!-- Capacity: otu1 or otu2 or otu3 or otu4 -->
+		<xs:choice minOccurs="0">
+			<xs:element name="OTU1" type="CtrlPlane:OTNData_OTU1"/>
+			<xs:element name="OTU2" type="CtrlPlane:OTNData_OTU2"/>
+			<xs:element name="OTU3" type="CtrlPlane:OTNData_OTU3"/>
+			<xs:element name="OTU4" type="CtrlPlane:OTNData_OTU4"/>
+		</xs:choice>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="contain" use="optional" type="xs:string"/>
+	</xs:complexType>
+
+	<!-- Definition of IACD, mostly following IETF RFC6001 -->
+	<xs:complexType name="CtrlPlaneAdcapContent">
+		<xs:sequence>
+			<xs:element name="lowerSwcap" type="xs:string" />
+			<xs:element name="lowerEncType" type="xs:string" />
+			<xs:element name="upperSwcap" type="xs:string" />
+			<xs:element name="upperEncType" type="xs:string" />
+			<xs:element minOccurs="0" name="maximumAdjustableCapacity" type="xs:string"/>
+			<xs:element minOccurs="0" name="adjustmentCapabilitySpecificInfo" 
+				type="CtrlPlane:CtrlPlaneAdjustmentCapabilitySpecificInfo"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Place holder for IACD -->
+	<xs:complexType name="CtrlPlaneAdjustmentCapabilitySpecificInfo">
+		<xs:sequence>
+			<xs:element name="vendorSpecificInfo" type="CtrlPlane:CtrlPlaneAdcapVendorSpecificInfo"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Definition of vendor-specific IACD info -->
+	<xs:complexType name="CtrlPlaneAdcapVendorSpecificInfo">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="cienaEoSSpecificInfo" type="CtrlPlane:CtrlPlaneAdcapVendorSpecificInfo_ciena_eos"/>
+                <!-- <xs:element name="cienaOtnSpecificInfo" type="CtrlPlane:CtrlPlaneAdcapVendorSpecificInfo_ciena_otn"/>  -->
+                <!-- <xs:element name="cienaOtnSpecificInfo" type="CtrlPlane:CtrlPlaneAdcapVendorSpecificInfo_infinera_dtn"/>  -->
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Ciena Ethernet over SONET/SDH adjustment info -->
+	<xs:complexType name="CtrlPlaneAdcapVendorSpecificInfo_ciena_eos">
+		<xs:sequence>
+			<xs:element name="minimumEtherBandwidth" type="xs:string"/>
+			<xs:element name="incrementEtherBandwidth" type="xs:string"/>
+			<xs:element name="maximumEtherBandwidth" type="xs:string"/>
+			<xs:element name="contiguousTimeslots" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<!-- V2 Extension with Capability and Relation elements -->
+
+	<!-- Capability -->
+	<xs:element name="capability" type="CtrlPlane:CtrlPlaneCapabilityContent" />
+
+	<xs:complexType name="CtrlPlaneCapabilityContent">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="ingressResourceBlock" type="CtrlPlane:ResourceBlock"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="egressResourceBlock" type="CtrlPlane:ResourceBlock"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="crossConnect" type="CtrlPlane:CrossConnect"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ResourceBlock">
+		<xs:sequence>
+			<xs:element minOccurs="1" maxOccurs="unbounded" name="switchingCapabilityDescriptor" 
+				type="CtrlPlane:CtrlPlaneSwcapContent"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="connectedPortIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="connectedLinkIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="adjustmentCapabilityDescriptor" 
+				type="CtrlPlane:CtrlPlaneAdcapContent"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="type" use="required" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="CrossConnect">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element minOccurs="0" maxOccurs="unbounded" name="sourcePortIdRef" type="xs:string"/>
+				<xs:element minOccurs="0" maxOccurs="unbounded" name="sourceLinkIdRef" type="xs:string"/>
+				<xs:element minOccurs="0" maxOccurs="unbounded" name="sourceResourceBlockIdRef" type="xs:string"/>
+			</xs:choice>
+			<xs:choice>
+				<xs:element minOccurs="0" maxOccurs="unbounded" name="sinkPortIdRef" type="xs:string"/>
+				<xs:element minOccurs="0" maxOccurs="unbounded" name="sinkLinkIdRef" type="xs:string"/>
+				<xs:element minOccurs="0" maxOccurs="unbounded" name="sinkResourceBlockIdRef" type="xs:string"/>
+			</xs:choice>
+			<xs:element minOccurs="0" maxOccurs="1" name="capacity" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="type" use="required" type="xs:string"/>
+	</xs:complexType>
+
+
+	<!-- Relation -->
+	<xs:element name="relation" type="CtrlPlane:CtrlPlaneRelationContent" />
+
+	<xs:complexType name="CtrlPlaneRelationContent">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="domainIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="nodeIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="portIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="linkIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="pathIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="hopIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="resourceBlockIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="crossConnectIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="lifetimeIdRef" type="xs:string"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="relationIdRef" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="xs:string"/>
+		<xs:attribute name="type" use="required" type="xs:string"/>
+	</xs:complexType>
+	
+
 </xs:schema>

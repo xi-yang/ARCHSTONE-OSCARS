@@ -29,7 +29,8 @@ public class VlanLinkEvaluator extends LinkEvaluator {
     public boolean evaluate(CtrlPlaneLinkContent link,
             ArrayList<CtrlPlaneLinkContent> currentBestPath) {
         
-        CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors();
+        // Assume there is one and only one ISCD per link
+        CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors().get(0);
         String linkId = NMWGParserUtil.normalizeURN(link.getId());
         String localDomain = PathTools.getLocalDomainId();
         
@@ -51,13 +52,15 @@ public class VlanLinkEvaluator extends LinkEvaluator {
             CtrlPlaneLinkContent bestPathLink = currentBestPath.get(i);
             
             //skip links with no VLAN info
-            if(!this.hasVlanInfo(bestPathLink.getSwitchingCapabilityDescriptors())){
+            // Assume there is one and only one ISCD per link
+            if(!this.hasVlanInfo(bestPathLink.getSwitchingCapabilityDescriptors().get(0))){
                 continue;
             }
             
             //Join VLAN values
+            // Assume there is one and only one ISCD
             CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = 
-                bestPathLink.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo();
+                bestPathLink.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo();
             vlanRange = VlanRange.and(vlanRange, new VlanRange(swcapInfo.getVlanRangeAvailability()));
             
             //no VLANS available so this link should NOT be used
@@ -78,7 +81,8 @@ public class VlanLinkEvaluator extends LinkEvaluator {
         
         //set the vlan range if its a local link so constrained range is passed to next domain
         if(localDomain != null && linkId.startsWith(localDomain)){
-            link.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().setVlanRangeAvailability(vlanRange.toString());
+            // Assume there is one and only one ISCD
+            link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().setVlanRangeAvailability(vlanRange.toString());
         }
         
         return true;
@@ -133,13 +137,14 @@ public class VlanLinkEvaluator extends LinkEvaluator {
             /* keep track of vlan info since need to consider last hop seen before
              * current domain
              */
+            // Assume there is one and only one ISCD per link
             if(linkMap.containsKey(currLinkId) && 
-                    this.hasVlanInfo(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors())){
+                    this.hasVlanInfo(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().get(0))){
                 //get vlanRangeAvailability
-                prevDomainVlanAvail = new VlanRange(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability());
+                prevDomainVlanAvail = new VlanRange(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability());
                 //get suggested
-                if(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange() != null){
-                    prevDomainSuggested = new VlanRange(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange());
+                if(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange() != null){
+                    prevDomainSuggested = new VlanRange(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange());
                 }
             }
             
@@ -199,14 +204,15 @@ public class VlanLinkEvaluator extends LinkEvaluator {
             }
             
             //go to next link if not in map or if not a vlan link
-            if(!linkMap.containsKey(currLinkId) || !this.hasVlanInfo(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors())){
+            // Assume there is one and only one ISCD per link
+            if(!linkMap.containsKey(currLinkId) || !this.hasVlanInfo(linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().get(0))){
                 currLinkId = this.getNextLinkInPath(currLinkId, nodeId, visitedLinkMap, linkMap, nodeLinkMap);
                 continue;
             }
             //look at vlans
-            CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo();
+            CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo();
             currSegment.add(linkMap.get(currLinkId));
-            String vlans = linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability();
+            String vlans = linkMap.get(currLinkId).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability();
             
             //add to translation stack if can do translation
             if(swcapInfo.isVlanTranslation() != null && swcapInfo.isVlanTranslation()){
@@ -252,9 +258,10 @@ public class VlanLinkEvaluator extends LinkEvaluator {
                 }
                 for(int i = 0; i <= currSegEndIndex; i++){
                     if(suggest){
-                        currSegment.get(i).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().setSuggestedVLANRange(vlan + "");
+                        // Assume there is one and only one ISCD per link
+                        currSegment.get(i).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().setSuggestedVLANRange(vlan + "");
                     }else{
-                        currSegment.get(i).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().setVlanRangeAvailability(vlan + "");
+                        currSegment.get(i).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().setVlanRangeAvailability(vlan + "");
                     }
                 }
                 
@@ -284,9 +291,10 @@ public class VlanLinkEvaluator extends LinkEvaluator {
             }
             for(int i = 0; i < currSegSize ; i++){
                 if(suggest){
-                    currSegment.get(i).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().setSuggestedVLANRange(vlan+"");
+                    // Assume there is one and only one ISCD per link
+                    currSegment.get(i).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().setSuggestedVLANRange(vlan+"");
                 }else{
-                    currSegment.get(i).getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().setVlanRangeAvailability(vlan+"");
+                    currSegment.get(i).getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().setVlanRangeAvailability(vlan+"");
                 }
             }
         }
@@ -304,7 +312,8 @@ public class VlanLinkEvaluator extends LinkEvaluator {
 
     private int useSuggested(CtrlPlaneLinkContent link,
             VlanRange currSegmentRange) {
-        CtrlPlaneSwitchingCapabilitySpecificInfo linkSwcapInfo = link.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo();
+        // Assume there is one and only one ISCD per link
+        CtrlPlaneSwitchingCapabilitySpecificInfo linkSwcapInfo = link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo();
         
         //if no suggested range then just return a random vlan from current range
         if(linkSwcapInfo.getSuggestedVLANRange() == null){

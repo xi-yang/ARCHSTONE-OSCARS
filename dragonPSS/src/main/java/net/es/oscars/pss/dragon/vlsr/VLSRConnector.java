@@ -652,7 +652,8 @@ public class VLSRConnector implements Connector {
      *
      */
     private int getLinkDescr(CtrlPlaneLinkContent link) {
-        String linkDescr = link.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability();
+        // Assume there is one and only one ISCD per link
+        String linkDescr = link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability();
         if (linkDescr == null) {
             return -1;
         } else {

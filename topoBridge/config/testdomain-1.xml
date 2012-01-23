@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CtrlPlane:topology xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20080828/" id="testdomain-1">
+<CtrlPlane:topology xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20110826/" id="testdomain-1">
   <xsd:documentation xmlns:xsd="http://www.w3.org/2001/XMLSchema" lang="en">
      This file describes a two node topology 
   </xsd:documentation>

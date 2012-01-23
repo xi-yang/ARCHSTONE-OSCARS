@@ -322,7 +322,8 @@ public class IONQueryCircuitStatistics extends HttpServlet{
                         }
 			 */
 			CtrlPlaneLinkContent currentLink = locationPoint.getLink();
-			CtrlPlaneSwcapContent swcapCont = currentLink. getSwitchingCapabilityDescriptors();
+                        // Assume there is one and only one ISCD per link
+			CtrlPlaneSwcapContent swcapCont = currentLink. getSwitchingCapabilityDescriptors().get(0);
 
 			CtrlPlaneSwitchingCapabilitySpecificInfo specInfo = swcapCont.getSwitchingCapabilitySpecificInfo();
 			String linkDescr = null;

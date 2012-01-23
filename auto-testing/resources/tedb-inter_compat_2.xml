@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CtrlPlane:topology 
-    xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20080828/" id="testdomain-3.net">
+    xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20110826/" id="testdomain-3.net">
     <xsd:documentation xmlns:xsd="http://www.w3.org/2001/XMLSchema" lang="en">
         testdomain-1.net.xml: This file describes a topology 
     </xsd:documentation>
