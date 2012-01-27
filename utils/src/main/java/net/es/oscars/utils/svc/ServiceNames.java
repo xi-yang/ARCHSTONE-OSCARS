@@ -26,4 +26,6 @@ public class ServiceNames {
     public static final String SVC_WSNBROKER    = "WSNBrokerService";
     //Added for ION
     public static final String SVC_IONUI	="IONUIService";
+    //Added for TCE
+    public static final String SVC_PCE_TCE      = "TcePCE";
 }

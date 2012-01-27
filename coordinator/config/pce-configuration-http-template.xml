@@ -12,45 +12,12 @@
         <Aggregates>
             <PCE>
                 <Bindings>
-                   <Name>Connectivity PCE</Name>
-                   <PathTag>SampleDomain</PathTag>
-                   <Endpoint>http://localhost:9007/connectivityPCE</Endpoint>
-                   <Role>PCE</Role>
-                   <ProxyEndpoint>http://localhost:10000/OSCARS/PCERuntimeService</ProxyEndpoint>
+                    <Name>Tce PCE</Name>
+                    <PathTag>SampleDomain</PathTag>
+                    <Endpoint>http://localhost:9020/tcePCE</Endpoint>
+                    <Role>PCE</Role>
+                    <ProxyEndpoint>http://localhost:10000/OSCARS/PCERuntimeService</ProxyEndpoint>
                 </Bindings>
-                <Aggregates>
-                   <PCE>
-                       <Bindings>
-                           <Name>Bandwidth PCE</Name>
-                           <PathTag>SampleDomain</PathTag>
-                           <Endpoint>http://localhost:9009/bandwidthPCE</Endpoint>
-                           <Role>PCE</Role>
-                           <ProxyEndpoint>http://localhost:10000/OSCARS/PCERuntimeService</ProxyEndpoint>
-                       </Bindings>
-                       <Aggregates>
-                            <PCE>
-                                <Bindings>
-                                    <Name>VLAN PCE</Name>
-                                    <PathTag>SampleDomain</PathTag>
-                                    <Endpoint>http://localhost:9010/OSCARS/vlanPCE</Endpoint>
-                                    <Role>PCE</Role>
-                                    <ProxyEndpoint>http://localhost:10000/OSCARS/PCERuntimeService</ProxyEndpoint>
-                                </Bindings> 
-                                <Aggregates>
-                                    <PCE>
-                                        <Bindings>
-                                            <Name>Dijkstra PCE</Name>
-                                            <PathTag>SampleDomain</PathTag>
-                                            <Endpoint>http://localhost:9008/dijkstraPCE</Endpoint>
-                                            <Role>PCE</Role>
-                                            <ProxyEndpoint>http://localhost:10000/OSCARS/PCERuntimeService</ProxyEndpoint>
-                                        </Bindings>
-                                    </PCE>
-                                </Aggregates>
-                            </PCE>
-                         </Aggregates>
-                   </PCE>
-                </Aggregates>
             </PCE>
         </Aggregates>
     </PCE>    

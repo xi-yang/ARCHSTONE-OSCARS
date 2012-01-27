@@ -85,6 +85,8 @@ testService "LookupService" "LookupService" "lookup" "lookup"
 
 testService "NotificationBridgeService" "NotificationBridgeService" "notifyBridge" "notificationBridge"
 
+testService "TcePCE" "TcePCE" "tcePCE" "tcePCE"
+
 #WBUI service gets its port from jetty.xml
 Config=$(sh $OSCARS_DIST/bin/parseManifest.sh WBUIService WBUIService $CONTEXT jetty.xml)
 conf=$(echo $Config | awk -F/ '$1~//{print $3}')

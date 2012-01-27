@@ -98,6 +98,12 @@ stopVlanPCE () {
     stopService
 }
 
+stopTcePCE () {
+    Service="TcePCE"
+    ShortName="tcePCE"
+    stopService
+}
+
 stopstubPSS () {
     Service="StubPSS"
     ShortName="stubPSS"
@@ -220,7 +226,8 @@ while [ ! -z $1 ]
     stopNotificationBridge
     stopWSNBroker
     stopWBUI
-    stopIONUI;;
+    stopIONUI
+    stopTcePCE;;
   authN)    stopauthN;;
   authZ)    stopauthZ;;
   api)      stopOSCARSService;;
@@ -246,6 +253,7 @@ while [ ! -z $1 ]
   notifyBridge)     stopNotificationBridge;;
   wsnbroker) stopWSNBroker;;
   ionui)    stopIONUI;;
+  tcePCE)   stopTcePCE;;
   *)        echo server $1 not recognized;;
   esac
   shift

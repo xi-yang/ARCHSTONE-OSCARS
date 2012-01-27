@@ -43,6 +43,8 @@
 	<module>ion-war</module> 
 	<module>ionui</module> -->
 	<!-- 2 lines above added for ion -->
+        <!-- added for tce -->
+        <module>tcePCE</module>
         <module>bin</module>
     </modules>
     <build>
