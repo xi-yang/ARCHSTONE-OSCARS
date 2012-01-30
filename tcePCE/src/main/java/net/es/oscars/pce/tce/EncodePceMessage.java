@@ -289,8 +289,8 @@ public class EncodePceMessage {
 	    						 priEncoder.encodeString(PCE_LINK_ID, linkId);
 	    					 }
 	    					
-	    					 if(link.getSwitchingCapabilityDescriptors()!=null){
-	    						 CtrlPlaneSwcapContent switchingCapabilityDescriptors = link.getSwitchingCapabilityDescriptors();
+	    					 if(link.getSwitchingCapabilityDescriptors().size() > 0){
+	    						 CtrlPlaneSwcapContent switchingCapabilityDescriptors = link.getSwitchingCapabilityDescriptors().get(0);
 	    						 if(switchingCapabilityDescriptors.getSwitchingcapType()!=null){
 	    							 String switchingcapType = switchingCapabilityDescriptors.getSwitchingcapType();
 	    							 //System.out.println("switching_captype="+switchingcapType);

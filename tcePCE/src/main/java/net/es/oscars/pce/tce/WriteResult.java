@@ -147,7 +147,12 @@ public class WriteResult {
 			switchingCapabilitySpecificInfo.setVlanTranslation(vlanTranslation);
 			
 			switchingCapabilityDescriptors.setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
-			linkOri.setSwitchingCapabilityDescriptors(switchingCapabilityDescriptors);
+			//linkOri.setSwitchingCapabilityDescriptors(switchingCapabilityDescriptors);
+                        if (linkOri.getSwitchingCapabilityDescriptors().size() == 0) {
+                                linkOri.getSwitchingCapabilityDescriptors().add(switchingCapabilityDescriptors);
+                        } else {
+                                linkOri.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
+                        }
 			hopContent.setLink(linkOri);
 			hop.add(hopContent);
 		}
@@ -206,7 +211,13 @@ public class WriteResult {
 			switchingCapabilitySpecificInfo.setVlanTranslation(vlanTranslation);
 			
 			switchingCapabilityDescriptors.setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
-			linkOri.setSwitchingCapabilityDescriptors(switchingCapabilityDescriptors);
+			//linkOri.setSwitchingCapabilityDescriptors(switchingCapabilityDescriptors);
+                        if (linkOri.getSwitchingCapabilityDescriptors().size() == 0) {
+                                linkOri.getSwitchingCapabilityDescriptors().add(switchingCapabilityDescriptors);
+                        } else {
+                                linkOri.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
+                        }
+
 			topoBuilder.addLink(linkOri);
 
 		}
