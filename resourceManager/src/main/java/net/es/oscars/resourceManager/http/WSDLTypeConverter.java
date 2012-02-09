@@ -17,6 +17,12 @@ import org.ogf.schema.network.topology.ctrlplane.CtrlPlanePathContent;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlanePortContent;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapContent;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfo;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoPsc;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoL2Sc;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoTdm;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoLsc;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoOpenflow;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneAdcapContent;
 
 //import net.es.oscars.resourceManager.beans.*;
 import net.es.oscars.resourceManager.beans.ConstraintType;
@@ -461,37 +467,193 @@ public class WSDLTypeConverter {
 
     List<PathElemParam> pathElemParams = new ArrayList<PathElemParam>();
     // Assume there is one and only one ISCD
-    CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors().get(0);
-    String switchingcapType = swcap.getSwitchingcapType();
-    CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = 
-                        swcap.getSwitchingCapabilitySpecificInfo();
-    if(switchingcapType == null || "".equals(switchingcapType.trim())){
-      //TODO: should esnet change its topology so these are set and we can throw an exception?
-        switchingcapType = DEFAULT_SWCAP;
-    }
-    if(swcap.getEncodingType() == null || "".equals(swcap.getEncodingType().trim())){
-      //TODO: should esnet change its topology so these are set and we can throw an exception?
-        swcap.setEncodingType(DEFAULT_ENCODING);
-    }
-    PathElemParam encodingParam = new PathElemParam();
-    encodingParam.setSwcap(switchingcapType);
-    encodingParam.setType(PathElemParamType.ENCODING_TYPE);
-    encodingParam.setValue(swcap.getEncodingType());
-    pathElemParams.add(encodingParam);
+    for (CtrlPlaneSwcapContent swcap: link.getSwitchingCapabilityDescriptors()) {
+        String switchingcapType = swcap.getSwitchingcapType();
+        CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = 
+                            swcap.getSwitchingCapabilitySpecificInfo();
+        if(switchingcapType == null || "".equals(switchingcapType.trim())){
+          //TODO: should esnet change its topology so these are set and we can throw an exception?
+            switchingcapType = DEFAULT_SWCAP;
+        }
+        if(swcap.getEncodingType() == null || "".equals(swcap.getEncodingType().trim())){
+          //TODO: should esnet change its topology so these are set and we can throw an exception?
+            swcap.setEncodingType(DEFAULT_ENCODING);
+        }
+        PathElemParam encodingParam = new PathElemParam();
+        encodingParam.setSwcap(switchingcapType);
+        encodingParam.setType(PathElemParamType.ENCODING_TYPE);
+        encodingParam.setValue(swcap.getEncodingType());
+        pathElemParams.add(encodingParam);
 
-    if (swcapInfo.getVlanRangeAvailability() != null) {
-        PathElemParam pathElemParam = new PathElemParam();
-        pathElemParam.setSwcap(switchingcapType);
-        pathElemParam.setType(PathElemParamType.L2SC_VLAN_RANGE);
-        pathElemParam.setValue(swcapInfo.getVlanRangeAvailability());
-        pathElemParams.add(pathElemParam);
+        if (swcapInfo.getVlanRangeAvailability() != null) {
+            PathElemParam pathElemParam = new PathElemParam();
+            pathElemParam.setSwcap(switchingcapType);
+            pathElemParam.setType(PathElemParamType.L2SC_VLAN_RANGE);
+            pathElemParam.setValue(swcapInfo.getVlanRangeAvailability());
+            pathElemParams.add(pathElemParam);
+        }
+        if (swcapInfo.getSuggestedVLANRange() != null) {
+            PathElemParam pathElemParam = new PathElemParam();
+            pathElemParam.setSwcap(switchingcapType);
+            pathElemParam.setType(PathElemParamType.L2SC_SUGGESTED_VLAN);
+            pathElemParam.setValue(swcapInfo.getSuggestedVLANRange());
+            pathElemParams.add(pathElemParam);
+        }
+        // ARCHSTONE: pscSpecificInfo
+        if (swcapInfo.getPscSpecificInfo() != null) {
+            PathElemParam pathElemParam;
+            if (swcapInfo.getPscSpecificInfo().getInterfaceMTU() > 0) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.INTERFACE_MTU);
+                pathElemParam.setValue(Integer.toString(swcapInfo.getPscSpecificInfo().getInterfaceMTU()));
+                pathElemParams.add(pathElemParam);
+            }
+            if (swcapInfo.getPscSpecificInfo().getLspHierarchy() != null 
+                    && !swcapInfo.getPscSpecificInfo().getLspHierarchy().isEmpty()) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.LSP_HIERARCHY);
+                pathElemParam.setValue(swcapInfo.getPscSpecificInfo().getLspHierarchy());
+                pathElemParams.add(pathElemParam);
+            }
+            
+        }
+        // ARCHSTONE: l2scSpecificInfo
+        if (swcapInfo.getL2ScSpecificInfo() != null) {
+            PathElemParam pathElemParam;
+            if (swcapInfo.getL2ScSpecificInfo().getInterfaceMTU() > 0) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.INTERFACE_MTU);
+                pathElemParam.setValue(Integer.toString(swcapInfo.getL2ScSpecificInfo().getInterfaceMTU()));
+                pathElemParams.add(pathElemParam);
+            }
+            if (swcapInfo.getL2ScSpecificInfo().getVlanRangeSet() != null 
+                    && !swcapInfo.getL2ScSpecificInfo().getVlanRangeSet().isEmpty()) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.VLAN_RANGE_SET);
+                pathElemParam.setValue(swcapInfo.getL2ScSpecificInfo().getVlanRangeSet());
+                pathElemParams.add(pathElemParam);
+            }
+            if (swcapInfo.getL2ScSpecificInfo().getSuggestedVlanSet() != null 
+                    && !swcapInfo.getL2ScSpecificInfo().getSuggestedVlanSet().isEmpty()) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.SUGGESTED_VLAN_SET);
+                pathElemParam.setValue(swcapInfo.getL2ScSpecificInfo().getSuggestedVlanSet());
+                pathElemParams.add(pathElemParam);
+            }
+            pathElemParam = new PathElemParam();
+            pathElemParam.setSwcap(switchingcapType);
+            pathElemParam.setType(PathElemParamType.VLAN_TRANSLATION);
+            pathElemParam.setValue(swcapInfo.getL2ScSpecificInfo().isVlanTranslation() ? "true":"false");
+            pathElemParams.add(pathElemParam);
+        }
+        // ARCHSTONE: tdmSpecificInfo
+        if (swcapInfo.getTdmSpecificInfo() != null) {
+            PathElemParam pathElemParam;
+            if (swcapInfo.getTdmSpecificInfo().getTimeslotRangeSet() != null 
+                    && !swcapInfo.getTdmSpecificInfo().getTimeslotRangeSet().isEmpty()) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.TIMESLOT_RANGE_SET);
+                pathElemParam.setValue(swcapInfo.getTdmSpecificInfo().getTimeslotRangeSet());
+                pathElemParams.add(pathElemParam);
+            }
+            if (swcapInfo.getTdmSpecificInfo().getSuggestedTimeslotSet() != null 
+                    && !swcapInfo.getTdmSpecificInfo().getSuggestedTimeslotSet().isEmpty()) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.SUGGESTED_TIMESLOT_SET);
+                pathElemParam.setValue(swcapInfo.getTdmSpecificInfo().getSuggestedTimeslotSet());
+                pathElemParams.add(pathElemParam);
+            }
+            pathElemParam = new PathElemParam();
+            pathElemParam.setSwcap(switchingcapType);
+            pathElemParam.setType(PathElemParamType.TSI_ENABLED);
+            pathElemParam.setValue(swcapInfo.getTdmSpecificInfo().isTsiEnabled() ? "true":"false");
+            pathElemParams.add(pathElemParam);
+            pathElemParam = new PathElemParam();
+            pathElemParam.setSwcap(switchingcapType);
+            pathElemParam.setType(PathElemParamType.VCAT_ENABLED);
+            pathElemParam.setValue(swcapInfo.getTdmSpecificInfo().isVcatEnabled() ? "true":"false");
+            pathElemParams.add(pathElemParam);
+        }
+        // ARCHSTONE: lscSpecificInfo
+        if (swcapInfo.getLscSpecificInfo() != null) {
+            PathElemParam pathElemParam;
+            if (swcapInfo.getLscSpecificInfo().getWavelengthRangeSet() != null 
+                    && !swcapInfo.getLscSpecificInfo().getWavelengthRangeSet().isEmpty()) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.WAVELENGTH_RANGE_SET);
+                pathElemParam.setValue(swcapInfo.getLscSpecificInfo().getWavelengthRangeSet());
+                pathElemParams.add(pathElemParam);
+            }
+            if (swcapInfo.getLscSpecificInfo().getSuggestedWavelengthSet() != null 
+                    && !swcapInfo.getLscSpecificInfo().getSuggestedWavelengthSet().isEmpty()) {
+                pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.SUGGESTED_WAVELENGTH_SET);
+                pathElemParam.setValue(swcapInfo.getLscSpecificInfo().getSuggestedWavelengthSet());
+                pathElemParams.add(pathElemParam);
+            }
+            pathElemParam = new PathElemParam();
+            pathElemParam.setSwcap(switchingcapType);
+            pathElemParam.setType(PathElemParamType.TSI_ENABLED);
+            pathElemParam.setValue(swcapInfo.getLscSpecificInfo().isWavelengthConversionEnabled() ? "true":"false");
+            pathElemParams.add(pathElemParam);
+        }
+        // ARCHSTONE: openflowSpecificInfo
+        if (swcapInfo.getOpenflowSpecificInfo() != null) {
+            // TODO: OpenFlow schema not finalized
+        }
+        if (swcapInfo.getVendorSpecificInfo() != null) {
+            PathElemParam pathElemParam = new PathElemParam();
+            pathElemParam.setSwcap(switchingcapType);
+            pathElemParam.setType(PathElemParamType.VENDOR_SPECIFIC_INFO);
+            //TODO: Marshall swcapInfo.getVendorSpecificInfo() into XML
+            if (swcapInfo.getVendorSpecificInfo().getInfineraDTNSpecificInfo() != null) {
+                pathElemParam.setValue("<xml>InfineraDTNSpecificInfo to be marshalled</xml>");
+            } else if (swcapInfo.getVendorSpecificInfo().getCienaOTNSpecificInfo() != null) {
+                pathElemParam.setValue("<xml>CienaOTNSpecificInfo to be marshalled</xml>");
+            }
+            pathElemParams.add(pathElemParam);
+        }
     }
-    if (swcapInfo.getSuggestedVLANRange() != null) {
+
+    if (link.getAdjustmentCapabilityDescriptor().size() > 0) {
+        CtrlPlaneAdcapContent adjcap = link.getAdjustmentCapabilityDescriptor().get(0);
         PathElemParam pathElemParam = new PathElemParam();
-        pathElemParam.setSwcap(switchingcapType);
-        pathElemParam.setType(PathElemParamType.L2SC_SUGGESTED_VLAN);
-        pathElemParam.setValue(swcapInfo.getSuggestedVLANRange());
+        pathElemParam.setSwcap(PathElemParamSwcap.ADJUST);
+        pathElemParam.setType(PathElemParamType.LOWER_SWCAP);
+        pathElemParam.setValue(adjcap.getLowerSwcap());
         pathElemParams.add(pathElemParam);
+        pathElemParam = new PathElemParam();
+        pathElemParam.setSwcap(PathElemParamSwcap.ADJUST);
+        pathElemParam.setType(PathElemParamType.LOWER_ENC_TYPE);
+        pathElemParam.setValue(adjcap.getLowerEncType());
+        pathElemParams.add(pathElemParam);
+        pathElemParam = new PathElemParam();
+        pathElemParam.setSwcap(PathElemParamSwcap.ADJUST);
+        pathElemParam.setType(PathElemParamType.UPPER_SWCAP);
+        pathElemParam.setValue(adjcap.getUpperSwcap());
+        pathElemParams.add(pathElemParam);
+        pathElemParam = new PathElemParam();
+        pathElemParam.setSwcap(PathElemParamSwcap.ADJUST);
+        pathElemParam.setType(PathElemParamType.UPPER_ENC_TYPE);
+        pathElemParam.setValue(adjcap.getUpperEncType());
+        pathElemParams.add(pathElemParam);
+        if (adjcap.getMaximumAdjustableCapacity() != null
+                && !adjcap.getMaximumAdjustableCapacity().isEmpty()) {
+            pathElemParam = new PathElemParam();
+            pathElemParam.setSwcap(PathElemParamSwcap.ADJUST);
+            pathElemParam.setType(PathElemParamType.MAX_ADJUST_CAPACITY);
+            pathElemParam.setValue(adjcap.getMaximumAdjustableCapacity());
+            pathElemParams.add(pathElemParam);
+        }
     }
     return pathElemParams;
 }
@@ -865,32 +1027,16 @@ public class WSDLTypeConverter {
              hop.setLinkIdRef(urn);
          } else if ("link".equals(hopType)){
              CtrlPlaneLinkContent link = new CtrlPlaneLinkContent();
-             link.setId(urn);
-             CtrlPlaneSwcapContent swcap = new CtrlPlaneSwcapContent();
-             CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
-             
+             link.setId(urn);             
              //get supported swcap type
              HashMap<String,Boolean> swcaps = new HashMap<String,Boolean>();
              for(PathElemParam pathElemParam : pathElem.getPathElemParams()){
                  swcaps.put(pathElemParam.getSwcap(), true);
-             }
-             
-             //add vlan parameters
-             if(swcaps.containsKey(PathElemParamSwcap.L2SC)){
-                 swcap.setSwitchingcapType(PathElemParamSwcap.L2SC);
-                 PathElemParam encodingType = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.ENCODING_TYPE);
-                 if(encodingType != null){
-                     swcap.setEncodingType(encodingType.getValue());
-                 }
-                 PathElemParam vlanRange = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.L2SC_VLAN_RANGE);
-                 if(vlanRange != null){
-                     swcapInfo.setVlanRangeAvailability(vlanRange.getValue());
-                 }
-                 PathElemParam suggVlanRange = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.L2SC_SUGGESTED_VLAN);
-                 if(suggVlanRange != null){
-                     swcapInfo.setSuggestedVLANRange(suggVlanRange.getValue());
-                 }
-             }else if(swcaps.containsKey(PathElemParamSwcap.MPLS)){
+             }             
+             //add swcap parameters
+             if(swcaps.containsKey(PathElemParamSwcap.MPLS)){ // backward compatible with pre-ARCHSTONE
+                 CtrlPlaneSwcapContent swcap = new CtrlPlaneSwcapContent();
+                 CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
                  swcap.setSwitchingcapType(PathElemParamSwcap.MPLS);
                  PathElemParam encodingType = pathElem.getPathElemParam(PathElemParamSwcap.MPLS, PathElemParamType.ENCODING_TYPE);
                  if(encodingType != null){
@@ -904,22 +1050,151 @@ public class WSDLTypeConverter {
                  if(suggVlanRange != null){
                      swcapInfo.setSuggestedVLANRange(suggVlanRange.getValue());
                  }
-             }else if(swcaps.containsKey(PathElemParamSwcap.TDM)){
+                 swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
+                 link.getSwitchingCapabilityDescriptors().add(swcap);
+             } else if(swcaps.containsKey(PathElemParamSwcap.PSC)){
+                 CtrlPlaneSwcapContent swcap = new CtrlPlaneSwcapContent();
+                 CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
+                 CtrlPlaneSwitchingCapabilitySpecificInfoPsc pscInfo = new CtrlPlaneSwitchingCapabilitySpecificInfoPsc();
+                 swcap.setSwitchingcapType(PathElemParamSwcap.PSC);
+                 PathElemParam encodingType = pathElem.getPathElemParam(PathElemParamSwcap.PSC, PathElemParamType.ENCODING_TYPE);
+                 if(encodingType != null){
+                     swcap.setEncodingType(encodingType.getValue());
+                 }
+                 PathElemParam interfaceMTU = pathElem.getPathElemParam(PathElemParamSwcap.PSC, PathElemParamType.INTERFACE_MTU);
+                 if(interfaceMTU != null){
+                     pscInfo.setInterfaceMTU(Integer.getInteger(interfaceMTU.getValue()));
+                 }
+                 PathElemParam lspHierarchy = pathElem.getPathElemParam(PathElemParamSwcap.PSC, PathElemParamType.LSP_HIERARCHY);
+                 if(lspHierarchy != null){
+                     pscInfo.setLspHierarchy(lspHierarchy.getValue());
+                 }
+                 // TODO: handle vendorSpecificInfo
+                 swcapInfo.setPscSpecificInfo(pscInfo);
+                 swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
+                 link.getSwitchingCapabilityDescriptors().add(swcap);
+             } else if(swcaps.containsKey(PathElemParamSwcap.L2SC)){
+                 CtrlPlaneSwcapContent swcap = new CtrlPlaneSwcapContent();
+                 CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
+                 swcap.setSwitchingcapType(PathElemParamSwcap.L2SC);
+                 PathElemParam encodingType = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.ENCODING_TYPE);
+                 if(encodingType != null){
+                     swcap.setEncodingType(encodingType.getValue());
+                 }
+                 PathElemParam vlanRange = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.L2SC_VLAN_RANGE);
+                 if(vlanRange != null){
+                     swcapInfo.setVlanRangeAvailability(vlanRange.getValue());
+                 }
+                 PathElemParam suggVlanRange = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.L2SC_SUGGESTED_VLAN);
+                 if(suggVlanRange != null){
+                     swcapInfo.setSuggestedVLANRange(suggVlanRange.getValue());
+                 }
+                 if (pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.VLAN_RANGE_SET) != null) {
+                     CtrlPlaneSwitchingCapabilitySpecificInfoL2Sc l2scInfo = new CtrlPlaneSwitchingCapabilitySpecificInfoL2Sc();
+                     PathElemParam vlanRangeSet = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.VLAN_RANGE_SET);
+                     if(vlanRangeSet != null){
+                         l2scInfo.setVlanRangeSet(vlanRangeSet.getValue());
+                     }
+                     PathElemParam suggestedVlanSet = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.SUGGESTED_VLAN_SET);
+                     if(suggestedVlanSet != null){
+                         l2scInfo.setSuggestedVlanSet(suggestedVlanSet.getValue());
+                     }
+                     PathElemParam vlanTranslation = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.VLAN_TRANSLATION);
+                     if(vlanTranslation != null){
+                         l2scInfo.setVlanTranslation(vlanTranslation.getValue().contains("true") ? true : false);
+                     }
+                     // TODO: handle vendorSpecificInfo
+                     swcapInfo.setL2ScSpecificInfo(l2scInfo);
+                 }
+                 swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
+                 link.getSwitchingCapabilityDescriptors().add(swcap);
+             } else if(swcaps.containsKey(PathElemParamSwcap.TDM)){
+                 CtrlPlaneSwcapContent swcap = new CtrlPlaneSwcapContent();
+                 CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
                  swcap.setSwitchingcapType(PathElemParamSwcap.TDM);
                  PathElemParam encodingType = pathElem.getPathElemParam(PathElemParamSwcap.TDM, PathElemParamType.ENCODING_TYPE);
                  if(encodingType != null){
                      swcap.setEncodingType(encodingType.getValue());
                  }
-             }
-             
-             //swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
-             //link.setSwitchingCapabilityDescriptors(swcap);
-             if (link.getSwitchingCapabilityDescriptors().size() == 0) {
+                 if (pathElem.getPathElemParam(PathElemParamSwcap.TDM, PathElemParamType.TIMESLOT_RANGE_SET) != null) {
+                     CtrlPlaneSwitchingCapabilitySpecificInfoTdm tdmInfo = new CtrlPlaneSwitchingCapabilitySpecificInfoTdm();
+                     PathElemParam timeslotRangeSet = pathElem.getPathElemParam(PathElemParamSwcap.TDM, PathElemParamType.TIMESLOT_RANGE_SET);
+                     if(timeslotRangeSet != null){
+                         tdmInfo.setTimeslotRangeSet(timeslotRangeSet.getValue());
+                     }
+                     PathElemParam suggestedTimeslotSet = pathElem.getPathElemParam(PathElemParamSwcap.TDM, PathElemParamType.SUGGESTED_TIMESLOT_SET);
+                     if(suggestedTimeslotSet != null){
+                         tdmInfo.setSuggestedTimeslotSet(suggestedTimeslotSet.getValue());
+                     }
+                     PathElemParam tsiEnabled = pathElem.getPathElemParam(PathElemParamSwcap.TDM, PathElemParamType.TSI_ENABLED);
+                     if(tsiEnabled != null){
+                         tdmInfo.setTsiEnabled(tsiEnabled.getValue().contains("true") ? true : false);
+                     }
+                     PathElemParam vcatEnabled = pathElem.getPathElemParam(PathElemParamSwcap.TDM, PathElemParamType.VCAT_ENABLED);
+                     if(vcatEnabled != null){
+                         tdmInfo.setTsiEnabled(vcatEnabled.getValue().contains("true") ? true : false);
+                     }
+                     // TODO: handle vendorSpecificInfo
+                     swcapInfo.setTdmSpecificInfo(tdmInfo);
+                 }
                  swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
                  link.getSwitchingCapabilityDescriptors().add(swcap);
-                 
-             } else {
-                link.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(swcapInfo);
+             } else if(swcaps.containsKey(PathElemParamSwcap.LSC)){
+                 CtrlPlaneSwcapContent swcap = new CtrlPlaneSwcapContent();
+                 CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
+                 swcap.setSwitchingcapType(PathElemParamSwcap.LSC);
+                 PathElemParam encodingType = pathElem.getPathElemParam(PathElemParamSwcap.LSC, PathElemParamType.ENCODING_TYPE);
+                 if(encodingType != null){
+                     swcap.setEncodingType(encodingType.getValue());
+                 }
+                 CtrlPlaneSwitchingCapabilitySpecificInfoLsc lscInfo = new CtrlPlaneSwitchingCapabilitySpecificInfoLsc();
+                 PathElemParam wavelengthRangeSet = pathElem.getPathElemParam(PathElemParamSwcap.LSC, PathElemParamType.WAVELENGTH_RANGE_SET);
+                 if (wavelengthRangeSet != null) {
+                     lscInfo.setWavelengthRangeSet(wavelengthRangeSet.getValue());
+                 }
+                 PathElemParam suggestedWavelengthSet = pathElem.getPathElemParam(PathElemParamSwcap.LSC, PathElemParamType.SUGGESTED_WAVELENGTH_SET);
+                 if (suggestedWavelengthSet != null) {
+                     lscInfo.setSuggestedWavelengthSet(suggestedWavelengthSet.getValue());
+                 }
+                 PathElemParam wavelengthConversion = pathElem.getPathElemParam(PathElemParamSwcap.LSC, PathElemParamType.WAVELENGTH_CONVERSION);
+                 if (wavelengthConversion != null) {
+                     lscInfo.setWavelengthConversionEnabled(wavelengthConversion.getValue().contains("true") ? true : false);
+                 }
+                 // TODO: handle vendorSpecificInfo
+                 swcapInfo.setLscSpecificInfo(lscInfo);
+                 swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
+                 link.getSwitchingCapabilityDescriptors().add(swcap);
+             } else if(swcaps.containsKey(PathElemParamSwcap.OPENFLOW)){
+                 CtrlPlaneSwcapContent swcap = new CtrlPlaneSwcapContent();
+                 CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
+                 swcap.setSwitchingcapType(PathElemParamSwcap.OPENFLOW);
+                 PathElemParam encodingType = pathElem.getPathElemParam(PathElemParamSwcap.OPENFLOW, PathElemParamType.ENCODING_TYPE);
+                 if(encodingType != null){
+                     swcap.setEncodingType(encodingType.getValue());
+                 }
+                 // TODO: OpenFlow schema not finalized yet
+                 swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
+                 link.getSwitchingCapabilityDescriptors().add(swcap);
+             } else if(swcaps.containsKey(PathElemParamSwcap.ADJUST)){
+                 CtrlPlaneAdcapContent adcap = new CtrlPlaneAdcapContent();
+                 PathElemParam lowerSwcap = pathElem.getPathElemParam(PathElemParamSwcap.ADJUST, PathElemParamType.LOWER_SWCAP);
+                 if(lowerSwcap != null){
+                     adcap.setLowerSwcap(lowerSwcap.getValue());
+                 }
+                 PathElemParam lowerEncType = pathElem.getPathElemParam(PathElemParamSwcap.ADJUST, PathElemParamType.LOWER_ENC_TYPE);
+                 if(lowerEncType != null){
+                     adcap.setLowerEncType(lowerEncType.getValue());
+                 }
+                 PathElemParam upperSwcap = pathElem.getPathElemParam(PathElemParamSwcap.ADJUST, PathElemParamType.UPPER_SWCAP);
+                 if(upperSwcap != null){
+                     adcap.setLowerSwcap(upperSwcap.getValue());
+                 }
+                 PathElemParam upperEncType = pathElem.getPathElemParam(PathElemParamSwcap.ADJUST, PathElemParamType.UPPER_ENC_TYPE);
+                 if(upperEncType != null){
+                     adcap.setLowerEncType(upperEncType.getValue());
+                 }
+                 // TODO: handle vendorSpecificInfo
+                 link.getAdjustmentCapabilityDescriptor().add(adcap);
              }
              hop.setLink(link);
          }
