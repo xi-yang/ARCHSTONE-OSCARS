@@ -22,7 +22,20 @@ import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpe
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoTdm;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoLsc;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoOpenflow;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapVendorSpecificInfo;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneAdcapContent;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.*;
+import javax.xml.transform.dom.*;
+import org.w3c.dom.*;
+import java.io.StringWriter;
+import java.io.StringReader;
 
 //import net.es.oscars.resourceManager.beans.*;
 import net.es.oscars.resourceManager.beans.ConstraintType;
@@ -611,16 +624,31 @@ public class WSDLTypeConverter {
             // TODO: OpenFlow schema not finalized
         }
         if (swcapInfo.getVendorSpecificInfo() != null) {
-            PathElemParam pathElemParam = new PathElemParam();
-            pathElemParam.setSwcap(switchingcapType);
-            pathElemParam.setType(PathElemParamType.VENDOR_SPECIFIC_INFO);
-            //TODO: Marshall swcapInfo.getVendorSpecificInfo() into XML
-            if (swcapInfo.getVendorSpecificInfo().getInfineraDTNSpecificInfo() != null) {
-                pathElemParam.setValue("<xml>InfineraDTNSpecificInfo to be marshalled</xml>");
-            } else if (swcapInfo.getVendorSpecificInfo().getCienaOTNSpecificInfo() != null) {
-                pathElemParam.setValue("<xml>CienaOTNSpecificInfo to be marshalled</xml>");
+            // Marshall swcapInfo.getVendorSpecificInfo() into XML
+            try {
+                PathElemParam pathElemParam = new PathElemParam();
+                pathElemParam.setSwcap(switchingcapType);
+                pathElemParam.setType(PathElemParamType.VENDOR_SPECIFIC_INFO);
+                    Document infoDoc = null;
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    dbf.setNamespaceAware(false);
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    infoDoc = db.newDocument();
+                    JAXBContext jc = JAXBContext.newInstance("net.es.oscars.resourceManager.http.WSDLTypeConverter");
+                    Marshaller m = jc.createMarshaller();
+                    m.marshal(swcapInfo.getVendorSpecificInfo().getInfineraDTNSpecificInfo(), infoDoc);
+                    TransformerFactory factory = TransformerFactory.newInstance();
+                    Transformer transformer = factory.newTransformer();
+                    StringWriter writer = new StringWriter();
+                    Result result = new StreamResult(writer);
+                    Source source = new DOMSource(infoDoc);
+                    transformer.transform(source, result);
+                    writer.close();
+                    pathElemParam.setValue(writer.toString());
+                    pathElemParams.add(pathElemParam);
+            } catch (Exception e) {
+                    //throw new RMException("Error marshling InfineraDTNSpecificInfo " + e.getMessage());
             }
-            pathElemParams.add(pathElemParam);
         }
     }
 
@@ -1069,7 +1097,10 @@ public class WSDLTypeConverter {
                  if(lspHierarchy != null){
                      pscInfo.setLspHierarchy(lspHierarchy.getValue());
                  }
-                 // TODO: handle vendorSpecificInfo
+                 PathElemParam vendorSpecificInfo = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.VENDOR_SPECIFIC_INFO);
+                 if (vendorSpecificInfo != null) {
+                     swcapInfo.setVendorSpecificInfo(convertVendorSpecificInfo(vendorSpecificInfo.getValue()));
+                 }
                  swcapInfo.setPscSpecificInfo(pscInfo);
                  swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
                  link.getSwitchingCapabilityDescriptors().add(swcap);
@@ -1103,7 +1134,10 @@ public class WSDLTypeConverter {
                      if(vlanTranslation != null){
                          l2scInfo.setVlanTranslation(vlanTranslation.getValue().contains("true") ? true : false);
                      }
-                     // TODO: handle vendorSpecificInfo
+                     PathElemParam vendorSpecificInfo = pathElem.getPathElemParam(PathElemParamSwcap.L2SC, PathElemParamType.VENDOR_SPECIFIC_INFO);
+                     if (vendorSpecificInfo != null) {
+                         swcapInfo.setVendorSpecificInfo(convertVendorSpecificInfo(vendorSpecificInfo.getValue()));
+                     }
                      swcapInfo.setL2ScSpecificInfo(l2scInfo);
                  }
                  swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
@@ -1134,7 +1168,10 @@ public class WSDLTypeConverter {
                      if(vcatEnabled != null){
                          tdmInfo.setTsiEnabled(vcatEnabled.getValue().contains("true") ? true : false);
                      }
-                     // TODO: handle vendorSpecificInfo
+                     PathElemParam vendorSpecificInfo = pathElem.getPathElemParam(PathElemParamSwcap.TDM, PathElemParamType.VENDOR_SPECIFIC_INFO);
+                     if (vendorSpecificInfo != null) {
+                         swcapInfo.setVendorSpecificInfo(convertVendorSpecificInfo(vendorSpecificInfo.getValue()));
+                     }
                      swcapInfo.setTdmSpecificInfo(tdmInfo);
                  }
                  swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
@@ -1160,8 +1197,11 @@ public class WSDLTypeConverter {
                  if (wavelengthConversion != null) {
                      lscInfo.setWavelengthConversionEnabled(wavelengthConversion.getValue().contains("true") ? true : false);
                  }
-                 // TODO: handle vendorSpecificInfo
-                 swcapInfo.setLscSpecificInfo(lscInfo);
+                 PathElemParam vendorSpecificInfo = pathElem.getPathElemParam(PathElemParamSwcap.LSC, PathElemParamType.VENDOR_SPECIFIC_INFO);
+                 if (vendorSpecificInfo != null) {
+                     swcapInfo.setVendorSpecificInfo(convertVendorSpecificInfo(vendorSpecificInfo.getValue()));
+                 }
+                 swcapInfo.setLscSpecificInfo(lscInfo);                 
                  swcap.setSwitchingCapabilitySpecificInfo(swcapInfo);
                  link.getSwitchingCapabilityDescriptors().add(swcap);
              } else if(swcaps.containsKey(PathElemParamSwcap.OPENFLOW)){
@@ -1193,7 +1233,7 @@ public class WSDLTypeConverter {
                  if(upperEncType != null){
                      adcap.setLowerEncType(upperEncType.getValue());
                  }
-                 // TODO: handle vendorSpecificInfo
+                 // TODO: handle adjustSpecificInfo
                  link.getAdjustmentCapabilityDescriptor().add(adcap);
              }
              hop.setLink(link);
@@ -1203,6 +1243,27 @@ public class WSDLTypeConverter {
          return hop;
      }
 
+     public static CtrlPlaneSwcapVendorSpecificInfo 
+             convertVendorSpecificInfo(String xmlString) {
+         // Unmarshall swcapInfo.vendorSpecificInfo from XML
+         CtrlPlaneSwcapVendorSpecificInfo vendorSpecificInfo = new CtrlPlaneSwcapVendorSpecificInfo();
+         try {
+             Document infoDoc = null;
+             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+             dbf.setNamespaceAware(false);
+             DocumentBuilder db = dbf.newDocumentBuilder();
+             infoDoc = db.newDocument();
+             JAXBContext jc = JAXBContext.newInstance("net.es.oscars.resourceManager.http.WSDLTypeConverter");
+             Unmarshaller unm = jc.createUnmarshaller();
+             StringReader reader = new StringReader(xmlString);
+             vendorSpecificInfo = (CtrlPlaneSwcapVendorSpecificInfo)unm.unmarshal(reader);
+             reader.close();
+             return vendorSpecificInfo;
+         } catch (Exception e) {
+             //throw new RMException("Error marshling InfineraDTNSpecificInfo " + e.getMessage());
+         }
+         return null;
+    }
 
      /**
       * Remove hops internal to domain, leaving ingress and egress.
