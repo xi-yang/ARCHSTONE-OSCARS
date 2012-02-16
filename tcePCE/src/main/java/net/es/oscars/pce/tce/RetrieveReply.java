@@ -3,6 +3,15 @@ package net.es.oscars.pce.tce;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneAdcapContent;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapContent;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapVendorSpecificInfo;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfo;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoL2Sc;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoLsc;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoTdm;
+
+import net.es.oscars.resourceManager.http.WSDLTypeConverter;
 import net.es.oscars.utils.soap.OSCARSServiceException;
 
 public class RetrieveReply {
@@ -493,6 +502,12 @@ public class RetrieveReply {
 		long bagBandwidth;
 		int bagStartTime;
 		int bagEndTime;
+		List<CtrlPlaneSwcapContent> switchingCapabilityDescriptors = null;
+		CtrlPlaneSwcapContent switchCap = null;
+		CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = null;
+		List<CtrlPlaneAdcapContent> adjustmentCapabilityDescriptor = null;
+		CtrlPlaneAdcapContent adcapContent = null;
+		
 		
 		
 		ReplyPathContent replyPath = new ReplyPathContent();
@@ -550,7 +565,33 @@ public class RetrieveReply {
 
 				offset = offset + length;
 
-				replyLink.setSwitchingType(switchingCapType);					
+				replyLink.setSwitchingType(switchingCapType);
+				
+				switchingCapabilityDescriptors = replyLink.getSwitchingCapabilityDescriptors();
+				
+				switchCap = new CtrlPlaneSwcapContent();
+								
+				switchingCapabilityDescriptors.add(switchCap);
+				
+				switchCap.setSwitchingcapType(switchingCapType);
+				
+				switchingCapabilitySpecificInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
+				switchCap.setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
+				
+				//according to switch cap type, create corresponding fields
+				if(switchingCapType.equals("l2sc")){
+					CtrlPlaneSwitchingCapabilitySpecificInfoL2Sc cpscsL2sc = new CtrlPlaneSwitchingCapabilitySpecificInfoL2Sc();
+					switchingCapabilitySpecificInfo.setL2ScSpecificInfo(cpscsL2sc);
+				}else if(switchingCapType.equals("tdm")){
+					CtrlPlaneSwitchingCapabilitySpecificInfoTdm cpscsTdm = new CtrlPlaneSwitchingCapabilitySpecificInfoTdm();
+					switchingCapabilitySpecificInfo.setTdmSpecificInfo(cpscsTdm);
+				}else if(switchingCapType.equals("lsc")){
+					CtrlPlaneSwitchingCapabilitySpecificInfoLsc cpscsLsc = new CtrlPlaneSwitchingCapabilitySpecificInfoLsc();
+					switchingCapabilitySpecificInfo.setLscSpecificInfo(cpscsLsc);
+				}else{
+					throw new OSCARSServiceException("Unknow switching capability type");
+				}
+				
 			}else if(type == CodeNumber.PCE_SWITCHINGENCTYPE){
 				length = this.decodeLength(priDecoder, buff);
 				switchingEncType = priDecoder.decodeString(buff, offset, length);
@@ -558,6 +599,9 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setEncodingType(switchingEncType);
+				
+				switchCap.setEncodingType(switchingEncType);
+				
 			}else if(type == CodeNumber.PCE_SWITCHINGVLANRANGEAVAI){
 				length = this.decodeLength(priDecoder, buff);
 				availableVlanTags = priDecoder.decodeString(buff, offset, length);
@@ -565,6 +609,11 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setAvailableVlanTags(availableVlanTags);
+				
+				switchingCapabilitySpecificInfo.getL2ScSpecificInfo().setVlanRangeSet(availableVlanTags);
+				
+				switchingCapabilitySpecificInfo.setVlanRangeAvailability(availableVlanTags); //compatible
+				
 			}else if(type == CodeNumber.PCE_SWITCHINGVLANRANGESUGG){
 				length = this.decodeLength(priDecoder, buff);
 				suggestedVlanTags = priDecoder.decodeString(buff, offset, length);
@@ -572,6 +621,11 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setSuggestedVlanTags(suggestedVlanTags);
+				
+				switchingCapabilitySpecificInfo.getL2ScSpecificInfo().setSuggestedVlanSet(suggestedVlanTags);
+				
+				switchingCapabilitySpecificInfo.setSuggestedVLANRange(suggestedVlanTags); //compatible
+				
 			}else if(type == CodeNumber.PCE_SWITCHINGVLANRANGEASSI){
 				length = this.decodeLength(priDecoder, buff);
 				assignedVlanTags = priDecoder.decodeString(buff, offset, length);
@@ -579,6 +633,9 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setAssignedVlanTags(assignedVlanTags);
+				
+				switchingCapabilitySpecificInfo.getL2ScSpecificInfo().setUsedVlanSet(assignedVlanTags);
+				
 			}else if(type == CodeNumber.PCE_VLANTRANSLATION){
 				length = this.decodeLength(priDecoder, buff);
 				vlanTranslation = priDecoder.decodeBoolean(buff, offset, length);
@@ -586,6 +643,11 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setVlanTranslation(vlanTranslation);
+				
+				switchingCapabilitySpecificInfo.getL2ScSpecificInfo().setVlanTranslation(vlanTranslation);
+				
+				switchingCapabilitySpecificInfo.setVlanTranslation(vlanTranslation); //compatible
+				
 			}else if(type == CodeNumber.PCE_CAPACITY){
 				length = this.decodeLength(priDecoder, buff);
 				capacity = priDecoder.decodeLong(buff, offset, length);
@@ -593,6 +655,8 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setCapacity(capacity);
+				
+				switchCap.setCapacity(Long.toString(capacity));
 			}else if(type == CodeNumber.PCE_MTU){
 				length = this.decodeLength(priDecoder, buff);
 				mtu = priDecoder.decodeInteger(buff, offset, length);
@@ -600,6 +664,140 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setMtu(mtu);
+				
+				switchingCapabilitySpecificInfo.getL2ScSpecificInfo().setInterfaceMTU(mtu);
+				
+				switchingCapabilitySpecificInfo.setInterfaceMTU(mtu);
+				
+			}else if(type == CodeNumber.PCE_CONCATENATIONTYPE){
+				length = this.decodeLength(priDecoder, buff);
+				String concatenationType = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getTdmSpecificInfo().setConcatenationType(concatenationType);
+				
+			}else if(type == CodeNumber.PCE_SWITCHINGTIMESLOTAVAI){
+				length = this.decodeLength(priDecoder, buff);
+				String availableTimeslot = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getTdmSpecificInfo().setTimeslotRangeSet(availableTimeslot);
+				
+			}else if(type == CodeNumber.PCE_SWITCHINGTIMESLOTSUGG){
+				length = this.decodeLength(priDecoder, buff);
+				String suggestedTimeslot = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getTdmSpecificInfo().setSuggestedTimeslotSet(suggestedTimeslot);
+				
+			}else if(type == CodeNumber.PCE_SWITCHINGTIMESLOTASSI){
+				length = this.decodeLength(priDecoder, buff);
+				String assignedTimeslot = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getTdmSpecificInfo().setUsedTimeslotSet(assignedTimeslot);
+				
+			}else if(type == CodeNumber.PCE_TSIENABLED){
+				length = this.decodeLength(priDecoder, buff);
+				boolean tsiEnabled = priDecoder.decodeBoolean(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getTdmSpecificInfo().setTsiEnabled(tsiEnabled);
+				
+			}else if(type == CodeNumber.PCE_VCATENABLED){
+				length = this.decodeLength(priDecoder, buff);
+				boolean vcatEnabled = priDecoder.decodeBoolean(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getTdmSpecificInfo().setVcatEnabled(vcatEnabled);
+				
+			}else if(type == CodeNumber.PCE_CHANNELREPRESENTATION){
+				length = this.decodeLength(priDecoder, buff);
+				String channelRepresentation = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getLscSpecificInfo().setChannelRepresentation(channelRepresentation);
+				
+			}else if(type == CodeNumber.PCE_SWITCHINGWAVELENAVAI){
+				length = this.decodeLength(priDecoder, buff);
+				String availableWavelength = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getLscSpecificInfo().setWavelengthRangeSet(availableWavelength);
+				
+			}else if(type == CodeNumber.PCE_SWITCHINGWAVELENSUGG){
+				length = this.decodeLength(priDecoder, buff);
+				String suggestedWavelength = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getLscSpecificInfo().setSuggestedWavelengthSet(suggestedWavelength);
+				
+			}else if(type == CodeNumber.PCE_SWITCHINGWAVELENASSI){
+				length = this.decodeLength(priDecoder, buff);
+				String assignedWavelength = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getLscSpecificInfo().setUsedWavelengthSet(assignedWavelength);
+				
+			}else if(type == CodeNumber.PCE_WAVELENGTHCONVERSION){
+				length = this.decodeLength(priDecoder, buff);
+				boolean wavelengthConversion = priDecoder.decodeBoolean(buff, offset, length);
+				offset = offset + length;
+				
+				switchingCapabilitySpecificInfo.getLscSpecificInfo().setWavelengthConversionEnabled(wavelengthConversion);
+				
+			}else if(type == CodeNumber.PCE_VENDORSPECIFICINFO){
+				length = this.decodeLength(priDecoder, buff);
+				String vendorSpecXmlStr = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				CtrlPlaneSwcapVendorSpecificInfo vendorSpecificInfo = WSDLTypeConverter.convertVendorSpecificInfo(vendorSpecXmlStr);
+				switchingCapabilitySpecificInfo.setVendorSpecificInfo(vendorSpecificInfo);				
+				
+			}else if(type == CodeNumber.PCE_IACD_START){
+				length = this.decodeLength(priDecoder, buff);
+				String iacdStart = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				adjustmentCapabilityDescriptor = replyLink.getAdjustmentCapabilityDescriptor();
+				adcapContent = new CtrlPlaneAdcapContent();
+				adjustmentCapabilityDescriptor.add(adcapContent);
+								
+			}else if(type == CodeNumber.PCE_LOWERLAYERSWITCHINGTYPE){
+				length = this.decodeLength(priDecoder, buff);
+				String lowerSwcap = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				adcapContent.setLowerSwcap(lowerSwcap);
+				
+			}else if(type == CodeNumber.PCE_LOWERLAYERENCODINGTYPE){
+				length = this.decodeLength(priDecoder, buff);
+				String lowerEncType = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				adcapContent.setLowerEncType(lowerEncType);				
+				
+			}else if(type == CodeNumber.PCE_UPPERLAYERSWITCHINGTYPE){
+				length = this.decodeLength(priDecoder, buff);
+				String upperSwcap = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				adcapContent.setUpperSwcap(upperSwcap);			
+				
+			}else if(type == CodeNumber.PCE_UPPERLAYERENCODINGTYPE){
+				length = this.decodeLength(priDecoder, buff);
+				String upperEncType = priDecoder.decodeString(buff, offset, length);
+				offset = offset + length;
+				
+				adcapContent.setUpperEncType(upperEncType);				
+				
+			}else if(type == CodeNumber.PCE_MAXADAPTBANDWIDTH){
+				length = this.decodeLength(priDecoder, buff);
+				long maximumAdjustableCapacity = priDecoder.decodeLong(buff, offset, length);
+				offset = offset + length;
+				
+				adcapContent.setMaximumAdjustableCapacity(Long.toString(maximumAdjustableCapacity));
+				
 			}else if(type == CodeNumber.PCE_MAXRESVCAPACITY){
 				length = this.decodeLength(priDecoder, buff);
 				maximumReservableCapacity = priDecoder.decodeLong(buff, offset, length);
@@ -621,6 +819,8 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setGranularity(granularity);
+				//granularity field is per link in mxtce implementation
+				//switchCap.setGranularity(Long.toString(granularity));
 			}else if(type == CodeNumber.PCE_TE_METRIC){
 				length = this.decodeLength(priDecoder, buff);
 				trafficEngineeringMetric = priDecoder.decodeInteger(buff, offset, length);

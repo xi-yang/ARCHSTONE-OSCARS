@@ -108,8 +108,8 @@ public class WriteResult {
 		for(int i=0;i<linkSize;i++){
 			CtrlPlaneHopContent hopContent = new CtrlPlaneHopContent();
 			CtrlPlaneLinkContent linkOri = new CtrlPlaneLinkContent();
-			CtrlPlaneSwcapContent switchingCapabilityDescriptors = new CtrlPlaneSwcapContent();
-			CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
+			//CtrlPlaneSwcapContent switchingCapabilityDescriptors = new CtrlPlaneSwcapContent();
+			//CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
 			ReplyLinkContent linkRes = links.get(i);
 			String hopId = UUID.randomUUID().toString();
 			hopContent.setId(hopId);
@@ -130,13 +130,36 @@ public class WriteResult {
 			linkOri.setGranularity(Long.toString(granularity));
 			int trafficEngineeringMetric = linkRes.getTrafficEngineeringMetric();
 			linkOri.setTrafficEngineeringMetric(Integer.toString(trafficEngineeringMetric));
-			String switchingcapType = linkRes.getSwitchingType();
-			switchingCapabilityDescriptors.setSwitchingcapType(switchingcapType);
-			String encodingType = linkRes.getEncodingType();
-			switchingCapabilityDescriptors.setEncodingType(encodingType);
-			long capability = linkRes.getCapacity();
-			
+			//String switchingcapType = linkRes.getSwitchingType();
+			//switchingCapabilityDescriptors.setSwitchingcapType(switchingcapType);
+			//String encodingType = linkRes.getEncodingType();
+			//switchingCapabilityDescriptors.setEncodingType(encodingType);
+			long capability = linkRes.getCapacity();						
 			linkOri.setCapacity(Long.toString(capability));
+			
+			List<CtrlPlaneSwcapContent> switchingCapabilityDescriptors = linkOri.getSwitchingCapabilityDescriptors();
+			while(switchingCapabilityDescriptors.size() != 0){
+				switchingCapabilityDescriptors.remove(0);
+			}
+			
+			List<CtrlPlaneSwcapContent> switCapDescriptors = linkRes.getSwitchingCapabilityDescriptors();
+			
+			for(int switListIndex=0;switListIndex<switCapDescriptors.size();switListIndex++){
+				switchingCapabilityDescriptors.add(switCapDescriptors.get(switListIndex));
+			}
+			
+			List<CtrlPlaneAdcapContent> adjustmentCapabilityDescriptor = linkOri.getAdjustmentCapabilityDescriptor();
+			while(adjustmentCapabilityDescriptor.size() != 0){
+				adjustmentCapabilityDescriptor.remove(0);
+			}
+			
+			List<CtrlPlaneAdcapContent> adjustCapDescriptor = linkRes.getAdjustmentCapabilityDescriptor();
+			
+			for(int adjListIndex=0;adjListIndex<adjustCapDescriptor.size();adjListIndex++){
+				adjustmentCapabilityDescriptor.add(adjustCapDescriptor.get(adjListIndex));
+			}
+			
+			/*
 			int interfaceMTU = linkRes.getMtu();
 			switchingCapabilitySpecificInfo.setInterfaceMTU(interfaceMTU);
 			String vlanRangeAvailability = linkRes.getAvailableVlanTags();
@@ -148,11 +171,12 @@ public class WriteResult {
 			
 			switchingCapabilityDescriptors.setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
 			//linkOri.setSwitchingCapabilityDescriptors(switchingCapabilityDescriptors);
-                        if (linkOri.getSwitchingCapabilityDescriptors().size() == 0) {
-                                linkOri.getSwitchingCapabilityDescriptors().add(switchingCapabilityDescriptors);
-                        } else {
-                                linkOri.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
-                        }
+			if (linkOri.getSwitchingCapabilityDescriptors().size() == 0) {
+				linkOri.getSwitchingCapabilityDescriptors().add(switchingCapabilityDescriptors);
+			} else {
+				linkOri.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
+			}
+			*/
 			hopContent.setLink(linkOri);
 			hop.add(hopContent);
 		}
@@ -172,8 +196,8 @@ public class WriteResult {
 		for(int i=0;i<linkSize;i++){
 			
 			CtrlPlaneLinkContent linkOri = new CtrlPlaneLinkContent();
-			CtrlPlaneSwcapContent switchingCapabilityDescriptors = new CtrlPlaneSwcapContent();
-			CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
+			//CtrlPlaneSwcapContent switchingCapabilityDescriptors = new CtrlPlaneSwcapContent();
+			//CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = new CtrlPlaneSwitchingCapabilitySpecificInfo();
 			ReplyLinkContent linkRes = links.get(i);
 			
 			
@@ -194,13 +218,36 @@ public class WriteResult {
 			linkOri.setGranularity(Long.toString(granularity));
 			int trafficEngineeringMetric = linkRes.getTrafficEngineeringMetric();
 			linkOri.setTrafficEngineeringMetric(Integer.toString(trafficEngineeringMetric));
-			String switchingcapType = linkRes.getSwitchingType();
-			switchingCapabilityDescriptors.setSwitchingcapType(switchingcapType);
-			String encodingType = linkRes.getEncodingType();
-			switchingCapabilityDescriptors.setEncodingType(encodingType);
-			long capability = linkRes.getCapacity();
-			
+			//String switchingcapType = linkRes.getSwitchingType();
+			//switchingCapabilityDescriptors.setSwitchingcapType(switchingcapType);
+			//String encodingType = linkRes.getEncodingType();
+			//switchingCapabilityDescriptors.setEncodingType(encodingType);
+			long capability = linkRes.getCapacity();			
 			linkOri.setCapacity(Long.toString(capability));
+			
+			List<CtrlPlaneSwcapContent> switchingCapabilityDescriptors = linkOri.getSwitchingCapabilityDescriptors();
+			while(switchingCapabilityDescriptors.size() != 0){
+				switchingCapabilityDescriptors.remove(0);
+			}
+			
+			List<CtrlPlaneSwcapContent> switCapDescriptors = linkRes.getSwitchingCapabilityDescriptors();
+			
+			for(int switListIndex=0;switListIndex<switCapDescriptors.size();switListIndex++){
+				switchingCapabilityDescriptors.add(switCapDescriptors.get(switListIndex));
+			}
+			
+			List<CtrlPlaneAdcapContent> adjustmentCapabilityDescriptor = linkOri.getAdjustmentCapabilityDescriptor();
+			while(adjustmentCapabilityDescriptor.size() != 0){
+				adjustmentCapabilityDescriptor.remove(0);
+			}
+			
+			List<CtrlPlaneAdcapContent> adjustCapDescriptor = linkRes.getAdjustmentCapabilityDescriptor();
+			
+			for(int adjListIndex=0;adjListIndex<adjustCapDescriptor.size();adjListIndex++){
+				adjustmentCapabilityDescriptor.add(adjustCapDescriptor.get(adjListIndex));
+			}			
+			
+			/*
 			int interfaceMTU = linkRes.getMtu();
 			switchingCapabilitySpecificInfo.setInterfaceMTU(interfaceMTU);
 			String vlanRangeAvailability = linkRes.getAvailableVlanTags();
@@ -212,11 +259,12 @@ public class WriteResult {
 			
 			switchingCapabilityDescriptors.setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
 			//linkOri.setSwitchingCapabilityDescriptors(switchingCapabilityDescriptors);
-                        if (linkOri.getSwitchingCapabilityDescriptors().size() == 0) {
-                                linkOri.getSwitchingCapabilityDescriptors().add(switchingCapabilityDescriptors);
-                        } else {
-                                linkOri.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
-                        }
+			if (linkOri.getSwitchingCapabilityDescriptors().size() == 0) {
+				linkOri.getSwitchingCapabilityDescriptors().add(switchingCapabilityDescriptors);
+			} else {
+				linkOri.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(switchingCapabilitySpecificInfo);
+			}
+			*/
 
 			topoBuilder.addLink(linkOri);
 

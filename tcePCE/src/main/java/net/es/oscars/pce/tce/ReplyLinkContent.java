@@ -1,5 +1,11 @@
 package net.es.oscars.pce.tce;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneAdcapContent;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapContent;
+
 public class ReplyLinkContent {
 	
 	protected String id;
@@ -17,6 +23,8 @@ public class ReplyLinkContent {
 	protected long minimumReservableCapacity;
 	protected long granularity;
 	protected int trafficEngineeringMetric;
+    protected List<CtrlPlaneSwcapContent> switchingCapabilityDescriptors;
+    protected List<CtrlPlaneAdcapContent> adjustmentCapabilityDescriptor;
 	
 	public String getId(){
 		return this.id;
@@ -137,5 +145,19 @@ public class ReplyLinkContent {
 	public void setTrafficEngineeringMetric(int value){
 		this.trafficEngineeringMetric = value;
 	}
+	
+    public List<CtrlPlaneSwcapContent> getSwitchingCapabilityDescriptors() {
+        if (switchingCapabilityDescriptors == null) {
+            switchingCapabilityDescriptors = new ArrayList<CtrlPlaneSwcapContent>();
+        }
+        return this.switchingCapabilityDescriptors;
+    }
+    
+    public List<CtrlPlaneAdcapContent> getAdjustmentCapabilityDescriptor() {
+        if (adjustmentCapabilityDescriptor == null) {
+            adjustmentCapabilityDescriptor = new ArrayList<CtrlPlaneAdcapContent>();
+        }
+        return this.adjustmentCapabilityDescriptor;
+    }
 
 }

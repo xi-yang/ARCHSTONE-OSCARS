@@ -77,6 +77,27 @@ public class CodeNumber {
 	public static final byte PCE_OPT_BAG_STARTTIME = (byte)0xB4;
 	public static final byte PCE_OPT_BAG_ENDTIME = (byte)0xB5;
 	public static final byte PCE_PATH_END_TAG = (byte)0xB6;
+	
+	public static final byte PCE_CHANNELREPRESENTATION = (byte)0xB7;
+	public static final byte PCE_SWITCHINGWAVELENAVAI = (byte)0xB8;
+	public static final byte PCE_SWITCHINGWAVELENASSI = (byte)0xB9;
+	public static final byte PCE_SWITCHINGWAVELENSUGG = (byte)0xBA;
+	public static final byte PCE_WAVELENGTHCONVERSION = (byte)0xBB;
+
+	public static final byte PCE_CONCATENATIONTYPE = (byte)0xBC;
+	public static final byte PCE_SWITCHINGTIMESLOTAVAI = (byte)0xBD;
+	public static final byte PCE_SWITCHINGTIMESLOTASSI = (byte)0xBE;
+	public static final byte PCE_SWITCHINGTIMESLOTSUGG = (byte)0xBF;
+	public static final byte PCE_TSIENABLED = (byte)0xC0;
+	public static final byte PCE_VCATENABLED = (byte)0xC1;
+
+	public static final byte PCE_VENDORSPECIFICINFO = (byte)0xC2;
+	public static final byte PCE_IACD_START = (byte)0xC3;
+	public static final byte PCE_LOWERLAYERSWITCHINGTYPE = (byte)0xC4;
+	public static final byte PCE_LOWERLAYERENCODINGTYPE = (byte)0xC5;
+	public static final byte PCE_UPPERLAYERSWITCHINGTYPE = (byte)0xC6;
+	public static final byte PCE_UPPERLAYERENCODINGTYPE = (byte)0xC7;
+	public static final byte PCE_MAXADAPTBANDWIDTH = (byte)0xC8;
 
 	
 
