@@ -751,6 +751,7 @@ public class RetrieveReply {
 				String vendorSpecXmlStr = priDecoder.decodeString(buff, offset, length);
 				offset = offset + length;
 				
+				System.out.println("vendor xml="+vendorSpecXmlStr);
 				CtrlPlaneSwcapVendorSpecificInfo vendorSpecificInfo = WSDLTypeConverter.convertVendorSpecificInfo(vendorSpecXmlStr);
 				switchingCapabilitySpecificInfo.setVendorSpecificInfo(vendorSpecificInfo);
 				System.out.println("vendor decodered");
