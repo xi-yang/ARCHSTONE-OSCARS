@@ -754,6 +754,9 @@ public class RetrieveReply {
 				CtrlPlaneSwcapVendorSpecificInfo vendorSpecificInfo = WSDLTypeConverter.convertVendorSpecificInfo(vendorSpecXmlStr);
 				switchingCapabilitySpecificInfo.setVendorSpecificInfo(vendorSpecificInfo);
 				System.out.println("vendor decodered");
+				if(vendorSpecificInfo!=null){
+					System.out.println("vendor is not null");
+				}
 				
 			}else if(type == CodeNumber.PCE_IACD_START){
 				length = this.decodeLength(priDecoder, buff);
