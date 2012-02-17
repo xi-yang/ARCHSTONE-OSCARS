@@ -22,7 +22,7 @@ public class PathElemParamType {
     public static final String VCAT_ENABLED = "vcatEnabled";
     // lscSpecificInfo
     public static final String WAVELENGTH_RANGE_SET = "wavelengthRangeSet";
-    public static final String SUGGESTED_WAVELENGTH_SET = "wavelengthTimeslotSet";
+    public static final String SUGGESTED_WAVELENGTH_SET = "suggestedWavelengthSet";
     public static final String WAVELENGTH_CONVERSION = "wavelengthConversion";
     // openflowSpecificInfo
         //TDB
