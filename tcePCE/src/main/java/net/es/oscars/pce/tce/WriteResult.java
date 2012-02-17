@@ -146,6 +146,10 @@ public class WriteResult {
 			
 			for(int switListIndex=0;switListIndex<switCapDescriptors.size();switListIndex++){
 				switchingCapabilityDescriptors.add(switCapDescriptors.get(switListIndex));
+				if((switCapDescriptors.get(switListIndex)).getSwitchingCapabilitySpecificInfo().getVendorSpecificInfo()!=null){
+					System.out.println("vendor in write find"+switListIndex);
+				}
+				
 			}
 			
 			List<CtrlPlaneAdcapContent> adjustmentCapabilityDescriptor = linkOri.getAdjustmentCapabilityDescriptor();
