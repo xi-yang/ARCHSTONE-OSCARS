@@ -615,7 +615,7 @@ public class WSDLTypeConverter {
             }
             pathElemParam = new PathElemParam();
             pathElemParam.setSwcap(switchingcapType);
-            pathElemParam.setType(PathElemParamType.TSI_ENABLED);
+            pathElemParam.setType(PathElemParamType.WAVELENGTH_CONVERSION);
             pathElemParam.setValue(swcapInfo.getLscSpecificInfo().isWavelengthConversionEnabled() ? "true":"false");
             pathElemParams.add(pathElemParam);
         }
