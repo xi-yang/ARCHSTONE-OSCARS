@@ -752,7 +752,8 @@ public class RetrieveReply {
 				offset = offset + length;
 				
 				CtrlPlaneSwcapVendorSpecificInfo vendorSpecificInfo = WSDLTypeConverter.convertVendorSpecificInfo(vendorSpecXmlStr);
-				switchingCapabilitySpecificInfo.setVendorSpecificInfo(vendorSpecificInfo);				
+				switchingCapabilitySpecificInfo.setVendorSpecificInfo(vendorSpecificInfo);
+				System.out.println("vendor decodered");
 				
 			}else if(type == CodeNumber.PCE_IACD_START){
 				length = this.decodeLength(priDecoder, buff);
