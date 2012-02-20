@@ -12,6 +12,7 @@ import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpe
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoTdm;
 
 import net.es.oscars.resourceManager.http.WSDLTypeConverter;
+import net.es.oscars.resourceManager.common.RMException;
 import net.es.oscars.utils.soap.OSCARSServiceException;
 
 public class RetrieveReply {
@@ -750,15 +751,14 @@ public class RetrieveReply {
 				length = this.decodeLength(priDecoder, buff);
 				String vendorSpecXmlStr = priDecoder.decodeString(buff, offset, length);
 				offset = offset + length;
-				
-				System.out.println("vendor xml="+vendorSpecXmlStr);
-				CtrlPlaneSwcapVendorSpecificInfo vendorSpecificInfo = WSDLTypeConverter.convertVendorSpecificInfo(vendorSpecXmlStr);
-				switchingCapabilitySpecificInfo.setVendorSpecificInfo(vendorSpecificInfo);
-				System.out.println("vendor decodered");
-				if(vendorSpecificInfo!=null){
-					System.out.println("vendor is not null");
+				// test line: to be removed
+				vendorSpecXmlStr="<vendorSpecificInfo xmlns=\"http://ogf.org/schema/network/topology/ctrlPlane/20110826/\"><infineraDTNSpecificInfo><tributaryInfo id=\"1\" model=\"TAM-2-10\" contain=\"1xOTU3\">        <OTU3 id=\"1\" contain=\"1x10GE\"/>        </tributaryInfo></infineraDTNSpecificInfo></vendorSpecificInfo>";
+				try {
+					CtrlPlaneSwcapVendorSpecificInfo vendorSpecificInfo = WSDLTypeConverter.convertVendorSpecificInfo(vendorSpecXmlStr);
+					switchingCapabilitySpecificInfo.setVendorSpecificInfo(vendorSpecificInfo);
+				} catch (RMException e) {
+					throw new OSCARSServiceException(e.getMessage());
 				}
-				
 			}else if(type == CodeNumber.PCE_IACD_START){
 				length = this.decodeLength(priDecoder, buff);
 				String iacdStart = priDecoder.decodeString(buff, offset, length);

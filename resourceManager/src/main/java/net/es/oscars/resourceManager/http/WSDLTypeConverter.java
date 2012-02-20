@@ -28,6 +28,7 @@ import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneAdcapContent;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.JAXBElement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
@@ -634,7 +635,7 @@ public class WSDLTypeConverter {
                     dbf.setNamespaceAware(false);
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     infoDoc = db.newDocument();
-                    JAXBContext jc = JAXBContext.newInstance("net.es.oscars.resourceManager.http.WSDLTypeConverter");
+                    JAXBContext jc = JAXBContext.newInstance("org.ogf.schema.network.topology.ctrlplane");
                     Marshaller m = jc.createMarshaller();
                     m.marshal(swcapInfo.getVendorSpecificInfo().getInfineraDTNSpecificInfo(), infoDoc);
                     TransformerFactory factory = TransformerFactory.newInstance();
@@ -1244,7 +1245,7 @@ public class WSDLTypeConverter {
      }
 
      public static CtrlPlaneSwcapVendorSpecificInfo 
-             convertVendorSpecificInfo(String xmlString) {
+             convertVendorSpecificInfo(String xmlString) throws RMException{
          // Unmarshall swcapInfo.vendorSpecificInfo from XML
          CtrlPlaneSwcapVendorSpecificInfo vendorSpecificInfo = new CtrlPlaneSwcapVendorSpecificInfo();
          try {
@@ -1253,16 +1254,16 @@ public class WSDLTypeConverter {
              dbf.setNamespaceAware(false);
              DocumentBuilder db = dbf.newDocumentBuilder();
              infoDoc = db.newDocument();
-             JAXBContext jc = JAXBContext.newInstance("net.es.oscars.resourceManager.http.WSDLTypeConverter");
+             JAXBContext jc = JAXBContext.newInstance("org.ogf.schema.network.topology.ctrlplane");
              Unmarshaller unm = jc.createUnmarshaller();
              StringReader reader = new StringReader(xmlString);
-             vendorSpecificInfo = (CtrlPlaneSwcapVendorSpecificInfo)unm.unmarshal(reader);
+             JAXBElement<CtrlPlaneSwcapVendorSpecificInfo> jaxbVendorSpecificInfo = (JAXBElement<CtrlPlaneSwcapVendorSpecificInfo>)unm.unmarshal(reader);
+             vendorSpecificInfo = jaxbVendorSpecificInfo.getValue();
              reader.close();
              return vendorSpecificInfo;
          } catch (Exception e) {
-             //throw new RMException("Error marshling InfineraDTNSpecificInfo " + e.getMessage());
+             throw new RMException("Error unmarshling InfineraDTNSpecificInfo " + e.getMessage() + " xmlString=" + xmlString);
          }
-         return null;
     }
 
      /**

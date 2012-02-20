@@ -326,6 +326,7 @@
 	</xs:complexType>
 
 	<!-- Definition of vendor-specific info -->
+
 	<xs:complexType name="CtrlPlaneSwcapVendorSpecificInfo">
 		<xs:sequence>
 			<xs:choice>
@@ -334,6 +335,8 @@
 			</xs:choice>
 		</xs:sequence>
 	</xs:complexType>
+
+	<xs:element name="vendorSpecificInfo" type="CtrlPlane:CtrlPlaneSwcapVendorSpecificInfo" />  <!-- singled out for jaxb binding -->
 
 	<xs:complexType name="CtrlPlaneSwcapVendorSpecificInfo_ciena_otn">
 		<xs:sequence>
@@ -355,9 +358,9 @@
 			<xs:choice>
 				<xs:element name="suggestedOTU0" type="CtrlPlane:OTNData_OTU0"/>
 				<xs:element name="suggestedOTU1" type="CtrlPlane:OTNData_OTU1"/>
-				<xs:element name="suggestedusedOTU2" type="CtrlPlane:OTNData_OTU2"/>
-				<xs:element name="suggestedusedOTU3" type="CtrlPlane:OTNData_OTU3"/>
-				<xs:element name="suggestedusedOTU4" type="CtrlPlane:OTNData_OTU4"/>
+				<xs:element name="suggestedOTU2" type="CtrlPlane:OTNData_OTU2"/>
+				<xs:element name="suggestedOTU3" type="CtrlPlane:OTNData_OTU3"/>
+				<xs:element name="suggestedOTU4" type="CtrlPlane:OTNData_OTU4"/>
 			</xs:choice>
 		</xs:sequence>
 	</xs:complexType>
@@ -435,9 +438,9 @@
 		</xs:choice>
 		<xs:choice>
 			<xs:element name="suggestedOTU1" type="CtrlPlane:OTNData_OTU1"/>
-			<xs:element name="suggestedusedOTU2" type="CtrlPlane:OTNData_OTU2"/>
-			<xs:element name="suggestedusedOTU3" type="CtrlPlane:OTNData_OTU3"/>
-			<xs:element name="suggestedusedOTU4" type="CtrlPlane:OTNData_OTU4"/>
+			<xs:element name="suggestedOTU2" type="CtrlPlane:OTNData_OTU2"/>
+			<xs:element name="suggestedOTU3" type="CtrlPlane:OTNData_OTU3"/>
+			<xs:element name="suggestedOTU4" type="CtrlPlane:OTNData_OTU4"/>
 		</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="id" use="required" type="xs:string"/>
