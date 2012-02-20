@@ -336,8 +336,6 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:element name="vendorSpecificInfo" type="CtrlPlane:CtrlPlaneSwcapVendorSpecificInfo" />  <!-- singled out for jaxb binding -->
-
 	<xs:complexType name="CtrlPlaneSwcapVendorSpecificInfo_ciena_otn">
 		<xs:sequence>
 			<!-- Capacity: otu0 (1.2G) or otu1 (2.5G) or otu2 (10G 8xODU0) or otu3 (40G 32xODU0) or otu4 (100G 80xODU0) -->

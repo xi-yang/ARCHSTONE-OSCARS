@@ -25,6 +25,7 @@ import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpe
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapVendorSpecificInfo;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneAdcapContent;
 
+import javax.xml.namespace.QName;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -37,6 +38,7 @@ import javax.xml.transform.dom.*;
 import org.w3c.dom.*;
 import java.io.StringWriter;
 import java.io.StringReader;
+import org.xml.sax.InputSource;
 
 //import net.es.oscars.resourceManager.beans.*;
 import net.es.oscars.resourceManager.beans.ConstraintType;
@@ -630,25 +632,27 @@ public class WSDLTypeConverter {
                 PathElemParam pathElemParam = new PathElemParam();
                 pathElemParam.setSwcap(switchingcapType);
                 pathElemParam.setType(PathElemParamType.VENDOR_SPECIFIC_INFO);
-                    Document infoDoc = null;
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                    dbf.setNamespaceAware(false);
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    infoDoc = db.newDocument();
-                    JAXBContext jc = JAXBContext.newInstance("org.ogf.schema.network.topology.ctrlplane");
-                    Marshaller m = jc.createMarshaller();
-                    m.marshal(swcapInfo.getVendorSpecificInfo().getInfineraDTNSpecificInfo(), infoDoc);
-                    TransformerFactory factory = TransformerFactory.newInstance();
-                    Transformer transformer = factory.newTransformer();
-                    StringWriter writer = new StringWriter();
-                    Result result = new StreamResult(writer);
-                    Source source = new DOMSource(infoDoc);
-                    transformer.transform(source, result);
-                    writer.close();
-                    pathElemParam.setValue(writer.toString());
-                    pathElemParams.add(pathElemParam);
+                Document infoDoc = null;
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setNamespaceAware(false);
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                infoDoc = db.newDocument();
+                JAXBContext jc = JAXBContext.newInstance("org.ogf.schema.network.topology.ctrlplane");
+                Marshaller m = jc.createMarshaller();
+                JAXBElement<CtrlPlaneSwcapVendorSpecificInfo> jaxbVendorSpecificInfo = new JAXBElement(new QName("http://ogf.org/schema/network/topology/ctrlPlane/20110826/", "vendorSpecificInfo"), org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapVendorSpecificInfo.class, swcapInfo.getVendorSpecificInfo());
+                m.marshal(jaxbVendorSpecificInfo, infoDoc);
+                TransformerFactory factory = TransformerFactory.newInstance();
+                Transformer transformer = factory.newTransformer();
+                StringWriter writer = new StringWriter();
+                Result result = new StreamResult(writer);
+                Source source = new DOMSource(infoDoc);
+                transformer.transform(source, result);
+                writer.close();
+                pathElemParam.setValue(writer.toString());
+                pathElemParams.add(pathElemParam);
             } catch (Exception e) {
-                    //throw new RMException("Error marshling InfineraDTNSpecificInfo " + e.getMessage());
+                //throw new RMException("Error marshaling vendorSpecificInfo " + e.getMessage());
+                System.out.println("Error marshaling vendorSpecificInfo " + e.getMessage());
             }
         }
     }
@@ -1253,16 +1257,24 @@ public class WSDLTypeConverter {
              DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
              dbf.setNamespaceAware(false);
              DocumentBuilder db = dbf.newDocumentBuilder();
-             infoDoc = db.newDocument();
-             JAXBContext jc = JAXBContext.newInstance("org.ogf.schema.network.topology.ctrlplane");
-             Unmarshaller unm = jc.createUnmarshaller();
              StringReader reader = new StringReader(xmlString);
-             JAXBElement<CtrlPlaneSwcapVendorSpecificInfo> jaxbVendorSpecificInfo = (JAXBElement<CtrlPlaneSwcapVendorSpecificInfo>)unm.unmarshal(reader);
+
+             //infoDoc = db.newDocument();
+             infoDoc = db.parse(new InputSource(reader));
+             Node vendorSpecInfoNode = infoDoc.getFirstChild();
+
+             JAXBContext jc = JAXBContext.newInstance("org.ogf.schema.network.topology.ctrlplane");
+
+             Unmarshaller unm = jc.createUnmarshaller();
+
+             //JAXBElement<CtrlPlaneSwcapVendorSpecificInfo> jaxbVendorSpecificInfo = (JAXBElement<CtrlPlaneSwcapVendorSpecificInfo>)unm.unmarshal(reader);
+             JAXBElement<CtrlPlaneSwcapVendorSpecificInfo> jaxbVendorSpecificInfo = (JAXBElement<CtrlPlaneSwcapVendorSpecificInfo>)unm.unmarshal(vendorSpecInfoNode, org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapVendorSpecificInfo.class);
+
              vendorSpecificInfo = jaxbVendorSpecificInfo.getValue();
              reader.close();
              return vendorSpecificInfo;
          } catch (Exception e) {
-             throw new RMException("Error unmarshling InfineraDTNSpecificInfo " + e.getMessage() + " xmlString=" + xmlString);
+             throw new RMException("Error unmarshling vendorSpecificInfo " + e.getMessage());
          }
     }
 
