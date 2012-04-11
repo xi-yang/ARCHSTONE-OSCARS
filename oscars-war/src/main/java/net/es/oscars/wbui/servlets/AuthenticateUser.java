@@ -195,6 +195,7 @@ public class AuthenticateUser extends HttpServlet {
 
         if (!authVal.equals("DENIED"))  {
             authorizedTabs.put("reservationDetailsPane", Boolean.TRUE);
+            authorizedTabs.put("tceQueryPane", Boolean.TRUE);
         }
 
         authVal = resourcePerms.get("Reservations").get("create");

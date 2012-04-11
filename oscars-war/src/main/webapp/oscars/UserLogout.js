@@ -61,6 +61,10 @@ oscars.UserLogout.handleLogout = function () {
     if (dijit.byId("reservationsPane")) {
         mainTabContainer.closeChild(dijit.byId("reservationsPane"));
     }
+    if (dijit.byId("tceQueryPane")) {
+        mainTabContainer.closeChild(dijit.byId("tceQueryPane"));
+    }
+    // ??close tceQueryResultPanes if any
     if (dijit.byId("reservationCreatePane")) {
         mainTabContainer.closeChild(dijit.byId("reservationCreatePane"));
     }

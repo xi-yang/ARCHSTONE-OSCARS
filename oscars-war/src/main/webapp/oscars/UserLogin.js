@@ -148,6 +148,15 @@ oscars.UserLogin.handleReply = function (responseObject, ioArgs) {
         mainTabContainer.addChild(reservationCreatePane, 0);
         reservationCreatePane.startup();
     }
+    // query TCE form
+    if (responseObject.authorizedTabs.tceQueryPane) {
+        var tceQueryPane = new dojox.layout.ContentPane(
+            {title:'Query TCE', id: 'tceQueryPane'},
+             dojo.doc.createElement('div'));
+        tceQueryPane.setHref("forms/tceQuery.html");
+        mainTabContainer.addChild(tceQueryPane, 0);
+        tceQueryPane.startup();
+    }
     // reservation details form
     if (responseObject.authorizedTabs.reservationDetailsPane) {
         var reservationDetailsPane = new dojox.layout.ContentPane(

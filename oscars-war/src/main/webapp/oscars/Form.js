@@ -172,6 +172,9 @@ oscars.Form.selectedChanged = function (/* ContentPane widget */ contentPane) {
     // selected reservation details tab
     } else if (contentPane.id == "reservationDetailsPane") {
         oscars.ReservationDetails.tabSelected(contentPane, oscarsStatus);
+    // selected query TCE tab
+    } else if (contentPane.id == "tceQueryPane") {
+        oscars.TceQuery.tabSelected(contentPane, oscarsStatus);
     // selected create reservation tab
     } else if (contentPane.id == "reservationCreatePane") {
         oscars.ReservationCreate.tabSelected(contentPane, oscarsStatus);
