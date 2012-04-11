@@ -8,7 +8,7 @@ dojo.provide("oscars.TceQuery");
 
 // posts request to server to set parameters in initial create reservation form
 oscars.TceQuery.init = function () {
-
+    //
 };
 
 // posts request to server to create reservation
@@ -68,17 +68,11 @@ oscars.TceQuery.tabSelected = function (
 
 // resets all fields, including ones the standard reset doesn't catch
 oscars.TceQuery.resetFields = function () {
-    var formNode = dijit.byId("TceQueryForm").domNode;
+    var formNode = dijit.byId("tceQueryForm").domNode;
     // do the standard ones first
     formNode.reset();
-    // if layer 3 fields are displayed, display layer 2 ones again since
-    // that button is rechecked on reset
-    oscars.TceQuery.toggleLayer("layer2");
-    // set whether VLAN's are tagged back to default (Tagged)
-    var taggedSrcVlan = dojo.byId("taggedSrcVlan");
-    taggedSrcVlan.selectedIndex = 0;
-    var taggedDestVlan = dojo.byId("taggedDestVlan");
-    taggedDestVlan.selectedIndex = 0;
+    var nodes = dojo.query(".flexibleBandwidthDisplay");
+    nodes[0].style.display = "none";
 };
 
 oscars.TceQuery.flexibleBandwidthToggler = function (/*Event*/ evt) {
@@ -119,20 +113,28 @@ oscars.TceQuery.checkDateTimes = function () {
         oscarsStatus.innerHTML = msg;
         return false;
     }
-    var startSecondsN = dojo.byId("hiddenStartSeconds");
-    // set hidden field value, which is what servlet uses
-    startSecondsN.value = startSeconds;
-    var endSecondsN = dojo.byId("hiddenEndSeconds");
-    endSecondsN.value = endSeconds;
     return true;
 };
 
 // Add candidate schedule time window to data grid
 oscars.TceQuery.addSchedule = function () {
     var scheduleGrid = dijit.byId("tceQueryScheduleGrid");
-    var store = scheduleGrid.getStore();
+    var store = scheduleGrid.store;
+    if (store == null) {
+        var data = {
+            identifier: 'id',
+            label: 'id',
+            items: {}
+        };
+        store = new dojo.data.ItemFileWriteStore({data: data});
+        scheduleGrid.setStore(store);
+    }
     // parse paratmers
-    var item = {col1: startDate, col2: startTime, col3: endDate, col4: endTime, col5: duration};
-    store.items.push(item);
+    var startDate = dijit.byId("tceStartDate");
+    var startTime = dijit.byId("tceStartTime");
+    var endDate = dijit.byId("tceEndDate");
+    var endTime = dijit.byId("tceEndTime");
+    var item = {'id': 1,'startDate':startDate,'startTime':startTime,'endDate':endDate,'endTime':endTime};
+    store.newItem(item);
     scheduleGrid.sort();
 };
