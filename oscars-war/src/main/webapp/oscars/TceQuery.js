@@ -118,23 +118,27 @@ oscars.TceQuery.checkDateTimes = function () {
 
 // Add candidate schedule time window to data grid
 oscars.TceQuery.addSchedule = function () {
+    // parse paratmers
+    var startDate = dijit.byId("tceStartTime");
+    var startTime = dijit.byId("tceStartDate");
+    var endDate = dijit.byId("tceEndDate");
+    var endTime = dijit.byId("tceEndTime");
     var scheduleGrid = dijit.byId("tceQueryScheduleGrid");
+    // push to grid
+    var oscarsStatus = dojo.byId("oscarsStatus");
     var store = scheduleGrid.store;
     if (store == null) {
         var data = {
             identifier: 'id',
             label: 'id',
-            items: {}
+            items: [ {'id':1,'startDate':startDate,'startTime':startTime,'endDate':endDate,'endTime':endTime} ]
         };
         store = new dojo.data.ItemFileWriteStore({data: data});
         scheduleGrid.setStore(store);
-    }
-    // parse paratmers
-    var startDate = dijit.byId("tceStartDate");
-    var startTime = dijit.byId("tceStartTime");
-    var endDate = dijit.byId("tceEndDate");
-    var endTime = dijit.byId("tceEndTime");
-    var item = {'id': 1,'startDate':startDate,'startTime':startTime,'endDate':endDate,'endTime':endTime};
-    store.newItem(item);
-    scheduleGrid.sort();
+        oscarsStatus.numTceSchdules = 1;
+    } else {
+        oscarsStatus.numTceSchdules += 1;
+        var item = {'id':oscarsStatus.numTceSchdules ,'startDate':startDate,'startTime':startTime,'endDate':endDate,'endTime':endTime};
+        store.newItem(item);
+    } 
 };

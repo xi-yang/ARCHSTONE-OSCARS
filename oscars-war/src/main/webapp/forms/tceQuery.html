@@ -1,0 +1,150 @@
+<html>
+<head>
+    <script type="text/javascript">
+        dojo.connect(dijit.byId("tceQueryPane"), "onLoad",
+                     oscars.TceQuery.init);
+    </script>
+    <script type="text/javascript">
+    var tceQueryScheduleLayout = [
+             {name: 'ID', field: 'id', width: "30em"},
+             {name: 'From Date', field: 'startDate', width: "30em"},
+             {name: 'Start Time', field: 'startTime', width: "30em"},
+             {name: 'To Date', field: 'endDate', width: "30em"},
+             {name: 'End Time', field: 'endTime', width: "30em"},
+        ];
+    </script>
+</head>
+
+<body>
+<form id="tceQueryForm" dojoType="dijit.form.Form">
+
+<p>Required inputs are bordered in green.</p>
+
+<table width="100%">
+  <tbody>
+  <tr>
+    <td width="15%">
+      <button dojoType="dijit.form.Button" id="tceQuery">
+         EXECUTE QUERY
+         <script type="dojo/method" event="onClick">
+            oscars.TceQuery.sendQuery();
+        </script>
+      </button>
+    </td>
+    <td colspan="2">
+        <input dojoType="dijit.form.CheckBox" id="flexibleBandwidth"
+            name="productionType" type="checkbox" 
+             onClick="oscars.TceQuery.flexibleBandwidthToggler"/>
+      <label for="production">Request Flexible Bandwidth</label>
+    </td>
+    <td>
+      <!-- straight form reset doesn't reset all fields properly -->
+      <button dojoType="dijit.form.Button" id="tceQueryReset">
+         RESET Form
+         <script type="dojo/method" event="onClick">
+            oscars.TceQuery.resetFields();
+        </script>
+      </button>
+    </td>
+  </tr>
+  <tr>
+    <td>Source</td>
+    <td class="required" colspan="2">
+      <input type="text" name="source" id="tceSource"
+             dojoType="dijit.form.ValidationTextBox"
+             required="true" />
+    </td>
+    <td>VLAN (2-4094, any)</td>
+    <td class="required">
+      <input type="text" dojoType="dijit.form.TextBox" name="srcVlan"
+             id="tceSrcVlan" />
+    </td>
+  </tr>
+  <tr>
+    <td>Destination</td>
+    <td class="required" colspan="2">
+      <input type="text" name="destination" id="tceDestination"
+             dojoType="dijit.form.ValidationTextBox" 
+             required="true" />
+    </td> 
+    <td class="required">VLAN (2-4094, any)</td>
+    <td>
+      <input type="text" dojoType="dijit.form.TextBox" name="destVlan"
+             id="tceDestVlan" />
+    </td>
+  </tr>
+  <tr>
+    <td>Bandwidth (Mbps)</td>
+    <td class="required">
+      <input type="text" name="bandwidth" id="tceBandwidth"
+           dojoType="dijit.form.NumberTextBox"
+           constraints="{min:1,max:100000,places:0}"
+           promptMessage="Enter a value between 1 and 100000"
+           required="true"
+           invalidMessage="Invalid bandwidth." />
+     </td>
+     <td></td>
+    <td>Duration (Minutes)</td>
+    <td class="required">
+      <input type="text" name="duration" id="tceDuration"
+           dojoType="dijit.form.NumberTextBox"
+           constraints="{min:15,places:0}"
+           promptMessage="Enter a value equal or greater than 15"
+           required="true"
+           invalidMessage="Invalid duration." />
+     </td>
+  </tr>
+    <tr class="flexibleBandwidthDisplay" style="display:none">
+    <td>Max. Bandwidth (Mbps)</td>
+    <td>
+      <input type="text" name="maxBandwidth" id="maxBandwidth"
+           dojoType="dijit.form.NumberTextBox"
+           constraints="{min:1,max:100000,places:0}"
+           promptMessage="Enter a value between 1 and 100000"
+           required="true"
+           invalidMessage="Invalid bandwidth." />
+     </td>
+    <td/>
+    <td>Min. Bandwidth (Mbps)</td>
+    <td>
+      <input type="text" name="minBandwidth" id="minBandwidth"
+           dojoType="dijit.form.NumberTextBox"
+           constraints="{min:1,max:100000,places:0}"
+           promptMessage="Enter a value between 1 and 100000"
+           required="true"
+           invalidMessage="Invalid bandwidth." />
+     </td>
+    </tr>
+  <tr>
+    <td width="15%">
+      <button dojoType="dijit.form.Button" id="addSchedule">
+         ADD Time Window
+         <script type="dojo/method" event="onClick">
+            oscars.TceQuery.addSchedule();
+        </script>
+      </button>
+    </td>
+    <td  colspan="2">Start: &nbsp;&nbsp;&nbsp;&nbsp; MM/DD/YYYY<input dojoType="dijit.form.DateTextBox" name="startDate"
+               id="tceStartDate" />
+        HH:MM<input dojoType="dijit.form.ValidationTextBox" name="startTime"
+             id="tceStartTime"
+             regExp="[0-2]?[\d]:[0-5][\d]"
+             promptMessage="Enter the start time in format HH:MM"
+             invalidMessage="Invalid format:  use HH:MM" /></td>
+    <td colspan="2">End: &nbsp;&nbsp;&nbsp;&nbsp; MM/DD/YYYY<input dojoType="dijit.form.DateTextBox" name="endDate"
+               id="tceEndDate" />
+        HH:MM<input dojoType="dijit.form.ValidationTextBox" name="endTime"
+             id="tceEndTime"
+             regExp="[0-2]?[\d]:[0-5][\d]"
+             promptMessage="Enter the end time in format HH:MM"
+             invalidMessage="Invalid format:  use HH:MM" /></td>
+  </tr>
+</tbody>
+</table>
+<div id="tceQueryScheduleGrid" dojoType="dojox.grid.DataGrid"
+      structure="tceQueryScheduleLayout" autoWidth="true" autoHeight="true"
+      elasticView="2">
+</div>
+</form>
+</body>
+</html>
