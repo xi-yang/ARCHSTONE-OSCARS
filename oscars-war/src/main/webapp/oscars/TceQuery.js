@@ -8,7 +8,8 @@ dojo.provide("oscars.TceQuery");
 
 // posts request to server to set parameters in initial create reservation form
 oscars.TceQuery.init = function () {
-    //
+    var oscarsStatus = dojo.byId("oscarsStatus");
+    oscarsStatus.numTceSchdules = 0;
 };
 
 // posts request to server to create reservation
@@ -73,6 +74,12 @@ oscars.TceQuery.resetFields = function () {
     formNode.reset();
     var nodes = dojo.query(".flexibleBandwidthDisplay");
     nodes[0].style.display = "none";
+    var oscarsStatus = dojo.byId("oscarsStatus");
+    if (oscarsStatus.numTceSchdules > 0) {
+        var scheduleGrid = dijit.byId("tceQueryScheduleGrid");
+        scheduleGrid.setStore(null);
+        oscarsStatus.numTceSchdules = 0;
+    }
 };
 
 oscars.TceQuery.flexibleBandwidthToggler = function (/*Event*/ evt) {
@@ -119,26 +126,27 @@ oscars.TceQuery.checkDateTimes = function () {
 // Add candidate schedule time window to data grid
 oscars.TceQuery.addSchedule = function () {
     // parse paratmers
-    var startDate = dijit.byId("tceStartTime");
-    var startTime = dijit.byId("tceStartDate");
+    var startDate = dijit.byId("tceStartDate");
+    var startTime = dijit.byId("tceStartTime");
     var endDate = dijit.byId("tceEndDate");
     var endTime = dijit.byId("tceEndTime");
     var scheduleGrid = dijit.byId("tceQueryScheduleGrid");
+    // TODO: verify start >= now and (end - start) >= duration 
     // push to grid
     var oscarsStatus = dojo.byId("oscarsStatus");
+    oscarsStatus.numTceSchdules += 1;
+    var item = {'id':oscarsStatus.numTceSchdules ,'startDate':startDate,'startTime':startTime,'endDate':endDate,'endTime':endTime};
     var store = scheduleGrid.store;
     if (store == null) {
         var data = {
             identifier: 'id',
             label: 'id',
-            items: [ {'id':1,'startDate':startDate,'startTime':startTime,'endDate':endDate,'endTime':endTime} ]
+            items: [item]
         };
         store = new dojo.data.ItemFileWriteStore({data: data});
         scheduleGrid.setStore(store);
-        oscarsStatus.numTceSchdules = 1;
     } else {
-        oscarsStatus.numTceSchdules += 1;
-        var item = {'id':oscarsStatus.numTceSchdules ,'startDate':startDate,'startTime':startTime,'endDate':endDate,'endTime':endTime};
         store.newItem(item);
-    } 
+        scheduleGrid.setStore(store);
+    }
 };

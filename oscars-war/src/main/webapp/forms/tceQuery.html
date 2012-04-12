@@ -6,11 +6,11 @@
     </script>
     <script type="text/javascript">
     var tceQueryScheduleLayout = [
-             {name: 'ID', field: 'id', width: "30em"},
-             {name: 'From Date', field: 'startDate', width: "30em"},
-             {name: 'Start Time', field: 'startTime', width: "30em"},
-             {name: 'To Date', field: 'endDate', width: "30em"},
-             {name: 'End Time', field: 'endTime', width: "30em"},
+             {name: 'ID', field: 'id', width: "10em"},
+             {name: 'From Date', field: 'startDate', width: "20em"},
+             {name: 'Start Time', field: 'startTime', width: "20em"},
+             {name: 'To Date', field: 'endDate', width: "20em"},
+             {name: 'End Time', field: 'endTime', width: "20em"},
         ];
     </script>
 </head>
@@ -20,7 +20,7 @@
 
 <p>Required inputs are bordered in green.</p>
 
-<table width="100%">
+<table width="auto">
   <tbody>
   <tr>
     <td width="15%">
@@ -31,13 +31,13 @@
         </script>
       </button>
     </td>
-    <td colspan="2">
+    <td>
         <input dojoType="dijit.form.CheckBox" id="flexibleBandwidth"
             name="productionType" type="checkbox" 
              onClick="oscars.TceQuery.flexibleBandwidthToggler"/>
       <label for="production">Request Flexible Bandwidth</label>
     </td>
-    <td>
+    <td align="center">
       <!-- straight form reset doesn't reset all fields properly -->
       <button dojoType="dijit.form.Button" id="tceQueryReset">
          RESET Form
@@ -49,12 +49,12 @@
   </tr>
   <tr>
     <td>Source</td>
-    <td class="required" colspan="2">
+    <td class="required">
       <input type="text" name="source" id="tceSource"
              dojoType="dijit.form.ValidationTextBox"
              required="true" />
     </td>
-    <td>VLAN (2-4094, any)</td>
+    <td align="center">VLAN (2-4094, any)</td>
     <td class="required">
       <input type="text" dojoType="dijit.form.TextBox" name="srcVlan"
              id="tceSrcVlan" />
@@ -62,13 +62,13 @@
   </tr>
   <tr>
     <td>Destination</td>
-    <td class="required" colspan="2">
+    <td class="required">
       <input type="text" name="destination" id="tceDestination"
              dojoType="dijit.form.ValidationTextBox" 
              required="true" />
     </td> 
-    <td class="required">VLAN (2-4094, any)</td>
-    <td>
+    <td align="center">VLAN (2-4094, any)</td>
+    <td class="required">
       <input type="text" dojoType="dijit.form.TextBox" name="destVlan"
              id="tceDestVlan" />
     </td>
@@ -83,8 +83,7 @@
            required="true"
            invalidMessage="Invalid bandwidth." />
      </td>
-     <td></td>
-    <td>Duration (Minutes)</td>
+    <td align="center">Duration (Minutes)</td>
     <td class="required">
       <input type="text" name="duration" id="tceDuration"
            dojoType="dijit.form.NumberTextBox"
@@ -104,8 +103,7 @@
            required="true"
            invalidMessage="Invalid bandwidth." />
      </td>
-    <td/>
-    <td>Min. Bandwidth (Mbps)</td>
+    <td align="center">Min. Bandwidth (Mbps)</td>
     <td>
       <input type="text" name="minBandwidth" id="minBandwidth"
            dojoType="dijit.form.NumberTextBox"
@@ -116,7 +114,7 @@
      </td>
     </tr>
   <tr>
-    <td width="15%">
+    <td width="10%">
       <button dojoType="dijit.form.Button" id="addSchedule">
          ADD Time Window
          <script type="dojo/method" event="onClick">
@@ -124,20 +122,16 @@
         </script>
       </button>
     </td>
-    <td  colspan="2">Start: &nbsp;&nbsp;&nbsp;&nbsp; MM/DD/YYYY<input dojoType="dijit.form.DateTextBox" name="startDate"
-               id="tceStartDate" />
-        HH:MM<input dojoType="dijit.form.ValidationTextBox" name="startTime"
-             id="tceStartTime"
-             regExp="[0-2]?[\d]:[0-5][\d]"
-             promptMessage="Enter the start time in format HH:MM"
-             invalidMessage="Invalid format:  use HH:MM" /></td>
-    <td colspan="2">End: &nbsp;&nbsp;&nbsp;&nbsp; MM/DD/YYYY<input dojoType="dijit.form.DateTextBox" name="endDate"
-               id="tceEndDate" />
-        HH:MM<input dojoType="dijit.form.ValidationTextBox" name="endTime"
-             id="tceEndTime"
-             regExp="[0-2]?[\d]:[0-5][\d]"
-             promptMessage="Enter the end time in format HH:MM"
-             invalidMessage="Invalid format:  use HH:MM" /></td>
+    <td>Start Date/Time:
+        <input dojoType="dijit.form.DateTextBox" name="startDate" id="tceStartDate" />
+        End Date/Time:
+        <input dojoType="dijit.form.DateTextBox" name="endDate" id="tceEndDate" />
+    </td>
+    <td>&nbsp;&nbsp;&nbsp;
+        <input type="text" dojoType="dijit.form.TimeTextBox" name="startTime" id="tceStartTime" />
+        &nbsp;&nbsp;&nbsp;
+        <input type="text" dojoType="dijit.form.TimeTextBox" name="endTime" id="tceEndTime" />
+    </td>
   </tr>
 </tbody>
 </table>
@@ -146,5 +140,9 @@
       elasticView="2">
 </div>
 </form>
+<div id="tceQueryResultGrid" dojoType="dojox.grid.DataGrid"
+      structure="tceQueryResultLayout" autoWidth="true" autoHeight="true"
+      elasticView="2">
+</div>
 </body>
 </html>
