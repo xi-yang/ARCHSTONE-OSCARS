@@ -19,6 +19,9 @@ oscars.TceQuery.sendQuery = function () {
     if (!legalDates) {
         return;
     }
+
+    // convert data before sending
+
     // check validity of rest of fields
     var valid = dijit.byId("tceQueryForm").validate();
     if (!valid) {
@@ -32,7 +35,7 @@ oscars.TceQuery.sendQuery = function () {
       handleAs: "json",
       load: oscars.TceQuery.handleReply,
       error: oscars.Form.handleError,
-      form: dijit.byId("TceQueryForm").domNode
+      form: dijit.byId("tceQueryForm").domNode
     });
 };
 
@@ -80,16 +83,21 @@ oscars.TceQuery.resetFields = function () {
         scheduleGrid.setStore(null);
         oscarsStatus.numTceSchdules = 0;
     }
+    var hiddenTceSchedules = dojo.byId("hiddenTceSchedules");
+    hiddenTceSchedules.value = "";
 };
 
 oscars.TceQuery.flexibleBandwidthToggler = function (/*Event*/ evt) {
     var cb = dijit.byId("flexibleBandwidth");
+    var hiddenFlexibleBw = dojo.byId("hiddenFlexibleBandwidth");
     // only one
     var nodes = dojo.query(".flexibleBandwidthDisplay");
     if (cb.checked) {
         nodes[0].style.display = "";
+        hiddenFlexibleBw.value="true";
     } else {
         nodes[0].style.display = "none";
+        hiddenFlexibleBw.value="false";
     }
 };
 
@@ -98,28 +106,15 @@ oscars.TceQuery.checkDateTimes = function () {
     var currentDate = new Date();
     var msg;
     var startSeconds =
-        oscars.DigitalClock.convertDateTime(currentDate, "startDate",
-                                            "startTime", true);
+        oscars.DigitalClock.convertDateTime(currentDate, "startDate", "startTime", true);
     // default is 4 minutes in the future
     var endDate = new Date(startSeconds*1000 + 60*4*1000);
     var endSeconds =
-            oscars.DigitalClock.convertDateTime(endDate, "endDate", "endTime",
-                                                true);
-    // additional checks for legality
-    // check for start time more than four minutes in the past
-    if (startSeconds < (currentDate.getTime()/1000 - 240)) {
-        msg = "Start time is more than four minutes in the past";
-    } else if (startSeconds > endSeconds) {
-        msg = "End time is before start time";
-    } else if (startSeconds == endSeconds) {
-        msg = "End time is the same as start time";
-    }
-    if (msg) {
-        var oscarsStatus = dojo.byId("oscarsStatus");
-        oscarsStatus.className = "failure";
-        oscarsStatus.innerHTML = msg;
-        return false;
-    }
+            oscars.DigitalClock.convertDateTime(endDate, "endDate", "endTime",true);
+
+    // TODO: verify timeSchedules 
+    // TODO: add default time window to hiddenTceSchedules if empty
+
     return true;
 };
 
@@ -134,8 +129,9 @@ oscars.TceQuery.addSchedule = function () {
     // TODO: verify start >= now and (end - start) >= duration 
     // push to grid
     var oscarsStatus = dojo.byId("oscarsStatus");
+    var hiddenTceSchedules = dojo.byId("hiddenTceSchedules");
     oscarsStatus.numTceSchdules += 1;
-    var item = {'id':oscarsStatus.numTceSchdules ,'startDate':startDate,'startTime':startTime,'endDate':endDate,'endTime':endTime};
+    var item = {'id':oscarsStatus.numTceSchdules ,'startDate':startDate.toString(),'startTime':startTime.toString(),'endDate':endDate.toString(),'endTime':endTime.toString()};
     var store = scheduleGrid.store;
     if (store == null) {
         var data = {
@@ -147,6 +143,11 @@ oscars.TceQuery.addSchedule = function () {
         scheduleGrid.setStore(store);
     } else {
         store.newItem(item);
-        scheduleGrid.setStore(store);
+        hiddenTceSchedules.value = hiddenTceSchedules.value + ";"
     }
+    hiddenTceSchedules.value = hiddenTceSchedules.value + startDate.toString();
+    hiddenTceSchedules.value = hiddenTceSchedules.value + startTime.toString();
+    hiddenTceSchedules.value = hiddenTceSchedules.value + ",";
+    hiddenTceSchedules.value = hiddenTceSchedules.value + endDate.toString();
+    hiddenTceSchedules.value = hiddenTceSchedules.value + endTime.toString();
 };

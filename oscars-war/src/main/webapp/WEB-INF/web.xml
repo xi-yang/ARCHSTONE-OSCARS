@@ -74,6 +74,10 @@
         <servlet-class>net.es.oscars.wbui.servlets.UserLogout</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>QueryTCE</servlet-name>
+        <servlet-class>net.es.oscars.wbui.servlets.QueryTCE</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>CreateReservation</servlet-name>
         <servlet-class>net.es.oscars.wbui.servlets.CreateReservation</servlet-class>
     </servlet>
@@ -165,6 +169,10 @@
     <servlet-mapping>
         <servlet-name>UserLogout</servlet-name>
         <url-pattern>/servlet/UserLogout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QueryTCE</servlet-name>
+        <url-pattern>/servlet/QueryTCE</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CreateReservation</servlet-name>

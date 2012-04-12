@@ -18,6 +18,9 @@
 <body>
 <form id="tceQueryForm" dojoType="dijit.form.Form">
 
+<input type="hidden" name="hiddenFlexibleBandwidth" id="hiddenFlexibleBandwidth" value="false" />
+<input type="hidden" name="hiddenTceSchedules" id="hiddenTceSchedules" value="" />
+
 <p>Required inputs are bordered in green.</p>
 
 <table width="auto">
@@ -33,7 +36,7 @@
     </td>
     <td>
         <input dojoType="dijit.form.CheckBox" id="flexibleBandwidth"
-            name="productionType" type="checkbox" 
+            name="flexibleBandwidth" type="checkbox" 
              onClick="oscars.TceQuery.flexibleBandwidthToggler"/>
       <label for="production">Request Flexible Bandwidth</label>
     </td>
@@ -50,27 +53,27 @@
   <tr>
     <td>Source</td>
     <td class="required">
-      <input type="text" name="source" id="tceSource"
+      <input type="text" name="tceSource" id="tceSource"
              dojoType="dijit.form.ValidationTextBox"
              required="true" />
     </td>
     <td align="center">VLAN (2-4094, any)</td>
     <td class="required">
-      <input type="text" dojoType="dijit.form.TextBox" name="srcVlan"
-             id="tceSrcVlan" />
+      <input type="text" dojoType="dijit.form.ValidationTextBox" name="tceSrcVlan" 
+             id="tceSrcVlan" regExp="\d+|any" />
     </td>
   </tr>
   <tr>
     <td>Destination</td>
     <td class="required">
-      <input type="text" name="destination" id="tceDestination"
+      <input type="text" name="tceDestination" id="tceDestination"
              dojoType="dijit.form.ValidationTextBox" 
              required="true" />
     </td> 
     <td align="center">VLAN (2-4094, any)</td>
     <td class="required">
-      <input type="text" dojoType="dijit.form.TextBox" name="destVlan"
-             id="tceDestVlan" />
+      <input type="text" dojoType="dijit.form.ValidationTextBox" name="tceDestVlan"
+             id="tceDestVlan" regExp="\d+|any" />
     </td>
   </tr>
   <tr>
@@ -96,27 +99,19 @@
     <tr class="flexibleBandwidthDisplay" style="display:none">
     <td>Max. Bandwidth (Mbps)</td>
     <td>
-      <input type="text" name="maxBandwidth" id="maxBandwidth"
-           dojoType="dijit.form.NumberTextBox"
-           constraints="{min:1,max:100000,places:0}"
-           promptMessage="Enter a value between 1 and 100000"
-           required="true"
-           invalidMessage="Invalid bandwidth." />
+      <input type="text" name="maxBandwidth" id="maxBandwidth" value="0"
+           dojoType="dijit.form.NumberTextBox" />
      </td>
     <td align="center">Min. Bandwidth (Mbps)</td>
     <td>
-      <input type="text" name="minBandwidth" id="minBandwidth"
-           dojoType="dijit.form.NumberTextBox"
-           constraints="{min:1,max:100000,places:0}"
-           promptMessage="Enter a value between 1 and 100000"
-           required="true"
-           invalidMessage="Invalid bandwidth." />
+      <input type="text" name="minBandwidth" id="minBandwidth" value="0"
+           dojoType="dijit.form.NumberTextBox" />
      </td>
     </tr>
   <tr>
     <td width="10%">
       <button dojoType="dijit.form.Button" id="addSchedule">
-         ADD Time Window
+         ADD Time-Window
          <script type="dojo/method" event="onClick">
             oscars.TceQuery.addSchedule();
         </script>
@@ -135,14 +130,14 @@
   </tr>
 </tbody>
 </table>
-<div id="tceQueryScheduleGrid" dojoType="dojox.grid.DataGrid"
-      structure="tceQueryScheduleLayout" autoWidth="true" autoHeight="true"
-      elasticView="2">
+<div id="tceQueryScheduleGrid" dojoType="dojox.grid.DataGrid" 
+      structure="tceQueryScheduleLayout" selectionMode="single" 
+      autoWidth="true" autoHeight="true"  elasticView="1">
 </div>
 </form>
 <div id="tceQueryResultGrid" dojoType="dojox.grid.DataGrid"
       structure="tceQueryResultLayout" autoWidth="true" autoHeight="true"
-      elasticView="2">
+      elasticView="1">
 </div>
 </body>
 </html>
