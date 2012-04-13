@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>net.es.oscars.pce.tce.client</groupId>
+  <artifactId>tceApiClient</artifactId>
+  <versioning>
+    <release>0.1</release>
+    <versions>
+      <version>0.1</version>
+    </versions>
+    <lastUpdated>20120413011650</lastUpdated>
+  </versioning>
+</metadata>
