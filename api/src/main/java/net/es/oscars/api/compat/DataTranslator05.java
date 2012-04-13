@@ -670,7 +670,7 @@ public class DataTranslator05 {
             ctrlPlanePathContent.setDirection(pathInfo06.getPath().getDirection());
         }
         if (pathInfo06.getPath().getLifetime() != null) {
-            ctrlPlanePathContent.setLifetime(pathInfo06.getPath().getLifetime());
+            ctrlPlanePathContent.getLifetime().addAll(pathInfo06.getPath().getLifetime());
         }
 
         pathInfo05.setPath(ctrlPlanePathContent);

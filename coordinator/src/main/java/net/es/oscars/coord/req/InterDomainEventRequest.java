@@ -389,7 +389,7 @@ public class InterDomainEventRequest extends CoordRequest <InterDomainEventConte
         int pathIndex = 0;
         mergedPath.setId(UUID.randomUUID().toString());
         mergedPath.setDirection(localPath.getDirection());//this will likely always be null
-        mergedPath.setLifetime(localPath.getLifetime());//this will likely always be null
+        mergedPath.getLifetime().addAll(localPath.getLifetime());//this will likely always be null
         //set hops before local domain
         for(; pathIndex < remotePath.getHop().size() ; pathIndex++){
             String linkId = NMWGParserUtil.normalizeURN(NMWGParserUtil.getURN(remotePath.getHop().get(pathIndex), NMWGParserUtil.LINK_TYPE));
