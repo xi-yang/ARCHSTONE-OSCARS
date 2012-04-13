@@ -16,10 +16,13 @@ import javax.servlet.http.*;
 import org.apache.log4j.*;
 import net.sf.json.JSONObject;
 
+import java.net.URL;
+
 import net.es.oscars.api.soap.gen.v06.*;
 import net.es.oscars.pce.soap.gen.v06.*;
 
 import net.es.oscars.pce.tce.client.*;
+import org.ogf.schema.network.topology.ctrlplane.*;
 
 import net.es.oscars.logging.ErrSev;
 import net.es.oscars.logging.OSCARSNetLogger;
@@ -78,6 +81,16 @@ public class QueryTCE extends HttpServlet {
             return;
         }
 
+        URL hostUrl = new URL("http://localhost:9020/tcePCE");
+        URL wsdlUrl = new URL("file://" + System.getenv("OSCARS_HOME") + "/PCERuntimeService/api/pce-0.6.wsdl");
+        try {
+            TCEApiClient apiClient = TCEApiClient.getClient(hostUrl, wsdlUrl, "MyTCEClient");
+            QueryTCEReplyHandler replyHandler = new QueryTCEReplyHandler();
+            apiClient.initClient(replyHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // test code
         String flexibleBandwidth = "flexibleBandwidth=";
         flexibleBandwidth += request.getParameter("hiddenFlexibleBandwidth");
@@ -86,7 +99,7 @@ public class QueryTCE extends HttpServlet {
         flexibleBandwidth += " tceScheules=";
         flexibleBandwidth += request.getParameter("hiddenTceSchedules");
 
-        // TODO: poll tcePCE callbackHandler
+        // TODO: poll QueryTCEReplyHandler
 
         HashMap<String, Object> outputMap = new HashMap<String, Object>();
 
