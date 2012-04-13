@@ -16,9 +16,10 @@ import javax.servlet.http.*;
 import org.apache.log4j.*;
 import net.sf.json.JSONObject;
 
-import oasis.names.tc.saml._2_0.assertion.AttributeType;
-import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneHopContent;
-import org.ogf.schema.network.topology.ctrlplane.CtrlPlanePathContent;
+import net.es.oscars.api.soap.gen.v06.*;
+import net.es.oscars.pce.soap.gen.v06.*;
+
+import net.es.oscars.pce.tce.client.*;
 
 import net.es.oscars.logging.ErrSev;
 import net.es.oscars.logging.OSCARSNetLogger;
@@ -27,14 +28,6 @@ import net.es.oscars.utils.clients.CoordClient;
 import net.es.oscars.utils.soap.OSCARSServiceException;
 import net.es.oscars.utils.svc.ServiceNames;
 import net.es.oscars.utils.topology.PathTools;
-import net.es.oscars.api.soap.gen.v06.ResCreateContent;
-import net.es.oscars.api.soap.gen.v06.PathInfo;
-import net.es.oscars.api.soap.gen.v06.VlanTag;
-import net.es.oscars.api.soap.gen.v06.Layer2Info;
-import net.es.oscars.api.soap.gen.v06.CreateReply;
-import net.es.oscars.api.soap.gen.v06.UserRequestConstraintType;
-import net.es.oscars.common.soap.gen.MessagePropertiesType;
-import net.es.oscars.common.soap.gen.SubjectAttributes;
 
 /**
  * Servlet to handle a QueryTCE request
