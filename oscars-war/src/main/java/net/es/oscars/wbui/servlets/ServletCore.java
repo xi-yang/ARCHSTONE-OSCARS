@@ -14,6 +14,7 @@ import net.es.oscars.utils.clients.AuthNPolicyClient;
 import net.es.oscars.utils.clients.AuthZClient;
 import net.es.oscars.utils.clients.AuthZPolicyClient;
 import net.es.oscars.utils.clients.CoordClient;
+import net.es.oscars.pce.tce.client.*;
 
 import net.es.oscars.utils.config.ConfigDefaults;
 import net.es.oscars.utils.config.ConfigException;
@@ -59,6 +60,7 @@ public class ServletCore {
     private AuthZClient authZClient             = null;
     private AuthZPolicyClient authZPolicyClient = null;
     private CoordClient coordClient             = null;
+    private TCEApiClient tceClient              = null;
     private String transId                      = "0000";
 
     /**
@@ -133,6 +135,7 @@ public class ServletCore {
         this.initAuthZClient();
         this.initAuthZPolicyClient();
         this.initCoordClient();
+        this.initTceClient();
         LOG.debug(netLogger.end(event));
     }
 
@@ -183,6 +186,12 @@ public class ServletCore {
      */
     public CoordClient getCoordClient() {
         return coordClient;
+    }
+    /**
+     * @return the tceClient
+     */
+    public TCEApiClient getTceClient() {
+        return tceClient;
     }
 
     /**
@@ -382,6 +391,16 @@ public class ServletCore {
             URL coordWsdl = cc.getWSDLPath(ServiceNames.SVC_COORD,null);
             this.coordClient =
                 CoordClient.getClient(this.coordHost, coordWsdl);
+        } catch (MalformedURLException e) {
+            throw new OSCARSServiceException (e);
+        }
+    }
+    private void initTceClient() throws OSCARSServiceException {
+        // Instantiates Coordinator client
+        try {
+            URL hostUrl = new URL("http://localhost:9020/tcePCE");
+            URL wsdlUrl = new URL("file://" + System.getenv("OSCARS_HOME") + "/PCERuntimeService/api/pce-0.6.wsdl");
+            this.tceClient = TCEApiClient.getClient(hostUrl, wsdlUrl, "WBUI-QueryTCE");
         } catch (MalformedURLException e) {
             throw new OSCARSServiceException (e);
         }

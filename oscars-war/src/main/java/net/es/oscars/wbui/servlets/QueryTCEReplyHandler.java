@@ -4,11 +4,12 @@
  */
 package net.es.oscars.wbui.servlets;
 
+import java.io.*;
+
+import net.sf.json.JSONObject;
 
 import net.es.oscars.pce.tce.client.*;
 import net.es.oscars.pce.soap.gen.v06.*;
-
-import java.io.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -21,8 +22,9 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
     
     // TODO: add callback data with synchronized protection
     
-    // TODO: add poll function to check and retrieve callback data
-    
+    PrintWriter servletWriter = null;
+    void setServletWriter(PrintWriter out) {  servletWriter = out; }
+
     @Override
     synchronized public void handleReply(String method, String globalReservationId, 
             String transactionId, PCEDataContent pceDataContent, PCEError pceError, 

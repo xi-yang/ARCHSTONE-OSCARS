@@ -14,14 +14,6 @@ oscars.TceQuery.init = function () {
 
 // posts request to server to create reservation
 oscars.TceQuery.sendQuery = function () {
-    var legalDates = oscars.TceQuery.checkDateTimes();
-    // status bar shows error message
-    if (!legalDates) {
-        return;
-    }
-
-    // convert data before sending
-
     // check validity of rest of fields
     var valid = dijit.byId("tceQueryForm").validate();
     if (!valid) {
@@ -101,23 +93,6 @@ oscars.TceQuery.flexibleBandwidthToggler = function (/*Event*/ evt) {
     }
 };
 
-//TODO: modify this for TCE query (request topology)
-oscars.TceQuery.checkDateTimes = function () {
-    var currentDate = new Date();
-    var msg;
-    var startSeconds =
-        oscars.DigitalClock.convertDateTime(currentDate, "startDate", "startTime", true);
-    // default is 4 minutes in the future
-    var endDate = new Date(startSeconds*1000 + 60*4*1000);
-    var endSeconds =
-            oscars.DigitalClock.convertDateTime(endDate, "endDate", "endTime",true);
-
-    // TODO: verify timeSchedules 
-    // TODO: add default time window to hiddenTceSchedules if empty
-
-    return true;
-};
-
 // Add candidate schedule time window to data grid
 oscars.TceQuery.addSchedule = function () {
     // parse paratmers
@@ -147,7 +122,7 @@ oscars.TceQuery.addSchedule = function () {
     }
     hiddenTceSchedules.value = hiddenTceSchedules.value + startDate.toString();
     hiddenTceSchedules.value = hiddenTceSchedules.value + startTime.toString();
-    hiddenTceSchedules.value = hiddenTceSchedules.value + ",";
+    hiddenTceSchedules.value = hiddenTceSchedules.value + "--";
     hiddenTceSchedules.value = hiddenTceSchedules.value + endDate.toString();
     hiddenTceSchedules.value = hiddenTceSchedules.value + endTime.toString();
 };
