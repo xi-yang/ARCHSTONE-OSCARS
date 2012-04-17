@@ -87,7 +87,8 @@ public class QueryTCE extends HttpServlet {
         try {
             ((QueryTCEReplyHandler)apiClient.getReplyHandler()).setServletWriter(out);
             CtrlPlaneTopologyContent topology = new CtrlPlaneTopologyContent();
-            topology.setId(transId);
+            String topoId = "TCE-topology-" + UUID.randomUUID().toString();
+            topology.setId(topoId);
             String idcId  = "https://localhost:8443/OSCARS"; 
             topology.setIdcId(idcId);
             List<CtrlPlanePathContent> pathList = topology.getPath();
@@ -132,7 +133,7 @@ public class QueryTCE extends HttpServlet {
             throw new OSCARSServiceException("error:  destination is a required parameter");
         }
         CtrlPlanePathContent path = new CtrlPlanePathContent ();
-        String pathId= "TCE-Path-" +UUID.randomUUID().toString();
+        String pathId= "TCE-path-" +UUID.randomUUID().toString();
         path.setId(pathId);
         List<CtrlPlaneHopContent> pathHops = path.getHop();
         String srcVlan = "";
@@ -150,10 +151,13 @@ public class QueryTCE extends HttpServlet {
             throw new OSCARSServiceException("error:  destination vlan is a required parameter");
         }
 
+        long lbw=0, lmax=0, lmin=0;
         String bandwidth = "";
         strParam = request.getParameter("tceBandwidth");
         if ((strParam != null) && !strParam.trim().equals("")) {
             bandwidth = strParam.trim();
+            lbw = Long.valueOf(bandwidth);
+            //bandwidth = Long.toString(lbw*1000000);
         } else {
             throw new OSCARSServiceException("error:  bandwidth is a required parameter");
         }
@@ -161,14 +165,25 @@ public class QueryTCE extends HttpServlet {
         strParam = request.getParameter("maxBandwidth");
         if ((strParam != null) && !strParam.trim().equals("")) {
             maxBandwidth = strParam.trim();
+            lmax = Long.valueOf(maxBandwidth);
+            //maxBandwidth = Long.toString(lmax*1000000);
         } 
         String minBandwidth = "0";
         strParam = request.getParameter("minBandwidth");
         if ((strParam != null) && !strParam.trim().equals("")) {
             minBandwidth = strParam.trim();
+            lmin = Long.valueOf(minBandwidth);
+            //minBandwidth = Long.toString(lmin*1000000);
         } 
+        if (lmax > 0 && lmax < lbw) {
+            throw new OSCARSServiceException("'max. bandwidth' must be either 0 or greater than 'bandwidth'");
+        }
+        if (lmin > 0 && lmin > lbw) {
+            throw new OSCARSServiceException("'min. bandwidth' must be either 0 or smaller than 'bandwidth'");
+        }
 
         CtrlPlaneHopContent sourceHop = new CtrlPlaneHopContent();
+        sourceHop.setId("source");
         //sourceHop.setLinkIdRef(source);
         CtrlPlaneLinkContent sourceLink = new CtrlPlaneLinkContent();
         sourceLink.setId(source);
@@ -193,6 +208,7 @@ public class QueryTCE extends HttpServlet {
         pathHops.add(sourceHop);
 
         CtrlPlaneHopContent destHop = new CtrlPlaneHopContent();
+        destHop.setId("destination");
         //destHop.setLinkIdRef(destination);
         CtrlPlaneLinkContent destLink = new CtrlPlaneLinkContent();
         destLink.setId(destination);
@@ -227,21 +243,21 @@ public class QueryTCE extends HttpServlet {
         if ((strParam != null) && !strParam.trim().equals("")) {
             tecScheudles = strParam.trim();
         } else {
-            throw new OSCARSServiceException("error: at least one TCE Schedule Time-Window is required");
+            throw new OSCARSServiceException("At least one TCE Schedule Time-Window is required");
         }
         strParam = request.getParameter("tceDuration");
         String duration;
         if ((strParam != null) && !strParam.trim().equals("")) {
             duration = strParam.trim();
         } else {
-            throw new OSCARSServiceException("error: duration is a required parameter");
+            throw new OSCARSServiceException("duration is a required parameter");
         }        
         String schedules[] = tecScheudles.split(";");
         for (String schedule: schedules) {
             Pattern p = Pattern.compile("(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})--(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})");
             Matcher matcher = p.matcher(schedule);
             if (!matcher.find()) {
-                throw new OSCARSServiceException("error: Invalid Time-Window format: " + schedule);
+                throw new OSCARSServiceException("Invalid Time-Window format: " + schedule);
             }
             String start = matcher.group(1);
             String end = matcher.group(2);

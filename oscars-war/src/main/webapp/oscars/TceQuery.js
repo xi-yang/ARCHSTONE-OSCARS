@@ -90,6 +90,11 @@ oscars.TceQuery.flexibleBandwidthToggler = function (/*Event*/ evt) {
     } else {
         nodes[0].style.display = "none";
         hiddenFlexibleBw.value="false";
+        var maxBw = dijit.byId("maxBandwidth");
+        maxBw.value = "0";
+        var minBw = dijit.byId("minBandwidth");
+        minBw.value = "0";
+        
     }
 };
 
