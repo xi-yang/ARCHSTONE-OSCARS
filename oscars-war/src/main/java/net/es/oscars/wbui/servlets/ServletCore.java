@@ -401,6 +401,8 @@ public class ServletCore {
             URL hostUrl = new URL("http://localhost:9020/tcePCE");
             URL wsdlUrl = new URL("file://" + System.getenv("OSCARS_HOME") + "/PCERuntimeService/api/pce-0.6.wsdl");
             this.tceClient = TCEApiClient.getClient(hostUrl, wsdlUrl, "WBUI-QueryTCE");
+            QueryTCEReplyHandler replyHandler = new QueryTCEReplyHandler();
+            tceClient.initClient(replyHandler);
         } catch (MalformedURLException e) {
             throw new OSCARSServiceException (e);
         }

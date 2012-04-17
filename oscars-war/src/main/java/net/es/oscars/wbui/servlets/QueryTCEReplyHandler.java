@@ -5,6 +5,7 @@
 package net.es.oscars.wbui.servlets;
 
 import java.io.*;
+import java.util.*;
 
 import net.sf.json.JSONObject;
 
@@ -20,57 +21,46 @@ import javax.xml.bind.Marshaller;
  */
 public class QueryTCEReplyHandler  extends TCECallbackHandler {
     
-    // TODO: add callback data with synchronized protection
-    
+    boolean isReady = false;
+
     PrintWriter servletWriter = null;
     void setServletWriter(PrintWriter out) {  servletWriter = out; }
+
+    synchronized boolean ready() {
+        return isReady;
+    }
 
     @Override
     synchronized public void handleReply(String method, String globalReservationId, 
             String transactionId, PCEDataContent pceDataContent, PCEError pceError, 
             String errorCode) throws RuntimeException  {
         
-        // retrieve basic info
-        System.out.println("Method="+ method+" GRI="+globalReservationId
-                + " transId=" + transactionId);
-        
-        // retrieve optionalConstraint as String
+        // retrieve error message
+        if (pceDataContent == null && pceError != null) {
+            Map<String, Object> errorMap = new HashMap<String, Object>();
+            errorMap.put("success", Boolean.FALSE);
+            errorMap.put("status", pceError.getMsg()+": "+pceError.getDetails());
+            errorMap.put("method", method);
+            JSONObject jsonObject = JSONObject.fromObject(errorMap);
+            if (servletWriter != null) {
+                servletWriter.println("{}&&" + jsonObject);
+            }
+        }
+
+        // retrieve topology
+        if (pceDataContent != null && pceDataContent.getTopology() != null && pceDataContent.getUserRequestConstraint().getPathInfo().getPathType().equalsIgnoreCase("ServiceTopology")) {
+            ;
+        }
+
+        // retrieve optionalConstraint
         if (pceDataContent != null && pceDataContent.getOptionalConstraint() != null 
                && !pceDataContent.getOptionalConstraint().isEmpty()
                && pceDataContent.getOptionalConstraint().get(0).getValue().getStringValue() != null
                && !pceDataContent.getOptionalConstraint().get(0).getValue().getStringValue().isEmpty()) {
             String optionalConstraint = pceDataContent.getOptionalConstraint().get(0).getValue().getStringValue();
             System.out.println( "PCE optionalConstraint = "+optionalConstraint);
-            try {
-                FileWriter fstream = new FileWriter("mxtcePceReply_OC.xml");
-                BufferedWriter out = new BufferedWriter(fstream);
-                out.write(optionalConstraint);
-                out.flush();
-                out.close();
-            } catch (Exception e) {
-                System.err.println("Fail to write to mxtcePceReply_OC.xml: " + e.getMessage());
-            }
-            if (pceDataContent.getTopology() != null && pceDataContent.getUserRequestConstraint().getPathInfo().getPathType().equalsIgnoreCase("ServiceTopology")) {
-                try {
-                    FileWriter fstream = new FileWriter("mxtcePceReply_ST.xml");
-                    BufferedWriter out = new BufferedWriter(fstream);
-                    // marshall jaxb object <topology> into XML
-                    JAXBContext jc = JAXBContext.newInstance("org.ogf.schema.network.topology.ctrlplane");
-                    Marshaller m = jc.createMarshaller();
-                    m.marshal(pceDataContent.getTopology(), out);
-                    out.flush();
-                    out.close();
-                } catch (Exception e) {
-                    System.err.println("Fail to write to mxtcePceReply_ST.xml: " + e.getMessage());
-                }
-            }
         }
 
-        // retrieve error message
-        if (pceDataContent == null && pceError != null) {
-            System.err.println( "PCEErrorMsg="+pceError.getMsg());
-        }
-        // Do not exit in real app
-        System.exit(0);
+        this.isReady = true;
     }   
 }

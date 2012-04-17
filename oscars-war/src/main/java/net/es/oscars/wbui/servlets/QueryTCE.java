@@ -85,14 +85,10 @@ public class QueryTCE extends HttpServlet {
         URL hostUrl = new URL("http://localhost:9020/tcePCE");
         URL wsdlUrl = new URL("file://" + System.getenv("OSCARS_HOME") + "/PCERuntimeService/api/pce-0.6.wsdl");
         try {
-            QueryTCEReplyHandler replyHandler = new QueryTCEReplyHandler();
-            apiClient.initClient(replyHandler);
-            replyHandler.setServletWriter(out);
+            ((QueryTCEReplyHandler)apiClient.getReplyHandler()).setServletWriter(out);
             CtrlPlaneTopologyContent topology = new CtrlPlaneTopologyContent();
             topology.setId(transId);
-            String idcId  = "https://";
-            idcId += PathTools.getLocalDomainId();
-            idcId += ":8443/OSCARS"; 
+            String idcId  = "https://localhost:8443/OSCARS"; 
             topology.setIdcId(idcId);
             List<CtrlPlanePathContent> pathList = topology.getPath();
             CtrlPlanePathContent path = this.assemblePath(request);
@@ -101,6 +97,13 @@ public class QueryTCE extends HttpServlet {
             assembleSchedules(request, scheduleList);
             PCEDataContent pceData = apiClient.assemblePceData(topology, transId);
             apiClient.sendPceCreate(transId, pceData);
+            for (int t = 0; t < 10; t++) {
+                Thread.sleep(3000); // 3 secs
+                if (((QueryTCEReplyHandler)apiClient.getReplyHandler()).ready()) {
+                    return;
+                }
+            }
+            throw new OSCARSServiceException("Timeout: no response from TcePCE server.");
         } catch (Exception ex) {
             ServletUtils.handleFailure(out, log, ex, methodName);
             return;
@@ -129,7 +132,7 @@ public class QueryTCE extends HttpServlet {
             throw new OSCARSServiceException("error:  destination is a required parameter");
         }
         CtrlPlanePathContent path = new CtrlPlanePathContent ();
-        String pathId= PathTools.getLocalDomainId() + "-TcePath-" +UUID.randomUUID().toString();
+        String pathId= "TCE-Path-" +UUID.randomUUID().toString();
         path.setId(pathId);
         List<CtrlPlaneHopContent> pathHops = path.getHop();
         String srcVlan = "";
@@ -210,7 +213,7 @@ public class QueryTCE extends HttpServlet {
         specInfo.setVlanRangeAvailability(srcVlan);
         specInfo.setSuggestedVLANRange(srcVlan);
         swcap.setSwitchingCapabilitySpecificInfo(specInfo);
-        sourceLink.getSwitchingCapabilityDescriptors().add(swcap);
+        destLink.getSwitchingCapabilityDescriptors().add(swcap);
         destHop.setLink(destLink);
         pathHops.add(destHop);
 
@@ -235,14 +238,14 @@ public class QueryTCE extends HttpServlet {
         }        
         String schedules[] = tecScheudles.split(";");
         for (String schedule: schedules) {
-            Pattern p = Pattern.compile("(\\d4-\\d2-\\d2T\\d2:\\d2:\\d2)--(\\d4-\\d2-\\d2T\\d2:\\d2:\\d2)");
+            Pattern p = Pattern.compile("(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})--(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})");
             Matcher matcher = p.matcher(schedule);
-            if (!matcher.matches()) {
+            if (!matcher.find()) {
                 throw new OSCARSServiceException("error: Invalid Time-Window format: " + schedule);
             }
             String start = matcher.group(1);
             String end = matcher.group(2);
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss z");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             try {
                 Date currentTime = new Date();
                 Date startDate = formatter.parse(start);
@@ -269,12 +272,18 @@ public class QueryTCE extends HttpServlet {
                 lft.setDuration(du);
                 scheduleList.add(lft);
                 // verify
-                if (tstart < tnow || tend <= tstart || (tend - tstart) < tduration) {
-                    throw new OSCARSServiceException("Invalid TCE Schedule Time-Window: " + schedule);
+                if (tstart < tnow) {
+                    throw new OSCARSServiceException("Start date/time has passed in current time " + currentTime.toString() + " in time-window " + schedule);
+                }
+                if (tend <= tstart) {
+                    throw new OSCARSServiceException("Start time should have been earlier than end time in time-window " + schedule);
+                }
+                if ((tend - tstart) < tduration) {
+                    throw new OSCARSServiceException("Requested duration " + duration + " (min) is bigger than time-window " + schedule);
                 }
             
             } catch (Exception e) {
-                throw new OSCARSServiceException("error: " + e.getLocalizedMessage());
+                throw new OSCARSServiceException(e.getMessage());
             }
             
         }
