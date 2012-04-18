@@ -17,11 +17,19 @@
              {name: 'Path Hops', field: 'hopText', width: "40em"},
              {name: 'Schedules', field: 'scheduleText', width: "40em"},
         ];
+    var tcePathHopsLayout = [
+             {name: 'ID', field: 'id', width: "20em"},
+             {name: 'Switching Type', field: 'swcapType', width: "10em"},
+             {name: 'Encoding Type', field: 'encoding', width: "10em"},
+             {name: 'Bandwidth', field: 'bandwidth', width: "10em"},
+             {name: 'VLAN', field: 'vlanRange', width: "10em"},
+        ];
     var tcePathScheduleLayout = [
              {name: 'ID', field: 'id', width: "10em"},
-             {name: 'Start Date/Time', field: 'start', width: "20em"},
-             {name: 'End Date/Time', field: 'end', width: "20em"},
-             {name: 'Duration', field: 'duration', width: "10em"},
+             {name: 'Start Date', field: 'startDate', width: "10em"},
+             {name: 'Start Time', field: 'startTime', width: "10em"},
+             {name: 'End Date', field: 'endDate', width: "10em"},
+             {name: 'End Time', field: 'endTime', width: "10em"},
         ];
     </script>
 </head>
@@ -151,12 +159,25 @@
       elasticView="1">
 </div>
 
+<div style="display:none" id="hiddenPathId"></div>
+<div style="display:none" id="hiddenPathBandwidth"></div>
+<div style="display:none" id="hiddenPathSrcVlan"></div>
+<div style="display:none" id="hiddenPathDstVlan"></div>
+<div style="display:none" id="hiddenScheduleStartDate"></div>
+<div style="display:none" id="hiddenScheduleStartTime"></div>
+<div style="display:none" id="hiddenScheduleEndDate"></div>
+<div style="display:none" id="hiddenScheduleEndTime"></div>
+
 <div dojoType="dijit.Dialog" id="pathSelectionDialog" 
      style="display:none; width:100em;"
-     title="Select the path schedule for reservation"
+     title="Path hops and available schedules"
      execute="oscars.TceQuery.reserveSelectedPath(arguments[0]);">
     <div id="pathSelectionDialogPathId" class="text"></div>
-    <div id="pathSelectionDialogHops" class="text"></div>
+    <div id="pathSelectionDialogHopsGrid" dojoType="dojox.grid.DataGrid" 
+          structure="tcePathHopsLayout" selectionMode="single" 
+          autoWidth="true" autoHeight="true"  elasticView="1">
+    </div>
+    <div align="center">Select a schedule for reservation</div>
     <div id="pathSelectionDialogScheduleGrid" dojoType="dojox.grid.DataGrid" 
           structure="tcePathScheduleLayout" selectionMode="single" 
           autoWidth="true" autoHeight="true"  elasticView="1">

@@ -51,34 +51,49 @@ oscars.TceQuery.handleReply = function (responseObject, ioArgs) {
     var oscarsStatus = dojo.byId("oscarsStatus");
     oscarsStatus.className = "success";
     oscarsStatus.innerHTML = "TCEQuery reply path list";
-    dojo.connect(pathGrid, "onRowClick", oscars.TceQuery.onResvRowSelect);
+    dojo.connect(pathGrid, "onRowClick", oscars.TceQuery.onPathRowSelect);
 };
 
 
 // select path based on grid row select
-oscars.TceQuery.onResvRowSelect = function (/*Event*/ evt) {
+oscars.TceQuery.onPathRowSelect = function (/*Event*/ evt) {
     var mainTabContainer = dijit.byId("mainTabContainer");
     var tceQueryPane = dijit.byId("tceQueryPane");
-    var pathGrid = dijit.byId("resvGrid");
+    var pathGrid = dijit.byId("tceQueryResultGrid");
     // get path id
     var item = evt.grid.selection.getFirstSelected();
-    var pathId = pathGrid.store.getValues(item, "id");
-    var hopText = pathGrid.store.getValues(item, "hopText");
+    var pathId = dijit.byId("hiddenPathId");
+    pathId.innerHTML = pathGrid.store.getValues(item, "id");
+    var pathBandwidth = dijit.byId("hiddenPathBandwidth");
+    pathBandwidth.innerHTML = pathGrid.store.getValues(item, "bandwidth");
+    var pathSrcVlan = dijit.byId("hiddenPathSrcVlan");
+    pathSrcVlan.innerHTML = pathGrid.store.getValues(item, "srcVlan");
+    var pathDstVlan = dijit.byId("hiddenPathDstVlan");
+    pathDstVlan.innerHTML = pathGrid.store.getValues(item, "dstVlan");
     var pathDialog = dijit.byId("pathSelectionDialog");
     pathDialog.show();
     var pathIdText = dojo.byId("pathSelectionDialogPathId");
-    pathIdText.innerHTML = pathId;
-    var pathHopsText = dojo.byId("pathSelectionDialogHops");
-    pathHopsText.innerHTML = hopText; // TODO: break into multiple lines
-    // init pathSelectGrid     var pathScheduleGrid = dijit.byId("pathSelectionDialogScheduleGrid");
+    pathIdText.innerHTML = "<br>Path : <b>" + pathId.innerHTML + "</b><br>";
+    // init pathHopsGrid
+    var pathHopsGrid = dojo.byId("pathSelectionDialogHopsGrid");
+    var hopsData = pathGrid.store.getValues(item, "hops");
+    var data1 = {
+        identifier: 'id',
+        label: 'id',
+        items: hopsData
+    };
+    var store1 = new dojo.data.ItemFileWriteStore({data: data2});
+    pathHopsGrid.setStore(store1);
+    // init pathScheduleGrid
+    var pathScheduleGrid = dijit.byId("pathSelectionDialogScheduleGrid");
     var scheduleData = pathGrid.store.getValues(item, "schedules");
-    var data = {
+    var data2 = {
         identifier: 'id',
         label: 'id',
         items: scheduleData
     };
-    var store = new dojo.data.ItemFileWriteStore({data: data});
-    pathScheduleGrid.setStore(store);
+    var store2 = new dojo.data.ItemFileWriteStore({data: data2});
+    pathScheduleGrid.setStore(store2);
     dojo.connect(pathScheduleGrid, "onRowClick", oscars.TceQuery.onPathScheduleSelect);
 };
 
@@ -86,16 +101,66 @@ oscars.TceQuery.onResvRowSelect = function (/*Event*/ evt) {
 oscars.TceQuery.onPathScheduleSelect = function (/*Event*/ evt) {
     var pathScheduleGrid = dijit.byId("pathSelectionDialogScheduleGrid");
     // get schedule id
-    var item = evt.grid.selection.getFirstSelected();
-    var scheduleId = pathGrid.store.getValues(item, "id");
-    // TODO: record selection on rowClick
+    item = evt.grid.selection.getFirstSelected();
+    // record selection on rowClick
+    var schduleStartDate = dijit.byId("hiddenScheduleStartDate");
+    var schduleStartTime = dijit.byId("hiddenScheduleStartTime");
+    var schduleEndDate = dijit.byId("hiddenScheduleEndDate");
+    var schduleEndTime = dijit.byId("hiddenScheduleEndTime");
+    schduleStartDate.innerHTML = pathGrid.store.getValues(item, "startDate");
+    schduleStartTime.innerHTML = pathGrid.store.getValues(item, "startTime");
+    schduleEndDate.innerHTML = pathGrid.store.getValues(item, "endDate");
+    schduleEndTime.innerHTML = pathGrid.store.getValues(item, "endTime");
 };
 
-// go to reservation create pane
+// go reservationCreate
 oscars.TceQuery.reserveSelectedPath = function (dialogFields) {
     var pathDialog = dijit.byId("pathSelectionDialog");
-    pathDialog.hide();    
-    // TODO: fill reservationCrate tab
+    pathDialog.hide();
+
+    // fill reservationCrate tab
+    oscars.ReservationCreate.resetFields();
+    var node = dijit.byId("hiddenPathId");
+    dijit.byId("reservationDescription").setValue("Reservation for "+node.innerHTML);
+    node = dojo.byId("hiddenPathBandwdidth");
+    dijit.byId("bandwidth").setValue(node.innerHTML);
+    node = dojo.byId("tceSource");
+    dijit.byId("source").setValue(node.value);
+    node = dojo.byId("tceDestination");
+    dijit.byId("destination").setValue(node.value);
+    // tagged VLAN only
+    var taggedSrcVlan = dojo.byId("taggedSrcVlan");
+    taggedSrcVlan.selectedIndex = 0;
+    var taggedDstVlan = dojo.byId("taggedDstVlan");
+    taggedDstVlan.selectedIndex = 0;
+    // set src VLAN
+    node = dojo.byId("hiddenPathSrcVlan");
+    var srcVlan = node.innerHTML;
+    dijit.byId("srcVlan").setValue(node.innerHTML);
+    // set dst VLAN
+    var cb = dijit.byId("sameVlan");
+    var nodes = dojo.query(".destVlan");
+    node = dojo.byId("hiddenPathDstVlan");
+    if (node.innerHTML == srcVlan) {
+        nodes[0].style.display = "none";
+        cb.setAttribute('Ded', true);
+        dijit.byId("destVlan").setValue("");
+    } else {
+        nodes[0].style.display = "";
+        cb.setAttribute('checked', false);
+        dijit.byId("destVlan").setValue(node.innerHTML);
+    }
+    // set schedule
+    node = dojo.byId("hiddenScheduleStartDate");
+    dijit.byId("startDate").setValue(node.innerHTML)
+    node = dojo.byId("hiddenScheduleStartTime");
+    dijit.byId("startTime").setValue(node.innerHTML)
+    node = dojo.byId("hiddenScheduleEndDate");
+    dijit.byId("endDate").setValue(node.innerHTML)
+    node = dojo.byId("hiddenScheduleEndTime");
+    dijit.byId("endTime").setValue(node.innerHTML)
+    // TODO: set explicit path ??
+    // switch to reservationCrate tab
     var mainTabContainer = dijit.byId("mainTabContainer");
     var reservationCreatePane = dijit.byId("reservationCreatePane");
     mainTabContainer.selectChild(reservationCreatePane);
@@ -103,8 +168,8 @@ oscars.TceQuery.reserveSelectedPath = function (dialogFields) {
 
 // take action when this tab is clicked on
 oscars.TceQuery.tabSelected = function (
-        /* ContentPane widget */ contentPane,
-        /* domNode */ oscarsStatus) {
+    /* ContentPane widget */ contentPane,
+    /* domNode */ oscarsStatus) {
     oscarsStatus.innerHTML = "TCE query form";
     var pathGrid = dijit.byId("tceQueryResultGrid");
     if (pathGrid && !oscarsState.pathGridInitialized) {
@@ -126,8 +191,24 @@ oscars.TceQuery.resetFields = function () {
         scheduleGrid.setStore(null);
         oscarsStatus.numTceSchdules = 0;
     }
-    var hiddenTceSchedules = dojo.byId("hiddenTceSchedules");
-    hiddenTceSchedules.value = "";
+    var node = dojo.byId("hiddenTceSchedules");
+    node.value = "";
+    node = dijit.byId("hiddenPathId");
+    node.innerHTML = "";
+    node = dijit.byId("hiddenPathBandwidth");
+    node.innerHTML = "";
+    node = dijit.byId("hiddenPathSrcVlan");
+    node.innerHTML = "";
+    node = dijit.byId("hiddenPathDstVlan");
+    node.innerHTML = "";
+    node = dijit.byId("hiddenScheduleStartDate");
+    node.innerHTML = "";
+    node = dijit.byId("hiddenScheduleStartTime");
+    node.innerHTML = "";
+    node = dijit.byId("hiddenScheduleEndDate");
+    node.innerHTML = "";
+    node = dijit.byId("hiddenScheduleEndTime");
+    node.innerHTML = "";
 };
 
 oscars.TceQuery.flexibleBandwidthToggler = function (/*Event*/ evt) {
@@ -157,8 +238,7 @@ oscars.TceQuery.addSchedule = function () {
     var endDate = dijit.byId("tceEndDate");
     var endTime = dijit.byId("tceEndTime");
     var scheduleGrid = dijit.byId("tceQueryScheduleGrid");
-    // TODO: verify start >= now and (end - start) >= duration 
-    // push to grid
+    // add to grid
     var oscarsStatus = dojo.byId("oscarsStatus");
     var hiddenTceSchedules = dojo.byId("hiddenTceSchedules");
     oscarsStatus.numTceSchdules += 1;

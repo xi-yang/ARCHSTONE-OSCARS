@@ -13,8 +13,7 @@ import net.es.oscars.pce.tce.client.*;
 import net.es.oscars.pce.soap.gen.v06.*;
 import org.ogf.schema.network.topology.ctrlplane.*;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -66,6 +65,7 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
                 pathMap.put("schedules", scheduleList);
                 String schedulsText = pathSchedules2String(path);
                 pathMap.put("scheduleText", schedulsText);
+                getVlans(path, pathMap);
             }
             replyMap.put("pathData", pathList);
         }
@@ -123,13 +123,47 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
                 lftObj.put("id", Integer.toBinaryString(i));
                 Date start = new Date(Long.valueOf(lft.getStart().getValue())*1000);
                 Date end = new Date(Long.valueOf(lft.getEnd().getValue())*1000);
-                lftObj.put("start", start.toString());
-                lftObj.put("end", end.toString());
+                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+                String startStr = formatter.format(start);
+                String startDateTime[] = startStr.split(" ");
+                String endStr = formatter.format(start);
+                String endDateTime[] = endStr.split(" ");
+                lftObj.put("startDate", startDateTime[0]);
+                lftObj.put("startTime", startDateTime[1]);
+                lftObj.put("endDate", endDateTime[0]);
+                lftObj.put("endTime", endDateTime[1]);
                 lftObj.put("duration", lft.getDuration().getValue());
                 scheduleList.add(lftObj);
             }
         }
         return hopList;
+    }
+    
+    private void getVlans(CtrlPlanePathContent path, HashMap<String,Object> pathMap) {
+        ArrayList<CtrlPlaneHopContent> hops = (ArrayList<CtrlPlaneHopContent>) path.getHop();
+        if (hops.size() == 0) {
+            pathMap.put("srcVlan", "any");
+        }
+        if (hops.size() <= 1) {
+            pathMap.put("dstVlan", "any");
+        } else {
+            CtrlPlaneHopContent srcHop = hops.get(0);
+            CtrlPlaneHopContent dstHop = hops.get(hops.size()-1);
+            CtrlPlaneLinkContent link = srcHop.getLink();
+            if (link == null || link.getSwitchingCapabilityDescriptors().size() == 0 
+                    || link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo() == null) {
+                pathMap.put("srcVlan", "any");            
+            } else {
+                pathMap.put("srcVlan", link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability());            
+            }
+            link = dstHop.getLink();
+            if (link == null || link.getSwitchingCapabilityDescriptors().size() == 0 
+                    || link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo() == null) {
+                pathMap.put("dstVlan", "any");            
+            } else {
+                pathMap.put("dstVlan", link.getSwitchingCapabilityDescriptors().get(0).getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability());            
+            }
+        }
     }
 
     private String pathHops2String(CtrlPlanePathContent path) {
