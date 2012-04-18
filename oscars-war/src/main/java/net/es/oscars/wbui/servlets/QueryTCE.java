@@ -243,7 +243,7 @@ public class QueryTCE extends HttpServlet {
         if ((strParam != null) && !strParam.trim().equals("")) {
             tecScheudles = strParam.trim();
         } else {
-            throw new OSCARSServiceException("At least one TCE Schedule Time-Window is required");
+            throw new OSCARSServiceException("at least one time-window entry is required");
         }
         strParam = request.getParameter("tceDuration");
         String duration;
@@ -257,7 +257,7 @@ public class QueryTCE extends HttpServlet {
             Pattern p = Pattern.compile("(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})--(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})");
             Matcher matcher = p.matcher(schedule);
             if (!matcher.find()) {
-                throw new OSCARSServiceException("Invalid Time-Window format: " + schedule);
+                throw new OSCARSServiceException("invalid time-window format: " + schedule);
             }
             String start = matcher.group(1);
             String end = matcher.group(2);
@@ -289,13 +289,13 @@ public class QueryTCE extends HttpServlet {
                 scheduleList.add(lft);
                 // verify
                 if (tstart < tnow) {
-                    throw new OSCARSServiceException("Start date/time has passed in current time " + currentTime.toString() + " in time-window " + schedule);
+                    throw new OSCARSServiceException("Start date/time has passed in time-window " + schedule);
                 }
                 if (tend <= tstart) {
-                    throw new OSCARSServiceException("Start time should have been earlier than end time in time-window " + schedule);
+                    throw new OSCARSServiceException("Start time must be earlier than end time in time-window " + schedule);
                 }
                 if ((tend - tstart) < tduration) {
-                    throw new OSCARSServiceException("Requested duration " + duration + " (min) is bigger than time-window " + schedule);
+                    throw new OSCARSServiceException("Requested duration " + duration + " (min) cannot be longer than time-window " + schedule);
                 }
             
             } catch (Exception e) {

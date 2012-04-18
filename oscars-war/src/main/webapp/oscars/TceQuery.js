@@ -37,29 +37,80 @@ oscars.TceQuery.handleReply = function (responseObject, ioArgs) {
     if (!oscars.Form.resetStatus(responseObject)) {
         return;
     }
-    // TODO: Display query status message
-    // TODO: If successful, add a new "tceQueryResult_n" Tab and transision to that
-    /*
-    var formNode = dijit.byId("reservationDetailsForm").domNode;
-    formNode.gri.value = responseObject.gri;
-    dojo.xhrPost({
-        url: 'servlet/QueryReservation',
-        handleAs: "json",
-        load: oscars.ReservationDetails.handleReply,
-        error: oscars.Form.handleError,
-        form: dijit.byId("reservationDetailsForm").domNode
-    });
-    // set tab to reservation details
-    var resvDetailsPane = dijit.byId("reservationDetailsPane");
-    mainTabContainer.selectChild(resvDetailsPane);
-   */
+
+    var pathGrid = dijit.byId("tceQueryResultGrid");
+    var data = {
+        identifier: 'id',
+        label: 'id',
+        items: responseObject.pathData
+    };
+    var store =
+        new dojo.data.ItemFileWriteStore({data: data});
+    pathGrid.setStore(store);
+    oscarsState.pathGridInitialized = true;
+    var oscarsStatus = dojo.byId("oscarsStatus");
+    oscarsStatus.className = "success";
+    oscarsStatus.innerHTML = "TCEQuery reply path list";
+    dojo.connect(pathGrid, "onRowClick", oscars.TceQuery.onResvRowSelect);
 };
+
+
+// select path based on grid row select
+oscars.TceQuery.onResvRowSelect = function (/*Event*/ evt) {
+    var mainTabContainer = dijit.byId("mainTabContainer");
+    var tceQueryPane = dijit.byId("tceQueryPane");
+    var pathGrid = dijit.byId("resvGrid");
+    // get path id
+    var item = evt.grid.selection.getFirstSelected();
+    var pathId = pathGrid.store.getValues(item, "id");
+    var hopText = pathGrid.store.getValues(item, "hopText");
+    var pathDialog = dijit.byId("pathSelectionDialog");
+    pathDialog.show();
+    var pathIdText = dojo.byId("pathSelectionDialogPathId");
+    pathIdText.innerHTML = pathId;
+    var pathHopsText = dojo.byId("pathSelectionDialogHops");
+    pathHopsText.innerHTML = hopText; // TODO: break into multiple lines
+    // init pathSelectGrid     var pathScheduleGrid = dijit.byId("pathSelectionDialogScheduleGrid");
+    var scheduleData = pathGrid.store.getValues(item, "schedules");
+    var data = {
+        identifier: 'id',
+        label: 'id',
+        items: scheduleData
+    };
+    var store = new dojo.data.ItemFileWriteStore({data: data});
+    pathScheduleGrid.setStore(store);
+    dojo.connect(pathScheduleGrid, "onRowClick", oscars.TceQuery.onPathScheduleSelect);
+};
+
+// select schedule from dialog
+oscars.TceQuery.onPathScheduleSelect = function (/*Event*/ evt) {
+    var pathScheduleGrid = dijit.byId("pathSelectionDialogScheduleGrid");
+    // get schedule id
+    var item = evt.grid.selection.getFirstSelected();
+    var scheduleId = pathGrid.store.getValues(item, "id");
+    // TODO: record selection on rowClick
+};
+
+// go to reservation create pane
+oscars.TceQuery.reserveSelectedPath = function (dialogFields) {
+    var pathDialog = dijit.byId("pathSelectionDialog");
+    pathDialog.hide();    
+    // TODO: fill reservationCrate tab
+    var mainTabContainer = dijit.byId("mainTabContainer");
+    var reservationCreatePane = dijit.byId("reservationCreatePane");
+    mainTabContainer.selectChild(reservationCreatePane);
+}
 
 // take action when this tab is clicked on
 oscars.TceQuery.tabSelected = function (
         /* ContentPane widget */ contentPane,
         /* domNode */ oscarsStatus) {
     oscarsStatus.innerHTML = "TCE query form";
+    var pathGrid = dijit.byId("tceQueryResultGrid");
+    if (pathGrid && !oscarsState.pathGridInitialized) {
+        oscarsStatus.className = "success";
+        oscarsStatus.innerHTML = "TCEQuery reply path list";
+    }
 };
 
 // resets all fields, including ones the standard reset doesn't catch

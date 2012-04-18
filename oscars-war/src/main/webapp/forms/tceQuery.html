@@ -12,6 +12,17 @@
              {name: 'To Date', field: 'endDate', width: "20em"},
              {name: 'End Time', field: 'endTime', width: "20em"},
         ];
+    var tceQueryResultGrid = [
+             {name: 'ID', field: 'id', width: "10em"},
+             {name: 'Path Hops', field: 'hopText', width: "40em"},
+             {name: 'Schedules', field: 'scheduleText', width: "40em"},
+        ];
+    var tcePathScheduleLayout = [
+             {name: 'ID', field: 'id', width: "10em"},
+             {name: 'Start Date/Time', field: 'start', width: "20em"},
+             {name: 'End Date/Time', field: 'end', width: "20em"},
+             {name: 'Duration', field: 'duration', width: "10em"},
+        ];
     </script>
 </head>
 
@@ -138,6 +149,21 @@
 <div id="tceQueryResultGrid" dojoType="dojox.grid.DataGrid"
       structure="tceQueryResultLayout" autoWidth="true" autoHeight="true"
       elasticView="1">
+</div>
+
+<div dojoType="dijit.Dialog" id="pathSelectionDialog" 
+     style="display:none; width:100em;"
+     title="Select the path schedule for reservation"
+     execute="oscars.TceQuery.reserveSelectedPath(arguments[0]);">
+    <div id="pathSelectionDialogPathId" class="text"></div>
+    <div id="pathSelectionDialogHops" class="text"></div>
+    <div id="pathSelectionDialogScheduleGrid" dojoType="dojox.grid.DataGrid" 
+          structure="tcePathScheduleLayout" selectionMode="single" 
+          autoWidth="true" autoHeight="true"  elasticView="1">
+    </div>
+    <div align="center">
+        <button dojoType="dijit.form.Button" type="submit">RESERVE</button>
+    </div>
 </div>
 </body>
 </html>
