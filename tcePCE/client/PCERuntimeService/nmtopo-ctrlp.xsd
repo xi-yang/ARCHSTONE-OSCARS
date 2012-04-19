@@ -3,8 +3,8 @@
 <xs:schema 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     elementFormDefault="qualified" 
-    targetNamespace="http://ogf.org/schema/network/topology/ctrlPlane/20080828/" 
-    xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20080828/">
+    targetNamespace="http://ogf.org/schema/network/topology/ctrlPlane/20110826/" 
+    xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20110826/">
   
     <xs:annotation>
       <xs:documentation>
@@ -37,7 +37,7 @@
   
   <xs:complexType name="CtrlPlaneDomainContent">
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="lifetime" type="CtrlPlane:Lifetime"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:node"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:port"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:link"/>
@@ -50,7 +50,7 @@
   
   <xs:complexType name="CtrlPlaneNodeContent">
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="lifetime" type="CtrlPlane:Lifetime"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
         <xs:element minOccurs="0" name="address" type="CtrlPlane:CtrlPlaneAddressContent" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:port"/>
       </xs:sequence>
@@ -63,7 +63,7 @@
   <xs:complexType name="CtrlPlanePortContent">
       <xs:sequence>
         <!-- <xs:group ref="CtrlPlane:CtrlPlaneCapacityContent"/> -->
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="lifetime" type="CtrlPlane:Lifetime"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
         <xs:element minOccurs="0" name="capacity" type="xs:string"/>
         <xs:element minOccurs="0" name="maximumReservableCapacity" type="xs:string"/>
         <xs:element minOccurs="0" name="minimumReservableCapacity" type="xs:string"/>
@@ -102,7 +102,7 @@
   
   <xs:complexType name="CtrlPlanePathContent">
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="lifetime" type="CtrlPlane:Lifetime" />
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime" />
         <xs:element minOccurs="0" maxOccurs="unbounded" name="hop" type="CtrlPlane:CtrlPlaneHopContent" />
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>

@@ -9,8 +9,6 @@ package net.es.oscars.pce.tce.client;
  * @author xyang
  */
 
-import java.io.*;
-import java.util.*;
 import org.apache.log4j.Logger;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -29,7 +27,6 @@ import net.es.oscars.common.soap.gen.MessagePropertiesType;
 import net.es.oscars.common.soap.gen.SubjectAttributes;
 import oasis.names.tc.saml._2_0.assertion.AttributeType;
 
-
 import net.es.oscars.utils.soap.OSCARSServiceException;
 import net.es.oscars.utils.soap.OSCARSService;
 import net.es.oscars.utils.soap.OSCARSSoapService;
@@ -37,9 +34,11 @@ import net.es.oscars.utils.soap.OSCARSSoapService;
 import net.es.oscars.logging.OSCARSNetLoggerize;
 import net.es.oscars.logging.OSCARSNetLogger;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.JAXBElement;
 
 import java.io.*;
-
 import java.util.*;
 
 import java.text.SimpleDateFormat;
@@ -85,8 +84,15 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
     }
 
     public void initClient(TCECallbackHandler replyHandler) throws OSCARSServiceException {
-        runtimeServer = TCERuntimeSoapServer.getInstance();
+        if (runtimeServer == null)
+            runtimeServer = TCERuntimeSoapServer.getInstance();
         runtimeServer.setCallbackHandler(replyHandler);
+        String cxfServerPath = System.getenv("OSCARS_HOME")+"/PCERuntimeService/conf/server-cxf-http.xml";
+        try {
+            OSCARSSoapService.setSSLBusConfiguration(new URL("file:" + cxfServerPath));
+        } catch (MalformedURLException e) {
+            throw new OSCARSServiceException(e.getMessage());
+        }
         runtimeEndpoint = (EndpointImpl)runtimeServer.startServer(false);
         Map soap = (Map)runtimeServer.getConfig().get("soap");
         if (soap != null && soap.get("publishTo") != null)
@@ -98,6 +104,10 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
             runtimeEndpoint.stop();
     }
 
+    public TCECallbackHandler getReplyHandler() {
+        return runtimeServer.getCallbackHandler();
+    }
+
     private String getAutoGRI() {
         return clientName+"-"+Integer.toString(griAutoNum++);
     }
@@ -106,20 +116,14 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
         return clientName+"-"+UUID.randomUUID().toString();
     }
 
-    public void sendPceCreate (ResCreateContent requestContent) 
+    public void sendPceCreate (String gri, PCEDataContent pceDataContent) 
             throws OSCARSServiceException {
+        if (gri == null || gri.isEmpty())
+            gri = getAutoGRI();
  
         OSCARSNetLogger netLogger = OSCARSNetLogger.getTlogger();
         String event = "sendPCECreate";
         LOG.info (netLogger.start(event));
-
-        PCEDataContent pceDataContent = new PCEDataContent();
-        pceDataContent.setUserRequestConstraint (requestContent.getUserRequestConstraint());
-        pceDataContent.setReservedConstraint (requestContent.getReservedConstraint());
-        if (requestContent.getOptionalConstraint() != null) {
-            // Optional constraints may not be defined.
-            pceDataContent.getOptionalConstraint().addAll(requestContent.getOptionalConstraint());
-        }
         
         // Build the PCECreate request
         String transId = this.getTransactionId();
@@ -134,7 +138,7 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
         msgProps.setOriginator(subjectAttrs);
         msgProps.setGlobalTransactionId(transId);
         queryContent.setMessageProperties(msgProps);
-        queryContent.setGlobalReservationId(requestContent.getGlobalReservationId());
+        queryContent.setGlobalReservationId(gri);
         queryContent.setPceName(PceName);
         queryContent.setCallBackEndpoint(CallBackEndpoint);
         queryContent.setId(transId);
@@ -234,13 +238,10 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
         LOG.info (netLogger.end(event));
     }
  
-    public ResCreateContent assembleResCreateContent(String srcUrn, String dstUrn, 
+    // standard p2p path request
+    public PCEDataContent assemblePceData(String srcUrn, String dstUrn, 
             long startTimeFromNow, long duration, int bandwidth, String vlan, 
-            String descr, String optionalConstraint, String gri) {
-        if (gri == null || gri.isEmpty())
-            gri = getAutoGRI();
-        ResCreateContent query = new ResCreateContent();
-        query.setGlobalReservationId(gri);
+            String optionalConstraint) {
         UserRequestConstraintType userConstraint = new UserRequestConstraintType();
         long currentTime = System.currentTimeMillis() / 1000;
         String pathId = "path-"+ UUID.randomUUID().toString();
@@ -266,12 +267,10 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
         pathContent.setId(pathId);
         pathInfo.setPath(pathContent);
         userConstraint.setPathInfo(pathInfo);
-        query.setDescription(descr);
-        query.setUserRequestConstraint(userConstraint);
         
         ReservedConstraintType reservedConstraint = new ReservedConstraintType();
-        userConstraint.setStartTime(currentTime + startTimeFromNow);
-        userConstraint.setEndTime(currentTime + startTimeFromNow + duration);
+        reservedConstraint.setStartTime(currentTime + startTimeFromNow);
+        reservedConstraint.setEndTime(currentTime + startTimeFromNow + duration);
         reservedConstraint.setBandwidth(bandwidth);
         pathInfo = new PathInfo();
         pathInfo.setLayer2Info(layer2Info);
@@ -283,15 +282,20 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
         pathContent.getHop().add(dstHop);
         pathInfo.setPath(pathContent);
         reservedConstraint.setPathInfo(pathInfo);        
-        query.setReservedConstraint(reservedConstraint);
-        OptionalConstraintValue optValue = new OptionalConstraintValue();
-        optValue.setStringValue(optionalConstraint);
-        OptionalConstraintType optType = new OptionalConstraintType();
-        optType.setValue(optValue);
-        optType.setCategory("api-experiment-stornet");
-        query.getOptionalConstraint().add(optType);
 
-        return query;
+        PCEDataContent pceDataContent = new PCEDataContent();
+        pceDataContent.setUserRequestConstraint(userConstraint);
+        pceDataContent.setReservedConstraint(reservedConstraint);
+        if (optionalConstraint != null) {
+            OptionalConstraintValue optValue = new OptionalConstraintValue();
+            optValue.setStringValue(optionalConstraint);
+            OptionalConstraintType optType = new OptionalConstraintType();
+            optType.setValue(optValue);
+            optType.setCategory("api-experiment-stornet");
+            pceDataContent.getOptionalConstraint().add(optType);
+        }
+
+        return pceDataContent;
     }
 
     public static CtrlPlaneHopContent makeEdgeHop(String linkId, String vlan) {
@@ -307,12 +311,8 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
         link.setId(linkId);
         ssi.setSuggestedVLANRange(vlan);
         ssi.setVlanRangeAvailability(vlan);
-        if (link.getSwitchingCapabilityDescriptors().size() == 0) {
-            scp.setSwitchingCapabilitySpecificInfo(ssi);
-            link.getSwitchingCapabilityDescriptors().add(scp);
-        } else {
-            link.getSwitchingCapabilityDescriptors().get(0).setSwitchingCapabilitySpecificInfo(ssi);
-        }
+        scp.setSwitchingCapabilitySpecificInfo(ssi);
+        link.getSwitchingCapabilityDescriptors().add(scp);
         hop.setLink(link);
         return hop;
     }
@@ -339,8 +339,59 @@ public class TCEApiClient extends OSCARSSoapService<PCEService, PCEPortType> {
         return topoBuilder.getTopology();
     }
 
+    // assemble ARCHSTONE Request Topology
+    public PCEDataContent assemblePceData(CtrlPlaneTopologyContent topology, 
+            String optionalConstraint) {
+        UserRequestConstraintType userConstraint = new UserRequestConstraintType();
+        String pathId = "path-"+ UUID.randomUUID().toString();
+        // startTime, endTime and bandwidth in userReqConstraint no longer matter
+        //userConstraint.setStartTime(0);
+        //userConstraint.setEndTime(0);
+        //userConstraint.setBandwidth(0);
+        PathInfo pathInfo = new PathInfo();
+        // no more Layer2Info or Layer3Info at in pathInfo of userReqConstraint
+        pathInfo.setPathType("RequestTopology");
+        pathInfo.setPathSetupMode("timer-automatic");
+        CtrlPlanePathContent pathContent = new CtrlPlanePathContent();
+        pathContent.setId(pathId);
+        pathInfo.setPath(pathContent);
+        userConstraint.setPathInfo(pathInfo);
+
+       
+        PCEDataContent pceDataContent = new PCEDataContent();
+        pceDataContent.setUserRequestConstraint(userConstraint);
+        if (optionalConstraint != null) {
+            OptionalConstraintValue optValue = new OptionalConstraintValue();
+            optValue.setStringValue(optionalConstraint);
+            OptionalConstraintType optType = new OptionalConstraintType();
+            optType.setValue(optValue);
+            optType.setCategory("api-experiment-stornet");
+            pceDataContent.getOptionalConstraint().add(optType);
+        }
+        
+        pceDataContent.setTopology(topology);
+        return pceDataContent;
+    }
+
+    // assemble ARCHSTONE Request Topology from XML string
+    public PCEDataContent assemblePceData(String reqTopologyXml, 
+            String optionalConstraint) {
+        //unmarshal handle <topology> XML with JAXB and add to pceData 
+        CtrlPlaneTopologyContent topology = null;
+        try {
+            StringReader reader = new StringReader(reqTopologyXml);
+            JAXBContext jc = JAXBContext.newInstance("org.ogf.schema.network.topology.ctrlplane");
+            Unmarshaller unm = jc.createUnmarshaller();
+            JAXBElement<CtrlPlaneTopologyContent> jaxbTopology = (JAXBElement<CtrlPlaneTopologyContent>) unm.unmarshal(reader);
+            topology = jaxbTopology.getValue();
+        } catch (Exception e) {
+            System.err.println("Error in unmarshling RequestTopology: " + e.getMessage());
+        }
+        return assemblePceData(topology, optionalConstraint);
+    }
+
     @SuppressWarnings("unchecked")
-    public static ResCreateContent configureYaml(String configFile, String optionalConstraint) {
+    public static ResCreateContent configureRequstFromYaml(String configFile, String optionalConstraint) {
         Map config = getConfiguration(configFile);
         Map store = (Map) config.get("create");
 
