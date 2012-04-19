@@ -63,7 +63,7 @@
 	
 	<xs:complexType name="CtrlPlaneNodeContent">
 		<xs:sequence>
-			<xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="lifetime" type="CtrlPlane:Lifetime"/>
 			<xs:element minOccurs="0" name="address" type="CtrlPlane:CtrlPlaneAddressContent" />
 			<xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:port"/>
 
