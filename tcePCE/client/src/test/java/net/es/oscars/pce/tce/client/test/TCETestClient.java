@@ -132,7 +132,7 @@ public class TCETestClient {
     public static void parseArgs(String args[])  throws java.io.IOException {
 
         OptionParser parser = new OptionParser();
-        parser.acceptsAll( asList( "h", "?" ), "show help then exit" );
+        parser.acceptsAll( asList( "?" ), "show help then exit" );
         OptionSpec<String> optHost = parser.accepts("h", "host: default='localhost'").withRequiredArg().ofType(String.class);
         OptionSpec<String> optPort = parser.accepts("p", "port: default='9020'").withRequiredArg().ofType(String.class);
         OptionSpec<String> optYamlFile = parser.accepts("y", "yaml config file path").withRequiredArg().ofType(String.class);
