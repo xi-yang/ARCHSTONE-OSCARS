@@ -1,4 +1,4 @@
 ---
 soap:
-    publishTo:  'http://localhost:10000/OSCARS/PCERuntimeService'
+    publishTo:  'http://localhost:10101/OSCARS/PCERuntimeService'
 

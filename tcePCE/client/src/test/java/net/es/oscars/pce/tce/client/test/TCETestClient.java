@@ -12,6 +12,7 @@ import net.es.oscars.pce.soap.gen.v06.*;
 import net.es.oscars.pce.tce.client.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.*;
 
 import javax.xml.bind.JAXBContext;
@@ -19,6 +20,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBElement;
 
 import org.ogf.schema.network.topology.ctrlplane.*;
+
+import static java.util.Arrays.asList;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 /**
  *
@@ -37,30 +43,15 @@ import org.ogf.schema.network.topology.ctrlplane.*;
 
 
 public class TCETestClient {
+    static String host = "localhost";
+    static String port = "9020";
+    static String yamlfile = "";
+    static String topofile = "";
+    static String optconsfile = "";
+
     public static void main(String args[]) {
         try {
-            String yamlfile="";
-            String topofile="";
-            String host = "localhost";
-            String port = "9020";
-            if (args.length == 1) {
-                yamlfile = args[0];
-            }
-            if (args.length == 2) {
-                yamlfile = args[0];
-                topofile = args[1];
-            }
-            if (args.length == 3) {
-                yamlfile = args[0];
-                host = args[1];
-                port = args[2];
-            }
-            if (args.length == 4) {
-                yamlfile = args[0];
-                topofile = args[1];
-                host = args[2];
-                port = args[3];
-            }
+            parseArgs(args);
             URL hostUrl = new URL("http://"+host+":"+port+"/tcePCE");
             URL wsdlUrl = new URL("file://"+System.getenv("OSCARS_HOME")+"/PCERuntimeService/api/pce-0.6.wsdl");
             TCEApiClient apiClient = TCEApiClient.getClient(hostUrl, wsdlUrl, "MyTCEClient");
@@ -70,30 +61,46 @@ public class TCETestClient {
             String dstUrn = "urn:ogf:network:domain=testdomain-1.net:node=node-3:port=port-4:link=link-1";
             String vlan = "any"; 
             String descr = "my test path computation run";
-            String optionalConstraint = "<coScheduleRequest id=\"schedule-123456789-option-1\">"
-                + "<startTime>_starttime_</startTime>"
-                + "<endTime>_endtime_</endTime>"
-                + "<minBandwidth>_bandwidth_</minBandwidth>"
-                + "<maxNumOfAltPaths>3</maxNumOfAltPaths>"
-                + "<bandwidthAvailabilityGraph>true</bandwidthAvailabilityGraph>"
-                + "<contiguousVlan>true</contiguousVlan>"
-                + "</coScheduleRequest>";
             String requestTopology = "<topology id=\"service-reply-seq-1234a\""
-                // must add the namespace
-                + " xmlns=\"http://ogf.org/schema/network/topology/ctrlPlane/20110826/\">" 
-                // skip the acutal contents
-                +  "</topology>";
+                    // must add the namespace
+                    + " xmlns=\"http://ogf.org/schema/network/topology/ctrlPlane/20110826/\">"
+                    // skip the acutal contents
+                    + "</topology>";
+            String optionalConstraint = "";
+            if (!optconsfile.isEmpty()) {
+                byte[] buffer = new byte[(int) new File(optconsfile).length()];
+                FileInputStream f = new FileInputStream(optconsfile);
+                f.read(buffer);
+                optionalConstraint = new String(buffer);
+                f.close();
+            } else {
+                optionalConstraint = "<coScheduleRequest id=\"schedule-123456789-option-1\">"
+                    + "<startTime>_starttime_</startTime>"
+                    + "<endTime>_endtime_</endTime>"
+                    + "<minBandwidth>_bandwidth_</minBandwidth>"
+                    + "<maxNumOfAltPaths>3</maxNumOfAltPaths>"
+                    + "<bandwidthAvailabilityGraph>true</bandwidthAvailabilityGraph>"
+                    + "<contiguousVlan>true</contiguousVlan>"
+                    + "<requireLinkBAG>true</requireLinkBAG>"
+                    + "</coScheduleRequest>";
+                HashMap<String, Long> times = TCEApiClient.parseTimes("now", "+00:00:30");
+                optionalConstraint = optionalConstraint.replaceAll("_starttime_", Long.toString(times.get("start")));
+                optionalConstraint = optionalConstraint.replaceAll("_endtime_", Long.toString(times.get("end")));
+                optionalConstraint = optionalConstraint.replaceAll("_bandwidth_", Integer.toString(100));                
+            }
+
             PCEDataContent pceData;
             ResCreateContent reqData;
             String gri =  null;
             if (yamlfile.isEmpty()) {
-                HashMap<String, Long> times = TCEApiClient.parseTimes("now", "+00:00:30");
-                optionalConstraint = optionalConstraint.replaceAll("_starttime_", Long.toString(times.get("start")));
-                optionalConstraint = optionalConstraint.replaceAll("_endtime_", Long.toString(times.get("end")));
-                optionalConstraint = optionalConstraint.replaceAll("_bandwidth_", Integer.toString(100));
-                if (requestTopology.isEmpty()) {
+                if (topofile.isEmpty()) {
                     pceData = apiClient.assemblePceData(srcUrn, dstUrn, 0, 1800, 100, vlan, optionalConstraint);
                 } else {
+                    byte[] buffer = new byte[(int) new File(topofile).length()];
+                    FileInputStream f = new FileInputStream(topofile);
+                    f.read(buffer);
+                    requestTopology = new String(buffer);
+                    f.close();
                     pceData = apiClient.assemblePceData(requestTopology, optionalConstraint);
                 }
             } else {
@@ -122,5 +129,34 @@ public class TCETestClient {
             e.printStackTrace();
         }
     }
+    public static void parseArgs(String args[])  throws java.io.IOException {
+
+        OptionParser parser = new OptionParser();
+        parser.acceptsAll( asList( "h", "?" ), "show help then exit" );
+        OptionSpec<String> optHost = parser.accepts("h", "host: default='localhost'").withRequiredArg().ofType(String.class);
+        OptionSpec<String> optPort = parser.accepts("p", "port: default='9020'").withRequiredArg().ofType(String.class);
+        OptionSpec<String> optYamlFile = parser.accepts("y", "yaml config file path").withRequiredArg().ofType(String.class);
+        OptionSpec<String> optTopoFile = parser.accepts("t", "request topology file path").withRequiredArg().ofType(String.class);
+        OptionSpec<String> optOptConsFile = parser.accepts("o", "optional constraint file path").withRequiredArg().ofType(String.class);
+        OptionSet options = parser.parse( args );
+
+        // check for help
+        if ( options.has( "?" ) ) {
+            parser.printHelpOn( System.out );
+            System.exit(0);
+        }
+        if (options.has(optHost) ){
+            host = options.valueOf(optHost);
+        } 
+        if (options.has(optYamlFile) ){
+            yamlfile = options.valueOf(optYamlFile);
+        } 
+        if (options.has(optTopoFile) ){
+            topofile = options.valueOf(optTopoFile);
+        } 
+        if (options.has(optOptConsFile) ){
+            optconsfile = options.valueOf(optOptConsFile);
+        } 
+   }
 }
  
