@@ -2,7 +2,7 @@ package net.es.oscars.pce.tce;
 
 public class CodeNumber {
 	public static final byte ASN_LONG_LEN = (byte)0x80;
-	
+		
 	public static final byte BOOLEAN = (byte)0x01;
 	public static final byte INTEGER_NUM = (byte)0x02;
 	public static final byte ENUMERATED_NUM = (byte)0x03;
@@ -13,6 +13,7 @@ public class CodeNumber {
     public static final byte PCE_USERCONSTRAINT = (byte)0xF1;
     public static final byte PCE_RESVCONSTRAINT = (byte)0xF2;
     public static final byte PCE_OPTICONSTRAINT_COSCHEDULEREQ = (byte)0xF3;
+    public static final byte PCE_MULTIPLE_PATH = (byte)0xF4;
         
     public static final byte PCE_REPLY = (byte)0xF8;
     public static final byte PCE_REGU_REPLY = (byte)0xF9;
@@ -98,6 +99,14 @@ public class CodeNumber {
 	public static final byte PCE_UPPERLAYERSWITCHINGTYPE = (byte)0xC6;
 	public static final byte PCE_UPPERLAYERENCODINGTYPE = (byte)0xC7;
 	public static final byte PCE_MAXADAPTBANDWIDTH = (byte)0xC8;
+	
+	public static final byte PCE_NEXTHOP_LENGTH = (byte)0xC9;
+	public static final byte PCE_NEXTHOP = (byte)0xCA;
+	public static final byte PCE_LIFETIME_NUM = (byte)0xCB;
+	public static final byte PCE_LIFETIME = (byte)0xCC;
+	public static final byte PCE_LIFETIME_START = (byte)0xCD;
+	public static final byte PCE_LIFETIME_END = (byte)0xCE;
+	public static final byte PCE_LIFETIME_DUR = (byte)0xCF;
 
 	
 

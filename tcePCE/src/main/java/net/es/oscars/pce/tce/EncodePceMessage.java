@@ -19,49 +19,7 @@ import javax.xml.transform.dom.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
-public class EncodePceMessage {
-	
-    public static final byte PCE_USERCONSTRAINT = (byte)0xF1;
-    public static final byte PCE_RESVCONSTRAINT = (byte)0xF2;
-	
-	public static final byte PCE_GRI = (byte)0x81;
-	public static final byte PCE_LOGIN = (byte)0x82;
-	public static final byte PCE_LAYER = (byte)0x83;
-	public static final byte PCE_SOURCE = (byte)0x84;
-	public static final byte PCE_DESTINATION = (byte)0x85;
-	public static final byte PCE_BANDWIDTH = (byte)0x86;
-	public static final byte PCE_DESCRIPTION = (byte)0x87;
-	public static final byte PCE_STARTTIME = (byte)0x88;
-	public static final byte PCE_ENDTIME = (byte)0x89;
-	public static final byte PCE_PATHSETUPMODEL = (byte)0x8A;
-	public static final byte PCE_PATHTYPE = (byte)0x8B;
-	public static final byte PCE_SRCVLAN = (byte)0x8C;
-	public static final byte PCE_DESTVLAN = (byte)0x8D;
-	public static final byte PCE_PATH = (byte)0x8E;
-	public static final byte PCE_SRCIPPORT = (byte)0x8F;
-	public static final byte PCE_DESTIPPORT = (byte)0x90;
-	public static final byte PCE_L3_PROTOCOL = (byte)0x91;
-	public static final byte PCE_L3_DSCP = (byte)0x92;
-	public static final byte PCE_MPLS_BURSTLIMIT = (byte)0x93;
-	public static final byte PCE_MPLS_LSPCLASS = (byte)0x94;
-
-	
-	public static final byte PCE_PATH_ID = (byte)0x95;
-	public static final byte PCE_HOP_ID = (byte)0x96;
-	public static final byte PCE_LINK_ID = (byte)0x97;
-	public static final byte PCE_SWITCHINGCAPTYPE = (byte)0x98;
-	public static final byte PCE_SWITCHINGENCTYPE = (byte)0x99;
-	public static final byte PCE_SWITCHINGVLANRANGEAVAI = (byte)0x9A;
-	public static final byte PCE_PATH_LENGTH = (byte)0x9B;
-	public static final byte PCE_SWITCHINGVLANRANGESUGG = (byte)0x9C;
-	public static final byte PCE_VLANTRANSLATION = (byte)0x9D;
-	public static final byte PCE_SWITCHINGVLANRANGEASSI = (byte)0x9E;
-	public static final byte PCE_CAPACITY = (byte)0x9F;
-	public static final byte PCE_MTU = (byte)0xA0;
-
-	
-	public static final byte ASN_LONG_LEN = (byte)0x80;
-	
+public class EncodePceMessage {	
 	
 	byte[] pceEncodeArray;
 		
@@ -69,12 +27,13 @@ public class EncodePceMessage {
 		this.pceEncodeArray = null;		
 	}
 	
+	
 	public void encodeUserConstraint (String gri, UserRequestConstraintType userCons)throws OSCARSServiceException
 	{		
 		byte[] encodeBuffHead;
 		byte[] encodeBuffBody;
 		byte[] encodeBuff;
-		byte pceType = PCE_USERCONSTRAINT;
+		byte pceType = CodeNumber.PCE_USERCONSTRAINT;
 		PrimitiveEncoder priEncoder = new PrimitiveEncoder();
 		int buffLen;
 	    long startTime = userCons.getStartTime();
@@ -88,10 +47,10 @@ public class EncodePceMessage {
 	    	throw new OSCARSServiceException("The request has both layer2 and layer3 information");
 	    }
 	    
-	    priEncoder.encodeString(PCE_GRI, gri);
-	    priEncoder.encodeLong(PCE_STARTTIME, startTime);
-	    priEncoder.encodeLong(PCE_ENDTIME, endTime);
-	    priEncoder.encodeLong(PCE_BANDWIDTH, bandwidth);	    
+	    priEncoder.encodeString(CodeNumber.PCE_GRI, gri);
+	    priEncoder.encodeLong(CodeNumber.PCE_STARTTIME, startTime);
+	    priEncoder.encodeLong(CodeNumber.PCE_ENDTIME, endTime);
+	    priEncoder.encodeLong(CodeNumber.PCE_BANDWIDTH, bandwidth);	    
 	    
 	    if(pathInf.getLayer2Info()!=null){
 	    	Layer2Info layer2Info = pathInf.getLayer2Info();
@@ -102,11 +61,11 @@ public class EncodePceMessage {
 	    	String srcVtagValue = srcVtag.getValue();
 	    	String destVtagValue = destVtag.getValue();
 
-	    	priEncoder.encodeString(PCE_LAYER, "2");
-	    	priEncoder.encodeString(PCE_SOURCE, srcEndPoint);
-	    	priEncoder.encodeString(PCE_DESTINATION, destEndPoint);
-	    	priEncoder.encodeString(PCE_SRCVLAN, srcVtagValue);
-	    	priEncoder.encodeString(PCE_DESTVLAN, destVtagValue);
+	    	priEncoder.encodeString(CodeNumber.PCE_LAYER, "2");
+	    	priEncoder.encodeString(CodeNumber.PCE_SOURCE, srcEndPoint);
+	    	priEncoder.encodeString(CodeNumber.PCE_DESTINATION, destEndPoint);
+	    	priEncoder.encodeString(CodeNumber.PCE_SRCVLAN, srcVtagValue);
+	    	priEncoder.encodeString(CodeNumber.PCE_DESTVLAN, destVtagValue);
 	    }	    
 	    
 	    if(pathInf.getLayer3Info() != null){
@@ -118,25 +77,25 @@ public class EncodePceMessage {
 	    	int srcIpPort = layer3Info.getSrcIpPort();
 	    	int destIpPort = layer3Info.getDestIpPort();
 	    	
-	    	priEncoder.encodeString(PCE_LAYER, "3");
-	    	priEncoder.encodeString(PCE_SOURCE, srcHost);
-	    	priEncoder.encodeString(PCE_DESTINATION, destHost);
-	    	priEncoder.encodeInteger(PCE_SRCIPPORT, srcIpPort);
-	    	priEncoder.encodeInteger(PCE_DESTIPPORT, destIpPort);
-	    	priEncoder.encodeString(PCE_L3_PROTOCOL, protocol);
-	    	priEncoder.encodeString(PCE_L3_DSCP, dscp);	    	
+	    	priEncoder.encodeString(CodeNumber.PCE_LAYER, "3");
+	    	priEncoder.encodeString(CodeNumber.PCE_SOURCE, srcHost);
+	    	priEncoder.encodeString(CodeNumber.PCE_DESTINATION, destHost);
+	    	priEncoder.encodeInteger(CodeNumber.PCE_SRCIPPORT, srcIpPort);
+	    	priEncoder.encodeInteger(CodeNumber.PCE_DESTIPPORT, destIpPort);
+	    	priEncoder.encodeString(CodeNumber.PCE_L3_PROTOCOL, protocol);
+	    	priEncoder.encodeString(CodeNumber.PCE_L3_DSCP, dscp);	    	
 	    }
 	    
-	    priEncoder.encodeString(PCE_PATHSETUPMODEL, pathSetupMode);
-	    priEncoder.encodeString(PCE_PATHTYPE, pathType);
+	    priEncoder.encodeString(CodeNumber.PCE_PATHSETUPMODEL, pathSetupMode);
+	    priEncoder.encodeString(CodeNumber.PCE_PATHTYPE, pathType);
 	    
 	    if(pathInf.getMplsInfo() != null){
 	    	MplsInfo mplsInfo = pathInf.getMplsInfo();
 	    	int burstLimit = mplsInfo.getBurstLimit();
 	    	String lspClass = mplsInfo.getLspClass();
 	    	
-	    	priEncoder.encodeInteger(PCE_MPLS_BURSTLIMIT, burstLimit);
-	    	priEncoder.encodeString(PCE_MPLS_LSPCLASS, lspClass);
+	    	priEncoder.encodeInteger(CodeNumber.PCE_MPLS_BURSTLIMIT, burstLimit);
+	    	priEncoder.encodeString(CodeNumber.PCE_MPLS_LSPCLASS, lspClass);
 	    }
 	    
 	    priEncoder.buffPrune();
@@ -156,7 +115,7 @@ public class EncodePceMessage {
 		byte[] encodeBuffHead;
 		byte[] encodeBuffBody;
 		byte[] encodeBuff;
-		byte pceType = PCE_RESVCONSTRAINT;
+		byte pceType = CodeNumber.PCE_RESVCONSTRAINT;
 		PrimitiveEncoder priEncoder = new PrimitiveEncoder();
 		int buffLen;
 	    long startTime = resvCons.getStartTime();
@@ -168,89 +127,9 @@ public class EncodePceMessage {
 	    	throw new OSCARSServiceException("The request has both layer2 and layer3 information");
 	    }
 
-	    /*
-	    priEncoder.encodeLong(PCE_STARTTIME, startTime);
-	    priEncoder.encodeLong(PCE_ENDTIME, endTime);
-	    priEncoder.encodeInteger(PCE_BANDWIDTH, bandwidth);
-	    */	
-	    
 	    if(pathInf!=null){
 	    	//System.out.println("path info not empty");
-	    	/*
-		    if(pathInf.getPathSetupMode()!=null){
-		    	String pathSetupMode = pathInf.getPathSetupMode();
-		    	priEncoder.encodeString(PCE_PATHSETUPMODEL, pathSetupMode);
-		    }
-
-		    if(pathInf.getPathType()!=null){
-		    	String pathType = pathInf.getPathType();
-		    	priEncoder.encodeString(PCE_PATHTYPE, pathType);
-		    }
-		    
-		   
-		    if(pathInf.getLayer2Info()!=null){
-		    	
-		    	System.out.println("layer 2 not empty");
-		    	
-		    	Layer2Info layer2Info = pathInf.getLayer2Info();
-		    	
-		    	VlanTag srcVtag = layer2Info.getSrcVtag();
-		    	VlanTag destVtag = layer2Info.getDestVtag();
-		    	String srcEndPoint = layer2Info.getSrcEndpoint();
-		    	String destEndPoint = layer2Info.getDestEndpoint();
-		    	String srcVtagValue = srcVtag.getValue();
-		    	String destVtagValue = destVtag.getValue();
-		    	
-		    	//System.out.println("srcVtag"+srcVtag+" "+"destVtag"+destVtag);
-		    	System.out.println("srcEndPoint"+srcEndPoint+" "+"destEndPoint"+destEndPoint);
-		    	System.out.println("srcVtagValue"+srcVtagValue+" "+"destVtagValue"+destVtagValue);
-		    	
-		    	
-		    	priEncoder.encodeString(PCE_LAYER, "2");
-		    	priEncoder.encodeString(PCE_SOURCE, srcEndPoint);
-		    	priEncoder.encodeString(PCE_DESTINATION, destEndPoint);
-		    	priEncoder.encodeString(PCE_SRCVLAN, srcVtagValue);
-		    	priEncoder.encodeString(PCE_DESTVLAN, destVtagValue);
-		    	
-		    }
-		    
-		   
-		    
-		    if(pathInf.getLayer3Info() != null){
-		    	
-		    	System.out.println("layer 3 not empty");
-
-		    	Layer3Info layer3Info = pathInf.getLayer3Info();
-		    	String srcHost = layer3Info.getSrcHost();
-		    	String destHost = layer3Info.getDestHost();
-		    	String protocol = layer3Info.getProtocol();
-		    	String dscp = layer3Info.getDscp();
-		    	int srcIpPort = layer3Info.getSrcIpPort();
-		    	int destIpPort = layer3Info.getDestIpPort();
-		    	
-		    	priEncoder.encodeString(PCE_LAYER, "3");
-		    	priEncoder.encodeString(PCE_SOURCE, srcHost);
-		    	priEncoder.encodeString(PCE_DESTINATION, destHost);
-		    	priEncoder.encodeInteger(PCE_SRCIPPORT, srcIpPort);
-		    	priEncoder.encodeInteger(PCE_DESTIPPORT, destIpPort);
-		    	priEncoder.encodeString(PCE_L3_PROTOCOL, protocol);
-		    	priEncoder.encodeString(PCE_L3_DSCP, dscp);	    	
-		    }
-		    
-
-		    if(pathInf.getMplsInfo() != null){
-
-		    	System.out.println("mpls not empty");
-		    	
-		    	MplsInfo mplsInfo = pathInf.getMplsInfo();
-		    	int burstLimit = mplsInfo.getBurstLimit();
-		    	String lspClass = mplsInfo.getLspClass();
-		    	
-		    	priEncoder.encodeInteger(PCE_MPLS_BURSTLIMIT, burstLimit);
-		    	priEncoder.encodeString(PCE_MPLS_LSPCLASS, lspClass);
-		    }
-	    	*/
-	    	
+    	
 	    	
 	    	if(pathInf.getPath()!=null){
 	    		
@@ -260,13 +139,13 @@ public class EncodePceMessage {
 	    		if(path.getId()!=null){
 	    			String pathId = path.getId();
 
-	    			priEncoder.encodeString(PCE_PATH_ID, pathId);
+	    			priEncoder.encodeString(CodeNumber.PCE_PATH_ID, pathId);
 	    		}
 
 	    		
 	    		if(path.getHop()!=null){
 	    			List<CtrlPlaneHopContent> hop = path.getHop();
-	    			priEncoder.encodeInteger(PCE_PATH_LENGTH, hop.size());
+	    			priEncoder.encodeInteger(CodeNumber.PCE_PATH_LENGTH, hop.size());
 	    			//System.out.println("hop="+hop.size());
 	    			
 	    			CtrlPlaneHopContent oneHop;
@@ -276,7 +155,7 @@ public class EncodePceMessage {
 	    					 String hopId = oneHop.getId();
 	    					 //System.out.println("hop_id="+hopId);
 
-	    					 priEncoder.encodeString(PCE_HOP_ID, hopId);
+	    					 priEncoder.encodeString(CodeNumber.PCE_HOP_ID, hopId);
 	    				 }
     					 
 
@@ -286,7 +165,7 @@ public class EncodePceMessage {
 	    						 String linkId = link.getId();
 	    						 //System.out.println("link_id="+linkId);
 	    						 
-	    						 priEncoder.encodeString(PCE_LINK_ID, linkId);
+	    						 priEncoder.encodeString(CodeNumber.PCE_LINK_ID, linkId);
 	    					 }
 	    					
 	    					 if(link.getSwitchingCapabilityDescriptors().size() > 0){
@@ -295,13 +174,13 @@ public class EncodePceMessage {
 	    							 String switchingcapType = switchingCapabilityDescriptors.getSwitchingcapType();
 	    							 //System.out.println("switching_captype="+switchingcapType);
 	    							 
-	    							 priEncoder.encodeString(PCE_SWITCHINGCAPTYPE, switchingcapType);
+	    							 priEncoder.encodeString(CodeNumber.PCE_SWITCHINGCAPTYPE, switchingcapType);
 	    						 }
 	    						 if(switchingCapabilityDescriptors.getEncodingType()!=null){
 	    							 String encodingType = switchingCapabilityDescriptors.getEncodingType();
 	    							 //System.out.println("switching_enctype="+encodingType);
 	    							 
-	    							 priEncoder.encodeString(PCE_SWITCHINGENCTYPE, encodingType);
+	    							 priEncoder.encodeString(CodeNumber.PCE_SWITCHINGENCTYPE, encodingType);
 	    						 }
 	    						 if(switchingCapabilityDescriptors.getSwitchingCapabilitySpecificInfo()!=null){
 	    							 CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = switchingCapabilityDescriptors.getSwitchingCapabilitySpecificInfo();
@@ -310,25 +189,25 @@ public class EncodePceMessage {
 	    								 String vlanRangeAvailability = switchingCapabilitySpecificInfo.getVlanRangeAvailability();
 	    								 //System.out.println("switching_vlan_avai"+vlanRangeAvailability);
 	    								 
-	    								 priEncoder.encodeString(PCE_SWITCHINGVLANRANGEAVAI, vlanRangeAvailability);
+	    								 priEncoder.encodeString(CodeNumber.PCE_SWITCHINGVLANRANGEAVAI, vlanRangeAvailability);
 	    							 }
 	    							 
 	    							 if(switchingCapabilitySpecificInfo.getSuggestedVLANRange()!=null){
 	    								 String suggestedVLANRange = switchingCapabilitySpecificInfo.getSuggestedVLANRange();
 	    								 //System.out.println("switching_vlan_sugg"+suggestedVLANRange);
 	    								 
-	    								 priEncoder.encodeString(PCE_SWITCHINGVLANRANGESUGG, suggestedVLANRange);
+	    								 priEncoder.encodeString(CodeNumber.PCE_SWITCHINGVLANRANGESUGG, suggestedVLANRange);
 	    							 }
 	    							 
 	    							 
 	    							 if(switchingCapabilitySpecificInfo.isVlanTranslation()!=null){
 		    							 if(switchingCapabilitySpecificInfo.isVlanTranslation()==true){
 		    								 //System.out.println("vlan trans true");
-		    								 priEncoder.encodeBoolean(PCE_VLANTRANSLATION, true);
+		    								 priEncoder.encodeBoolean(CodeNumber.PCE_VLANTRANSLATION, true);
 		    							 }
 		    							 else{
 		    								 //System.out.println("vlan trans false");
-		    								 priEncoder.encodeBoolean(PCE_VLANTRANSLATION, false);	    								 
+		    								 priEncoder.encodeBoolean(CodeNumber.PCE_VLANTRANSLATION, false);	    								 
 		    							 }	    								 
 	    								 
 	    							 }
@@ -479,16 +358,16 @@ public class EncodePceMessage {
 			pceMessHeadBuff[offset++] = (byte) (length & 0xFF);			
 		}
 		else if(length<=0xFF){
-			pceMessHeadBuff[offset++] = (0x01 | ASN_LONG_LEN);
+			pceMessHeadBuff[offset++] = (0x01 | CodeNumber.ASN_LONG_LEN);
 			pceMessHeadBuff[offset++] = (byte) (length & 0xFF);			
 		}
 		else if (length<=0xFFFF){
-			pceMessHeadBuff[offset++] = (0x02 | ASN_LONG_LEN);
+			pceMessHeadBuff[offset++] = (0x02 | CodeNumber.ASN_LONG_LEN);
 			pceMessHeadBuff[offset++] = (byte) ((length>>8) & 0xFF);
 			pceMessHeadBuff[offset++] = (byte) (length & 0xFF);
 		}
 		else if (length<=0xFFFFFF){
-			pceMessHeadBuff[offset++] = (0x03 | ASN_LONG_LEN);
+			pceMessHeadBuff[offset++] = (0x03 | CodeNumber.ASN_LONG_LEN);
 			pceMessHeadBuff[offset++] = (byte) ((length>>16) & 0xFF);
 			pceMessHeadBuff[offset++] = (byte) ((length>>8) & 0xFF);
 			pceMessHeadBuff[offset++] = (byte) (length & 0xFF);
@@ -525,6 +404,294 @@ public class EncodePceMessage {
 	
 	public byte[] getPceEncodeArray(){
 		return this.pceEncodeArray;
+	}
+	
+	public void encodeTopology(CtrlPlaneTopologyContent topology, int pathSeq)throws OSCARSServiceException
+	{
+		byte[] encodeBuffHead;
+		byte[] encodeBuffBody;
+		byte[] encodeBuff;
+		byte pceType = CodeNumber.PCE_MULTIPLE_PATH;
+		PrimitiveEncoder priEncoder = new PrimitiveEncoder();
+		int buffLen;
+		List<Lifetime> topoLifetime = null;
+		
+		
+		
+		
+		List<CtrlPlanePathContent> path = topology.getPath();
+		
+		if(path==null || path.size()==0){
+			throw new OSCARSServiceException("No path in topology to encode");
+		}
+		
+		CtrlPlanePathContent singlePath = path.get(pathSeq);
+		
+		topoLifetime = topology.getLifetime();
+		
+		this.encodePath(priEncoder, singlePath, topoLifetime);
+		
+		priEncoder.buffPrune();
+	    encodeBuffBody = priEncoder.getBuff();
+	    buffLen = encodeBuffBody.length;
+	    
+	    //System.out.println("opt="+buffLen);
+	    encodeBuffHead = this.encodePceHeader(pceType, buffLen);
+	    encodeBuff = this.mergeBuff(encodeBuffHead, encodeBuffBody);
+	    
+	    this.combineField(encodeBuff);
+		
+		
+	}
+	
+	public void encodePath(PrimitiveEncoder priEncoder, CtrlPlanePathContent path, 
+			List<Lifetime> topoLifetime)throws OSCARSServiceException
+	{
+		List<Lifetime> pathLifetime = path.getLifetime();
+		int topoLifetimeNum = 0;
+		int pathLifetimeNum = 0;
+
+		if(path.getId()!=null){
+			String pathId = path.getId();
+
+			priEncoder.encodeString(CodeNumber.PCE_PATH_ID, pathId);
+		}
+		
+		if(topoLifetime != null && topoLifetime.size()!=0 ){
+			topoLifetimeNum = topoLifetime.size();			
+			
+		}
+		
+		if(pathLifetime != null && pathLifetime.size()!=0 ){
+			pathLifetimeNum = pathLifetime.size();
+			
+		}
+		
+		if((topoLifetimeNum + pathLifetimeNum) != 0){
+			priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_NUM, (topoLifetimeNum + pathLifetimeNum));
+			
+			Lifetime singleLifetime = null;
+			String startTime = null;
+			String endTime = null;
+			String duration = null;
+			
+			for(int i=0;i<(topoLifetimeNum+pathLifetimeNum);i++){
+				if(i<topoLifetimeNum){
+					singleLifetime = topoLifetime.get(i);
+				}else{
+					singleLifetime = pathLifetime.get(i-topoLifetimeNum);
+				}
+				
+				//priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME, 0); //dummy
+				
+				startTime = singleLifetime.getStart().getValue();
+				if(startTime != null && startTime.length() != 0){
+					try{
+						int startTimeNum = Integer.parseInt(startTime);
+						priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_START, startTimeNum);
+					}catch(NumberFormatException nfe){
+						throw new OSCARSServiceException("Lifetime start is not a number");
+					}					
+					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_START, startTime);
+				}else{
+					priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_START, -1);
+					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_START, "NO_VALUE");
+				}
+				
+				endTime = singleLifetime.getEnd().getValue();
+				if(endTime != null && endTime.length() !=  0){
+					try{
+						int endTimeNum = Integer.parseInt(endTime);
+						priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_END, endTimeNum);
+					}catch(NumberFormatException nfe){
+						throw new OSCARSServiceException("Lifetime end is not a number");
+					}
+					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_END, endTime);
+				}else{
+					priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_END, -1);
+					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_END, "NO_VALUE");
+				}
+				
+				duration = singleLifetime.getDuration().getValue();
+				if(duration != null && duration.length() != 0){
+					try{
+						int durationNum = Integer.parseInt(duration);
+						priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_DUR, durationNum);
+					}catch(NumberFormatException nfe){
+						throw new OSCARSServiceException("Lifetime duration is not a number");
+					}
+					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_DUR, duration);
+				}else{
+					priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_DUR, -1);
+					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_DUR, "NO_VALUE");
+				}
+			}			
+		}
+		
+		
+		if(path.getHop()==null || path.getHop().size()==0){
+			throw new OSCARSServiceException("Hop is empty");
+		}
+		
+		CtrlPlaneHopContent firstHop = path.getHop().get(0);
+		
+		if(firstHop.getLink()==null){
+			throw new OSCARSServiceException("Link in first hop is null");
+		}	
+		
+		if(firstHop.getLink().getMaximumReservableCapacity()!=null && firstHop.getLink().getMaximumReservableCapacity().length()!=0){
+			String maximumReservableCapacity = firstHop.getLink().getMaximumReservableCapacity();
+			try{
+				long maximumReservableCapacityNum = Long.parseLong(maximumReservableCapacity);
+				priEncoder.encodeLong(CodeNumber.PCE_MAXRESVCAPACITY, maximumReservableCapacityNum);
+			}catch(NumberFormatException nfe){
+				throw new OSCARSServiceException("MaximumReservableCapacity end is not a number");
+			}						
+		}
+		
+		if(firstHop.getLink().getMinimumReservableCapacity()!=null && firstHop.getLink().getMinimumReservableCapacity().length()!=0){
+			String minimumReservableCapacity = firstHop.getLink().getMinimumReservableCapacity();
+			try{
+				long minimumReservableCapacityNum = Long.parseLong(minimumReservableCapacity);
+				priEncoder.encodeLong(CodeNumber.PCE_MINRESVCAPACITY, minimumReservableCapacityNum);
+			}catch(NumberFormatException nfe){
+				throw new OSCARSServiceException("MinimumReservableCapacity end is not a number");
+			}						
+		}
+		
+		if(firstHop.getLink().getGranularity()!=null && firstHop.getLink().getGranularity().length()!=0){
+			String granularity = firstHop.getLink().getGranularity();
+			try{
+				long granularityNum = Long.parseLong(granularity);
+				priEncoder.encodeLong(CodeNumber.PCE_GRANULARITY, granularityNum);
+			}catch(NumberFormatException nfe){
+				throw new OSCARSServiceException("Granularity end is not a number");
+			}						
+		}
+
+		if(path.getHop()!=null){
+			List<CtrlPlaneHopContent> hop = path.getHop();
+			priEncoder.encodeInteger(CodeNumber.PCE_PATH_LENGTH, hop.size());
+			//System.out.println("hop="+hop.size());
+
+			CtrlPlaneHopContent oneHop;
+			for(int i=0;i<hop.size();i++){
+				oneHop = hop.get(i);
+				if(oneHop.getId()!=null){
+					String hopId = oneHop.getId();
+					//System.out.println("hop_id="+hopId);
+
+					priEncoder.encodeString(CodeNumber.PCE_HOP_ID, hopId);
+				}
+
+
+				if(oneHop.getLink()!=null){
+					CtrlPlaneLinkContent link = oneHop.getLink();
+					if(link.getId()!=null){
+						String linkId = link.getId();
+						//System.out.println("link_id="+linkId);
+
+						priEncoder.encodeString(CodeNumber.PCE_LINK_ID, linkId);
+					}
+					
+					/*
+					if(link.getMaximumReservableCapacity()!=null && link.getMaximumReservableCapacity().length()!=0){
+						String maximumReservableCapacity = link.getMaximumReservableCapacity();
+						try{
+							long maximumReservableCapacityNum = Long.parseLong(maximumReservableCapacity);
+							priEncoder.encodeLong(CodeNumber.PCE_MAXRESVCAPACITY, maximumReservableCapacityNum);
+						}catch(NumberFormatException nfe){
+							throw new OSCARSServiceException("MaximumReservableCapacity end is not a number");
+						}						
+					}
+					
+					if(link.getMinimumReservableCapacity()!=null && link.getMinimumReservableCapacity().length()!=0){
+						String minimumReservableCapacity = link.getMinimumReservableCapacity();
+						try{
+							long minimumReservableCapacityNum = Long.parseLong(minimumReservableCapacity);
+							priEncoder.encodeLong(CodeNumber.PCE_MINRESVCAPACITY, minimumReservableCapacityNum);
+						}catch(NumberFormatException nfe){
+							throw new OSCARSServiceException("MinimumReservableCapacity end is not a number");
+						}						
+					}
+					
+					if(link.getGranularity()!=null && link.getGranularity().length()!=0){
+						String granularity = link.getGranularity();
+						try{
+							long granularityNum = Long.parseLong(granularity);
+							priEncoder.encodeLong(CodeNumber.PCE_GRANULARITY, granularityNum);
+						}catch(NumberFormatException nfe){
+							throw new OSCARSServiceException("Granularity end is not a number");
+						}						
+					}
+					*/
+
+					if(link.getSwitchingCapabilityDescriptors().size() > 0){
+						CtrlPlaneSwcapContent switchingCapabilityDescriptors = link.getSwitchingCapabilityDescriptors().get(0);
+						if(switchingCapabilityDescriptors.getSwitchingcapType()!=null){
+							String switchingcapType = switchingCapabilityDescriptors.getSwitchingcapType();
+							//System.out.println("switching_captype="+switchingcapType);
+
+							priEncoder.encodeString(CodeNumber.PCE_SWITCHINGCAPTYPE, switchingcapType);
+						}
+						if(switchingCapabilityDescriptors.getEncodingType()!=null){
+							String encodingType = switchingCapabilityDescriptors.getEncodingType();
+							//System.out.println("switching_enctype="+encodingType);
+
+							priEncoder.encodeString(CodeNumber.PCE_SWITCHINGENCTYPE, encodingType);
+						}
+						if(switchingCapabilityDescriptors.getSwitchingCapabilitySpecificInfo()!=null){
+							CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = switchingCapabilityDescriptors.getSwitchingCapabilitySpecificInfo();
+
+							if(switchingCapabilitySpecificInfo.getVlanRangeAvailability()!=null){
+								String vlanRangeAvailability = switchingCapabilitySpecificInfo.getVlanRangeAvailability();
+								//System.out.println("switching_vlan_avai"+vlanRangeAvailability);
+
+								priEncoder.encodeString(CodeNumber.PCE_SWITCHINGVLANRANGEAVAI, vlanRangeAvailability);
+							}
+
+							if(switchingCapabilitySpecificInfo.getSuggestedVLANRange()!=null){
+								String suggestedVLANRange = switchingCapabilitySpecificInfo.getSuggestedVLANRange();
+								//System.out.println("switching_vlan_sugg"+suggestedVLANRange);
+
+								priEncoder.encodeString(CodeNumber.PCE_SWITCHINGVLANRANGESUGG, suggestedVLANRange);
+							}
+
+
+							if(switchingCapabilitySpecificInfo.isVlanTranslation()!=null){
+								if(switchingCapabilitySpecificInfo.isVlanTranslation()==true){
+									//System.out.println("vlan trans true");
+									priEncoder.encodeBoolean(CodeNumber.PCE_VLANTRANSLATION, true);
+								}
+								else{
+									//System.out.println("vlan trans false");
+									priEncoder.encodeBoolean(CodeNumber.PCE_VLANTRANSLATION, false);	    								 
+								}	    								 
+
+							}
+
+						}//end if switchingCapabilityDescriptors
+					}//end if link.getSwitchingCapabilityDescriptors
+				}//end if oneHop.getLink
+
+				List<CtrlPlaneNextHopContent> nextHop = oneHop.getNextHop();
+
+				if(nextHop !=null && nextHop.size()!=0){
+					priEncoder.encodeInteger(CodeNumber.PCE_NEXTHOP_LENGTH, nextHop.size());
+
+					for(CtrlPlaneNextHopContent singleNextHop: nextHop){
+						String nextHopValue = singleNextHop.getValue();						
+						priEncoder.encodeString(CodeNumber.PCE_NEXTHOP, nextHopValue);						
+					}	
+
+				}
+				
+				priEncoder.encodeInteger(CodeNumber.PCE_HOP_END_TAG, 1); //dummy field for mark end of one hop
+
+			}//end for int i=0;
+		}//end if path.getHop
+		
+		
 	}
 
 }

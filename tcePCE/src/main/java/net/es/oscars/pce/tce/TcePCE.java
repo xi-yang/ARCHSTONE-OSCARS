@@ -70,25 +70,27 @@ public class TcePCE {
             }
         }
         
-        byte[] apiMsg;
-        
-        CreateApiMsg createMsg = new CreateApiMsg(query);
-        
-        createMsg.encodeApiMsg();
-        
-        apiMsg = createMsg.getEncodedApiMsg();
-        
-        
 		String host="localhost";
 		int tcePort=2089;
-		Socket socket;		
+		Socket socket;
+		socket=new Socket(host,tcePort);
 		
-	    socket=new Socket(host,tcePort);
-	    
 		OutputStream f1 =socket.getOutputStream();
 		InputStream r1 =socket.getInputStream();
 		
-		f1.write(apiMsg);
+        byte[] apiMsg = null;        
+        CreateApiMsg createMsg = new CreateApiMsg();        
+        int pathNum = createMsg.getPathNumber(query);
+        
+        for(int i=0;i<pathNum;i++){
+        	if(i!=(pathNum-1)){
+        		createMsg.encodeApiMsg(query,i,false);
+        	}else{
+        		createMsg.encodeApiMsg(query,i,true);
+        	}
+        	apiMsg = createMsg.getEncodedApiMsg();
+        	f1.write(apiMsg);        	
+        }        
 		
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		byte[] buff = new byte[1024];

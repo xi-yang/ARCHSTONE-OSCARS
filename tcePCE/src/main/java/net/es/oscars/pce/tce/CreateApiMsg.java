@@ -43,11 +43,11 @@ import net.es.oscars.common.soap.gen.MessagePropertiesType;
 import net.es.oscars.pce.soap.gen.v06.PCEDataContent;
 
 public class CreateApiMsg {
-	private PCEMessage query;
+	//private PCEMessage query;
 	private byte[] encodedApiMessage;
 	
-	public CreateApiMsg(PCEMessage query){
-		this.query = query;
+	public CreateApiMsg(){
+		//this.query = query;
 				
 	}
 	
@@ -55,7 +55,7 @@ public class CreateApiMsg {
 		return this.encodedApiMessage;
 	}
 	
-	public void encodeApiMsg() throws OSCARSServiceException{
+	public void encodeApiMsg(PCEMessage query, int pathSeq, boolean lastPath) throws OSCARSServiceException{
 		PCEDataContent pceData = query.getPCEDataContent();
 		byte[] apiMsg;
 		byte[] apiMsgHeader;
@@ -65,21 +65,36 @@ public class CreateApiMsg {
 		
 		ReservedConstraintType resConType = pceData.getReservedConstraint();
 		UserRequestConstraintType userConType = pceData.getUserRequestConstraint();
+		CtrlPlaneTopologyContent topology = pceData.getTopology();
 		
 		EncodePceMessage encodePceMess = new EncodePceMessage();
 		
 		if(userConType==null){
-			throw new OSCARSServiceException("UserConstraint are empty");
+			throw new OSCARSServiceException("UserConstraint is empty");
 		}
 		
-		encodePceMess.encodeUserConstraint(gri, userConType);
-		
-		if(resConType!=null){
+		if(userConType.getPathInfo().getPathType().equals("mxtce")){
+			encodePceMess.encodeUserConstraint(gri, userConType);
 			
-			encodePceMess.encodeResvConstraint(resConType);
+			if(topology==null){
+				throw new OSCARSServiceException("Topology is empty");
+			}
 			
-		}		
-		
+			encodePceMess.encodeTopology(topology, pathSeq);			
+			
+		}else{
+			if(pathSeq!=0){
+				throw new OSCARSServiceException("Simple request should have only one path");
+			}
+			
+			encodePceMess.encodeUserConstraint(gri, userConType);
+
+			if(resConType!=null){
+
+				encodePceMess.encodeResvConstraint(resConType);
+
+			}			
+		}
 				
 		//add for optional constraint
 		List<OptionalConstraintType> optionalConstraint = pceData.getOptionalConstraint();
@@ -98,9 +113,40 @@ public class CreateApiMsg {
 		requestCons = encodePceMess.getPceEncodeArray();
 		
 		EncodeApiMsgHeader encoderApiMsgHeader = new EncodeApiMsgHeader();
-		apiMsgHeader = encoderApiMsgHeader.encoderApiMsg((short)1, (short)requestCons.length, 6, 0, 0);
+		
+		if(userConType.getPathInfo().getPathType().equals("mxtce")){
+			if(lastPath == false){
+				apiMsgHeader = encoderApiMsgHeader.encoderApiMsg((short)1, (short)requestCons.length, 6, 1, 0);
+			}else{
+				apiMsgHeader = encoderApiMsgHeader.encoderApiMsg((short)1, (short)requestCons.length, 6, 2, 0);
+			}
+		}else{
+			apiMsgHeader = encoderApiMsgHeader.encoderApiMsg((short)1, (short)requestCons.length, 6, 0, 0);
+		}
 		apiMsg = encodePceMess.mergeBuff(apiMsgHeader, requestCons);
 		this.encodedApiMessage = apiMsg;
+	}
+	
+	public int getPathNumber(PCEMessage query) throws OSCARSServiceException
+	{
+		int pathNum = 0;
+		PCEDataContent pceData = query.getPCEDataContent();
+		
+		if(pceData.getUserRequestConstraint().getPathInfo().getPathType().equals("mxtce")){
+			CtrlPlaneTopologyContent topology = pceData.getTopology();
+			List<CtrlPlanePathContent> path = topology.getPath();
+			
+			if(path==null || path.size()==0){
+				throw new OSCARSServiceException("No path in topology");
+			}
+			
+			pathNum = path.size();
+			
+		}else{
+			pathNum = 1;
+		}
+		
+		return pathNum;
 	}
 
 }
