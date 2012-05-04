@@ -73,7 +73,7 @@ public class CreateApiMsg {
 			throw new OSCARSServiceException("UserConstraint is empty");
 		}
 		
-		if(userConType.getPathInfo().getPathType().equals("mxtce")){
+		if(userConType.getPathInfo().getPathType().equals("RequestTopology")){
 			encodePceMess.encodeUserConstraint(gri, userConType);
 			
 			if(topology==null){
@@ -114,7 +114,7 @@ public class CreateApiMsg {
 		
 		EncodeApiMsgHeader encoderApiMsgHeader = new EncodeApiMsgHeader();
 		
-		if(userConType.getPathInfo().getPathType().equals("mxtce")){
+		if(userConType.getPathInfo().getPathType().equals("RequestTopology")){
 			if(lastPath == false){
 				apiMsgHeader = encoderApiMsgHeader.encoderApiMsg((short)1, (short)requestCons.length, 6, 1, 0);
 			}else{
@@ -132,7 +132,7 @@ public class CreateApiMsg {
 		int pathNum = 0;
 		PCEDataContent pceData = query.getPCEDataContent();
 		
-		if(pceData.getUserRequestConstraint().getPathInfo().getPathType().equals("mxtce")){
+		if(pceData.getUserRequestConstraint().getPathInfo().getPathType().equals("RequestTopology")){
 			CtrlPlaneTopologyContent topology = pceData.getTopology();
 			List<CtrlPlanePathContent> path = topology.getPath();
 			
