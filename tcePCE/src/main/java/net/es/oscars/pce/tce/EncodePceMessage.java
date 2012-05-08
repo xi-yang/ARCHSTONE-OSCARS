@@ -1,5 +1,6 @@
 package net.es.oscars.pce.tce;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,6 +19,9 @@ import javax.xml.transform.stream.*;
 import javax.xml.transform.dom.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
+
+import java.util.*;
+import java.text.*;
 
 public class EncodePceMessage {	
 	
@@ -490,7 +494,14 @@ public class EncodePceMessage {
 						int startTimeNum = Integer.parseInt(startTime);
 						priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_START, startTimeNum);
 					}catch(NumberFormatException nfe){
-						throw new OSCARSServiceException("Lifetime start is not a number");
+						try{
+							DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss:SSS");
+							Date date = formatter.parse(startTime);
+							int startTimeNum = (int)(date.getTime()/1000L);
+							priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_START, startTimeNum);
+						}catch(ParseException e){
+							throw new OSCARSServiceException("Lifetime start is not in correct format");
+						}
 					}					
 					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_START, startTime);
 				}else{
@@ -504,7 +515,14 @@ public class EncodePceMessage {
 						int endTimeNum = Integer.parseInt(endTime);
 						priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_END, endTimeNum);
 					}catch(NumberFormatException nfe){
-						throw new OSCARSServiceException("Lifetime end is not a number");
+						try{
+							DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss:SSS");
+							Date date = formatter.parse(endTime);
+							int endTimeNum = (int)(date.getTime()/1000L);
+							priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_END, endTimeNum);
+						}catch(ParseException e){
+							throw new OSCARSServiceException("Lifetime end is not in correct format");
+						}
 					}
 					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_END, endTime);
 				}else{
@@ -517,8 +535,29 @@ public class EncodePceMessage {
 					try{
 						int durationNum = Integer.parseInt(duration);
 						priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_DUR, durationNum);
-					}catch(NumberFormatException nfe){
-						throw new OSCARSServiceException("Lifetime duration is not a number");
+					}catch(NumberFormatException nfe){				
+						String[] durStr = duration.split(":");
+						int hour=0, min=0, second=0;
+						if(durStr.length==4){
+							try{
+								hour = Integer.parseInt(durStr[0]);
+								min = Integer.parseInt(durStr[1]);
+								second = Integer.parseInt(durStr[2]);
+							}catch(NumberFormatException numfe){
+								throw new OSCARSServiceException("Lifetime duration is not in correct format");
+							}
+						}else if(durStr.length==3){
+							try{									
+								min = Integer.parseInt(durStr[0]);
+								second = Integer.parseInt(durStr[1]);
+							}catch(NumberFormatException numfe){
+								throw new OSCARSServiceException("Lifetime duration is not in correct format");
+							}
+						}else{
+							throw new OSCARSServiceException("Lifetime duration is not in correct format");
+						}
+						int durationNum = hour*60*60 + min*60 + second;
+						priEncoder.encodeInteger(CodeNumber.PCE_LIFETIME_DUR, durationNum);
 					}
 					//priEncoder.encodeString(CodeNumber.PCE_LIFETIME_DUR, duration);
 				}else{
