@@ -134,12 +134,14 @@ public class BuildXml {
 				}
 			}
 			
-			BagInfoField bagInfo = coSchedulePathField.getBagInfoField();
-			if(bagInfo!=null){
+			List<BagInfoField> bagInfo = coSchedulePathField.getBagInfoField();
+			for(int j=0;j<bagInfo.size();j++){
+			
 				Element bagInfoNode = document.createElement("bagInfo");
 				coSchedulePathNode.appendChild(bagInfoNode);
 
-				List<BagSegmentField> bagSegment = bagInfo.getBagSegment();
+				BagInfoField singleBagInfoField = bagInfo.get(j);
+				List<BagSegmentField> bagSegment = singleBagInfoField.getBagSegment();
 				int bagSize = bagSegment.size();
 				for(int k=0;k<bagSize;k++){
 					BagSegmentField bagSegmentField = bagSegment.get(k);

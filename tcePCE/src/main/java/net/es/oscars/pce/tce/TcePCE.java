@@ -98,6 +98,9 @@ public class TcePCE {
 		int totalReadLength = 0;
 		int messageLength = -1;
 		byte[] replyApiBuff;
+		
+		ArrayList<ReplyMessageContent> replyMessageList = new ArrayList<ReplyMessageContent>();
+		
 		while((length = r1.read(buff))!=-1){
 			
 			totalReadLength = totalReadLength + length;			
@@ -106,21 +109,29 @@ public class TcePCE {
 				messageLength = this.getLength(buffer.toByteArray());
 			}
 			if(totalReadLength == messageLength + 24){
-				break;
+				//break;
+				replyApiBuff = buffer.toByteArray();
+				RetrieveReply retrieveMsg = new RetrieveReply();
+				retrieveMsg.checkApiMsg(replyApiBuff);
+				ReplyMessageContent replyMessage = retrieveMsg.decodeReplyMessage(replyApiBuff);
+				replyMessageList.add(replyMessage);
+				
+				buffer = new ByteArrayOutputStream(); //generate a new stream buffer
+				totalReadLength = 0; //reset length
 			}
 		}		
 		
-		ReplyMessageContent replyMessage = null;
-		RetrieveReply retrieveMsg = new RetrieveReply();
-		replyApiBuff = buffer.toByteArray();
-		retrieveMsg.checkApiMsg(replyApiBuff);
-		replyMessage = retrieveMsg.decodeReplyMessage(replyApiBuff);
+		//ReplyMessageContent replyMessage = null;
+		//RetrieveReply retrieveMsg = new RetrieveReply();
+		//replyApiBuff = buffer.toByteArray();
+		//retrieveMsg.checkApiMsg(replyApiBuff);
+		//replyMessage = retrieveMsg.decodeReplyMessage(replyApiBuff);
 
 		socket.close();
 		
 		WriteResult writeRes = new WriteResult(query);
 
-		writeRes.writeComputeRes(replyMessage);        
+		writeRes.writeComputeRes(replyMessageList);        
 		
         PCEDataContent pceData = query.getPCEDataContent();  //pceData has been updated by method writeComputeRes() if path compute result is succeed
 

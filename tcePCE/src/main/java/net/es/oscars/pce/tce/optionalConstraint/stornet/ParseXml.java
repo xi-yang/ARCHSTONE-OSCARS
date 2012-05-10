@@ -295,7 +295,7 @@ public class ParseXml {
 		PathInfoField pathInfo = new PathInfoField();
 		coSchedulePathField.setPathInfoField(pathInfo);
 		BagInfoField bagInfo = new BagInfoField();
-		coSchedulePathField.setBagInfoField(bagInfo);
+		coSchedulePathField.getBagInfoField().add(bagInfo);
 		
 		//set path info
 		pathInfo.setPathId("path-124423245-1");		
@@ -361,7 +361,7 @@ public class ParseXml {
 		pathInfo = new PathInfoField();
 		coSchedulePathField.setPathInfoField(pathInfo);
 		bagInfo = new BagInfoField();
-		coSchedulePathField.setBagInfoField(bagInfo);
+		coSchedulePathField.getBagInfoField().add(bagInfo);
 		
 		//set path info
 		pathInfo.setPathId("path-124423245-2");		
@@ -428,7 +428,7 @@ public class ParseXml {
 		pathInfo = new PathInfoField();
 		coSchedulePathField.setPathInfoField(pathInfo);
 		bagInfo = new BagInfoField();
-		coSchedulePathField.setBagInfoField(bagInfo);
+		coSchedulePathField.getBagInfoField().add(bagInfo);
 		
 		//set path info
 		pathInfo.setPathId("path-124423245-3");		

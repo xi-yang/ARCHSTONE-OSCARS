@@ -5,6 +5,7 @@ import java.util.List;
 
 public class BagInfoField {
 
+	protected String id;
 	protected List<BagSegmentField> bagSegment;
 	
 	public List<BagSegmentField> getBagSegment(){
@@ -12,6 +13,14 @@ public class BagInfoField {
 			bagSegment = new ArrayList<BagSegmentField>();
 		}
 		return this.bagSegment;
+	}
+	
+	public String getId(){
+		return this.id;
+	}
+	
+	public void setId(String value){
+		this.id = value;
 	}
 	
 

@@ -107,6 +107,10 @@ public class CodeNumber {
 	public static final byte PCE_LIFETIME_START = (byte)0xCD;
 	public static final byte PCE_LIFETIME_END = (byte)0xCE;
 	public static final byte PCE_LIFETIME_DUR = (byte)0xCF;
+	
+	public static final byte PCE_FLEX_ALT_PATH_NUM = (byte)0xD0;
+	public static final byte PCE_OPT_BAG_INFO_NUM = (byte)0xD1;
+	public static final byte PCE_OPT_BAG_SEG_NUM = (byte)0xD2;
 
 	
 

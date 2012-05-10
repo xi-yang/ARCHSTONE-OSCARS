@@ -15,6 +15,8 @@ import net.es.oscars.resourceManager.http.WSDLTypeConverter;
 import net.es.oscars.resourceManager.common.RMException;
 import net.es.oscars.utils.soap.OSCARSServiceException;
 
+import org.ogf.schema.network.topology.ctrlplane.*;
+
 public class RetrieveReply {
 	
 	byte[] receivedApiMsg;
@@ -42,7 +44,17 @@ public class RetrieveReply {
 			throw new OSCARSServiceException("Checksum of API message error");
 		}
 		
-		
+		if((option & 0x01) != 0){
+			//group messages
+			if((option & 0x02) !=0){
+				//group last message
+				
+			}else{
+				
+			}			
+		}else{
+			
+		}	
 		
 		
 	}
@@ -142,8 +154,8 @@ public class RetrieveReply {
 		byte type = 0;
 		int lengthTagSize = 0;
 		int totalMsgLength = 0;
-		int regFieldLength = 0;
-		int optFieldLength = 0;
+		
+		
 		int decodedLength = 0;
 		int length = 0;
 		int initialDecodeOffset = 0;
@@ -181,18 +193,18 @@ public class RetrieveReply {
 			}
 			
 			if(type == CodeNumber.PCE_REGU_REPLY){
-				regFieldLength = this.decodeLength(priDecoder, buff);
-				this.decodeReplyPathContent(buff, regFieldLength, replyMessage);
+				int regFieldLength = this.decodeLength(priDecoder, buff);
+				this.decodeReplyPathContent(buff, replyMessage);
 				decodedLength = offset - initialDecodeOffset;
 				
 				if(decodedLength < totalMsgLength){
-					type = buff[offset++];
-					if(type == CodeNumber.PCE_OPTI_REPLY){
-						optFieldLength = this.decodeLength(priDecoder, buff);
-						this.decodeOptiContent(buff, replyMessage);
+					//type = buff[offset++];
+					//if(type == CodeNumber.PCE_OPTI_REPLY){
+						int advancedFieldLength = this.decodeLength(priDecoder, buff);
+						this.decodeAdvContent(buff, replyMessage);
 						
 												
-					}
+					//}
 				}				
 			}			
 		}
@@ -202,12 +214,13 @@ public class RetrieveReply {
 		
 	}
 	
-	void decodeOptiContent(byte[] buff, ReplyMessageContent replyMessage) throws OSCARSServiceException{
+	void decodeAdvContent(byte[] buff, ReplyMessageContent replyMessage) throws OSCARSServiceException{
 		PrimitiveDecoder priDecoder = new PrimitiveDecoder();
 		ReplyPathContent replyPath = null;
 		ReplyCoSchedulePathContent coSchedulePath = null;
 		List<ReplyPathContent> altPaths = null;
-		int altPathsNumber = 0;
+		List<ReplyPathContent> flexPaths = null;
+		
 		byte type = 0;	
 		int length = 0;
 		
@@ -218,6 +231,7 @@ public class RetrieveReply {
 		
 		coSchedulePath.setPath(replyPath);
 		
+		int altPathsNumber = 0;
 		altPaths = coSchedulePath.getAltPathContent();
 		
 		type = buff[offset++];
@@ -231,11 +245,27 @@ public class RetrieveReply {
 		for(int i=0;i<altPathsNumber;i++){
 			replyPath = this.decodePath(buff);
 			altPaths.add(replyPath);
-		}		
+		}
+		
+		int flexPathsNumber = 0;
+		flexPaths = coSchedulePath.getFlexPathContent();
+		
+		type = buff[offset++];
+		if(type == CodeNumber.PCE_FLEX_ALT_PATH_NUM){
+			length = this.decodeLength(priDecoder, buff);
+			flexPathsNumber = priDecoder.decodeInteger(buff, offset, length);
+			offset = offset + length;
+		}
+		
+		for(int i=0;i<flexPathsNumber;i++){
+			replyPath = this.decodePath(buff);
+			flexPaths.add(replyPath);
+		}
 		
 	}
 
-	void decodeReplyPathContent(byte[] buff, int totalLength, ReplyMessageContent replyMessage) throws OSCARSServiceException{
+	void decodeReplyPathContent(byte[] buff, ReplyMessageContent replyMessage) throws OSCARSServiceException{
+		/*
 		PrimitiveDecoder priDecoder = new PrimitiveDecoder();
 		byte type = 0;
 		int lengthTagSize = 0;
@@ -263,11 +293,12 @@ public class RetrieveReply {
 		int initialDecodeOffset = 0;
 		int regularReplyLength = 0;
 		int optionalReplyLength = 0;
-		ReplyPathContent replyPath = null;
+		
 		ReplyCoSchedulePathContent coSchedulePath = null;
 		List<ReplyPathContent> altPaths = null;
 		int altPathsNumber = 0;
-		
+		*/
+		ReplyPathContent replyPath = null;
 		
 		replyPath = this.decodePath(buff);
 		replyMessage.setReplyPathContent(replyPath);
@@ -498,11 +529,11 @@ public class RetrieveReply {
 		List<ReplyLinkContent> linkSet = null;
 		int initialDecodeOffset = 0;
 		boolean pathEndFlag = false;
-		List<ReplyBagSegmentContent> bags = null;
-		ReplyBagSegmentContent bagSegment = null;
-		long bagBandwidth;
-		int bagStartTime;
-		int bagEndTime;
+		
+		//ReplyBagSegmentContent bagSegment = null;
+		//long bagBandwidth;
+		//int bagStartTime;
+		//int bagEndTime;
 		List<CtrlPlaneSwcapContent> switchingCapabilityDescriptors = null;
 		CtrlPlaneSwcapContent switchCap = null;
 		CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = null;
@@ -525,6 +556,44 @@ public class RetrieveReply {
 		
 		replyPath.setId(pathId);
 		
+		int lifetimeNum = 0;
+		type = buff[offset++];
+		if(type == CodeNumber.PCE_LIFETIME_NUM){
+			length = this.decodeLength(priDecoder, buff);
+			lifetimeNum = priDecoder.decodeInteger(buff, offset, length);
+			offset = offset + length;
+			
+			for(int i=0;i<lifetimeNum;i++){
+				Lifetime lifetime = new Lifetime();
+				
+				type = buff[offset++];
+				if(type == CodeNumber.PCE_LIFETIME_START){
+					length = this.decodeLength(priDecoder, buff);
+					int startTime = priDecoder.decodeInteger(buff, offset, length);
+					offset = offset + length;
+					lifetime.getStart().setValue(Integer.toString(startTime));					
+				}
+				
+				type = buff[offset++];
+				if(type == CodeNumber.PCE_LIFETIME_END){
+					length = this.decodeLength(priDecoder, buff);
+					int endTime = priDecoder.decodeInteger(buff, offset, length);
+					offset = offset + length;
+					lifetime.getEnd().setValue(Integer.toString(endTime));
+				}
+				
+				type = buff[offset++];
+				if(type == CodeNumber.PCE_LIFETIME_DUR){
+					length = this.decodeLength(priDecoder, buff);
+					int duration = priDecoder.decodeInteger(buff, offset, length);
+					offset = offset + length;
+					lifetime.getDuration().setValue(Integer.toString(duration));
+				}
+				
+				replyPath.getLifetime().add(lifetime);
+			}
+			
+		}		
 
 		type = buff[offset++];			
 		if(type == CodeNumber.PCE_PATH_LENGTH){
@@ -535,8 +604,9 @@ public class RetrieveReply {
 
 		}
 
-		linkSet = replyPath.getReplyLinkContent();
-		bags = replyPath.getReplyBagSegmentContent();
+		linkSet = replyPath.getReplyLinkContent();	
+		
+		int bagInfoNum = 0;
 
 		while(pathEndFlag){
 			type = buff[offset++];
@@ -833,6 +903,7 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setTrafficEngineeringMetric(trafficEngineeringMetric);
+				/*
 			}else if(type == CodeNumber.PCE_OPT_BAG_BANDWIDTH){				
 				length = this.decodeLength(priDecoder, buff);
 				bagBandwidth = priDecoder.decodeLong(buff, offset, length);
@@ -866,9 +937,10 @@ public class RetrieveReply {
 				bagSegment.setEndTime(bagEndTime);
 				bags.add(bagSegment);
 				bagSegment = null; //set back to null
-			}else if(type == CodeNumber.PCE_PATH_END_TAG){
+				*/
+			}else if(type == CodeNumber.PCE_OPT_BAG_INFO_NUM){
 				length = this.decodeLength(priDecoder, buff);
-				String tempStr = priDecoder.decodeString(buff, offset, length);
+				bagInfoNum = priDecoder.decodeInteger(buff, offset, length);  //get bag info number and terminate regular fields decoding
 				
 				offset = offset + length;
 				
@@ -882,10 +954,57 @@ public class RetrieveReply {
 		}
 		//linkSet.add(replyLink); //last link			
 
+		List<ReplyBagInfoContent> bagInfo = replyPath.getReplyBagInfoContent();
+		
+		for(int i=0;i<bagInfoNum;i++){
+			ReplyBagInfoContent singleBagInfo = new ReplyBagInfoContent();
+			bagInfo.add(singleBagInfo);
+			List<ReplyBagSegmentContent> bagSeg = singleBagInfo.getReplyBagSegmentContent();
+
+			type = buff[offset++];
+			if(type == CodeNumber.PCE_OPT_BAG_SEG_NUM){
+				length = this.decodeLength(priDecoder, buff);
+				int bagSegNum = priDecoder.decodeInteger(buff, offset, length);
+				offset = offset + length;
+
+				for(int j=0;j<bagSegNum;j++){
+					ReplyBagSegmentContent bagSegment = new ReplyBagSegmentContent();
+					bagSeg.add(bagSegment);
+
+					type = buff[offset++];
+					if(type == CodeNumber.PCE_OPT_BAG_BANDWIDTH){
+						length = this.decodeLength(priDecoder, buff);
+						long bagBandwidth = priDecoder.decodeLong(buff, offset, length);							
+						offset = offset + length;
+
+						bagSegment.setBandwidth(bagBandwidth);
+					}
+
+					type = buff[offset++];
+					if(type == CodeNumber.PCE_OPT_BAG_STARTTIME){
+						length = this.decodeLength(priDecoder, buff);
+						int bagStartTime = priDecoder.decodeInteger(buff, offset, length);							
+						offset = offset + length;
+
+						bagSegment.setStartTime(bagStartTime);
+					}
+
+					type = buff[offset++];						
+					if(type == CodeNumber.PCE_OPT_BAG_ENDTIME){
+						length = this.decodeLength(priDecoder, buff);
+						int bagEndTime = priDecoder.decodeInteger(buff, offset, length);							
+						offset = offset + length;
+
+						bagSegment.setEndTime(bagEndTime);						
+					}						
+				}					
+			}else{
+				throw new OSCARSServiceException("BagSegment number is missing");
+			}
+		}	
+		
 		return replyPath;
 
-		
-		
 	}
 	
 

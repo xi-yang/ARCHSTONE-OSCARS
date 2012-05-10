@@ -3,11 +3,14 @@ package net.es.oscars.pce.tce;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ogf.schema.network.topology.ctrlplane.Lifetime;
+
 public class ReplyPathContent {
 	
 	protected List<ReplyLinkContent> links;
 	protected String id;
-	protected List<ReplyBagSegmentContent> bags;
+	protected List<ReplyBagInfoContent> bagInfo;
+	protected List<Lifetime> lifetime;
 	
 	public List<ReplyLinkContent> getReplyLinkContent(){
 		if(links==null){
@@ -24,11 +27,18 @@ public class ReplyPathContent {
 		this.id = value;
 	}
 	
-	public List<ReplyBagSegmentContent> getReplyBagSegmentContent(){
-		if(bags==null){
-			bags = new ArrayList<ReplyBagSegmentContent>();
+	public List<ReplyBagInfoContent> getReplyBagInfoContent(){
+		if(bagInfo==null){
+			bagInfo = new ArrayList<ReplyBagInfoContent>();
 		}
-		return this.bags;
+		return this.bagInfo;
 	}
+	
+	public List<Lifetime> getLifetime() {
+        if (lifetime == null) {
+            lifetime = new ArrayList<Lifetime>();
+        }
+        return this.lifetime;
+    }
 
 }

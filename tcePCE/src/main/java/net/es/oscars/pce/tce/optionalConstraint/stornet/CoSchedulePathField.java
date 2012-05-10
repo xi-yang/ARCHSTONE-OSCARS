@@ -1,10 +1,13 @@
 package net.es.oscars.pce.tce.optionalConstraint.stornet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CoSchedulePathField {
 	
 	protected String id;
 	protected PathInfoField pathInfo;
-	protected BagInfoField bagInfo;
+	protected List<BagInfoField> bagInfo;
 	
 	public String getId(){
 		return this.id;
@@ -21,13 +24,21 @@ public class CoSchedulePathField {
 	public void setPathInfoField(PathInfoField value){
 		this.pathInfo = value;
 	}
-	
+	/*
 	public BagInfoField getBagInfoField(){
 		return this.bagInfo;
 	}
 	
 	public void setBagInfoField(BagInfoField value){
 		this.bagInfo = value;
+	}
+	*/
+	
+	public List<BagInfoField> getBagInfoField(){
+		if(this.bagInfo == null){
+			this.bagInfo = new ArrayList<BagInfoField>();
+		}
+		return this.bagInfo;		
 	}
 
 }
