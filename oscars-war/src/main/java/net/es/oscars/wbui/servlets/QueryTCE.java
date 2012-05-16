@@ -96,7 +96,7 @@ public class QueryTCE extends HttpServlet {
             pathList.add(path);
             List<Lifetime> scheduleList = topology.getLifetime();
             assembleSchedules(request, scheduleList);
-            PCEDataContent pceData = apiClient.assemblePceData(topology, transId);
+            PCEDataContent pceData = apiClient.assemblePceData(topology, null);
             apiClient.sendPceCreate(transId, pceData);
             for (int t = 0; t < 10; t++) {
                 Thread.sleep(3000); // 3 secs
