@@ -679,6 +679,17 @@ public class EncodePceMessage {
 
 							priEncoder.encodeString(CodeNumber.PCE_SWITCHINGENCTYPE, encodingType);
 						}
+						
+						if(switchingCapabilityDescriptors.getCapacity() != null){
+							 String capacity = switchingCapabilityDescriptors.getCapacity();
+							 try{
+								 long capacityNum = Long.parseLong(capacity);
+								 priEncoder.encodeLong(CodeNumber.PCE_CAPACITY, capacityNum);
+							 }catch(NumberFormatException nfe){
+								 throw new OSCARSServiceException("Capacity is not a number");
+							 }							 
+						 }
+						
 						if(switchingCapabilityDescriptors.getSwitchingCapabilitySpecificInfo()!=null){
 							CtrlPlaneSwitchingCapabilitySpecificInfo switchingCapabilitySpecificInfo = switchingCapabilityDescriptors.getSwitchingCapabilitySpecificInfo();
 
