@@ -27,7 +27,7 @@ public class RetrieveReply {
 		
 	}
 	
-	public void checkApiMsg(byte[] apiMsg) throws OSCARSServiceException{
+	public boolean checkApiMsg(byte[] apiMsg) throws OSCARSServiceException{
 		int type = this.getTwoByte(apiMsg);
 		int length = this.getTwoByte(apiMsg);
 		int ucid = this.getFourByte(apiMsg);
@@ -48,12 +48,12 @@ public class RetrieveReply {
 			//group messages
 			if((option & 0x02) !=0){
 				//group last message
-				
+				return true;
 			}else{
-				
+				return false;
 			}			
 		}else{
-			
+			return true;
 		}	
 		
 		

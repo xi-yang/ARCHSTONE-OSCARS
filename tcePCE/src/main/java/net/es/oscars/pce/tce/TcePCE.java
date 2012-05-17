@@ -112,9 +112,17 @@ public class TcePCE {
 				//break;
 				replyApiBuff = buffer.toByteArray();
 				RetrieveReply retrieveMsg = new RetrieveReply();
-				retrieveMsg.checkApiMsg(replyApiBuff);
+				boolean messageEndFlag = retrieveMsg.checkApiMsg(replyApiBuff);
 				ReplyMessageContent replyMessage = retrieveMsg.decodeReplyMessage(replyApiBuff);
 				replyMessageList.add(replyMessage);
+				
+				if(messageEndFlag == true){
+					break;
+				}
+				
+				if(replyMessage.getErrorMessage() != null){
+					break;
+				}
 				
 				buffer = new ByteArrayOutputStream(); //generate a new stream buffer
 				totalReadLength = 0; //reset length
