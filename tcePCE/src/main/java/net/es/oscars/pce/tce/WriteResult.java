@@ -53,13 +53,15 @@ public class WriteResult {
 			throw new OSCARSServiceException("Reply message list is empty");
 		}		
 
-		this.writeResvConstraint(replyMessageList, resConType);
+		if(resConType != null){
+			this.writeResvConstraint(replyMessageList, resConType);
+		}
 		this.writeTopology(replyMessageList, pceData);
 		this.writeMultipath(replyMessageList, pceData);
 		
 		for(int i=0;i<replyMessageList.size();i++){
 			ReplyMessageContent replyMessage = replyMessageList.get(i);
-			if(replyMessage.getCoSchedulePath()!=null){
+			if(replyMessage.getCoSchedulePath().getAltPathContent().size()!=0){
 				CoScheduleReplyField coScheduleReply = new CoScheduleReplyField();
 				this.writeOptiConstraint(replyMessage, coScheduleReply);
 				//new BuildXml().generateXml(coScheduleReply);					
