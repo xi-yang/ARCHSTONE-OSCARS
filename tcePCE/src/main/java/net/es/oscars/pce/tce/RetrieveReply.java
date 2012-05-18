@@ -198,13 +198,13 @@ public class RetrieveReply {
 				decodedLength = offset - initialDecodeOffset;
 				
 				if(decodedLength < totalMsgLength){
-					//type = buff[offset++];
-					//if(type == CodeNumber.PCE_OPTI_REPLY){
+					type = buff[offset++];
+					if(type == CodeNumber.PCE_OPTI_REPLY){
 						int advancedFieldLength = this.decodeLength(priDecoder, buff);
 						this.decodeAdvContent(buff, replyMessage);
 						
 												
-					//}
+					}
 				}				
 			}			
 		}
