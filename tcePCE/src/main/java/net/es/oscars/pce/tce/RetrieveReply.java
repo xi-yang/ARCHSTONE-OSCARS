@@ -10,6 +10,8 @@ import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpe
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoL2Sc;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoLsc;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfoTdm;
+import org.ogf.schema.network.topology.ctrlplane.Duration;
+import org.ogf.schema.network.topology.ctrlplane.TimeContent;
 
 import net.es.oscars.resourceManager.http.WSDLTypeConverter;
 import net.es.oscars.resourceManager.common.RMException;
@@ -571,7 +573,9 @@ public class RetrieveReply {
 					length = this.decodeLength(priDecoder, buff);
 					int startTime = priDecoder.decodeInteger(buff, offset, length);
 					offset = offset + length;
-					lifetime.getStart().setValue(Integer.toString(startTime));					
+					TimeContent start = new TimeContent();
+					start.setValue(Integer.toString(startTime));
+					lifetime.setStart(start);				
 				}
 				
 				type = buff[offset++];
@@ -579,15 +583,19 @@ public class RetrieveReply {
 					length = this.decodeLength(priDecoder, buff);
 					int endTime = priDecoder.decodeInteger(buff, offset, length);
 					offset = offset + length;
-					lifetime.getEnd().setValue(Integer.toString(endTime));
+					TimeContent end = new TimeContent();
+					end.setValue(Integer.toString(endTime));
+					lifetime.setEnd(end);
 				}
 				
 				type = buff[offset++];
 				if(type == CodeNumber.PCE_LIFETIME_DUR){
 					length = this.decodeLength(priDecoder, buff);
-					int duration = priDecoder.decodeInteger(buff, offset, length);
+					int durationValue = priDecoder.decodeInteger(buff, offset, length);
 					offset = offset + length;
-					lifetime.getDuration().setValue(Integer.toString(duration));
+					Duration duration = new Duration();
+					duration.setValue(Integer.toString(durationValue));
+					lifetime.setDuration(duration);
 				}
 				
 				replyPath.getLifetime().add(lifetime);
