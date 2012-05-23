@@ -290,6 +290,7 @@ public class EncodePceMessage {
 		int maxDuration = coSchedReq.getMaxDuration();
 		long maxBandwidth = coSchedReq.getMaxBandwidth();
 		long dataSizeBytes = coSchedReq.getDataSizeBytes();
+		boolean requireLinkBag = coSchedReq.getRequireLinkBag();
 		
 		priEncoder.encodeString(CodeNumber.PCE_OPT_COSCHEDREQID, coScheduleRequestId);
 		
@@ -316,6 +317,8 @@ public class EncodePceMessage {
 		if(dataSizeBytes>=0){
 			priEncoder.encodeLong(CodeNumber.PCE_OPT_COSCHREQ_DATASIZEBYTES, dataSizeBytes);
 		}
+		
+		priEncoder.encodeBoolean(CodeNumber.PCE_OPT_REQ_LINK_BAG, requireLinkBag);
 		
 	    priEncoder.buffPrune();
 	    encodeBuffBody = priEncoder.getBuff();

@@ -41,6 +41,7 @@ public class ParseXml {
 		String maxDuration = null;
 		String maxBandwidth = null;
 		String dataSizeBytes = null;
+		String requireLinkBag = null;
 		
 		CoScheduleRequestField coScheReq = null;
 		
@@ -167,6 +168,8 @@ public class ParseXml {
 							   maxBandwidth = child.getTextContent().trim();
 						   }else if(nodeName != null && nodeName.equalsIgnoreCase("dataSizeBytes")){
 							   dataSizeBytes = child.getTextContent().trim();
+						   }else if(nodeName !=null && nodeName.equalsIgnoreCase("requireLinkBAG")){
+							   requireLinkBag = child.getTextContent().trim();
 						   }else{
 							   
 						   }
@@ -199,6 +202,9 @@ public class ParseXml {
 					   }
 					   if(dataSizeBytes!=null){
 						   coScheReq.setDataSizeBytes(Long.valueOf(dataSizeBytes));
+					   }
+					   if(requireLinkBag!=null){
+						   coScheReq.setRequireLinkBag(Boolean.valueOf(requireLinkBag));
 					   }
 					   
 					   break;

@@ -12,6 +12,7 @@ public class CoScheduleRequestField {
 	protected int maxDuration;
 	protected long maxBandwidth;
 	protected long dataSizeBytes;
+	protected boolean requireLinkBag;
 	
 	CoScheduleRequestField(){
 		//initial variables
@@ -103,6 +104,14 @@ public class CoScheduleRequestField {
 	
 	public void setDataSizeBytes(long value){
 		this.dataSizeBytes = value;
+	}
+	
+	public boolean getRequireLinkBag(){
+		return this.requireLinkBag;
+	}
+	
+	public void setRequireLinkBag(boolean value){
+		this.requireLinkBag = value;
 	}
 
 }

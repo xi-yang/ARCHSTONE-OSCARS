@@ -111,6 +111,8 @@ public class CodeNumber {
 	public static final byte PCE_FLEX_ALT_PATH_NUM = (byte)0xD0;
 	public static final byte PCE_OPT_BAG_INFO_NUM = (byte)0xD1;
 	public static final byte PCE_OPT_BAG_SEG_NUM = (byte)0xD2;
+	
+	public static final byte PCE_OPT_REQ_LINK_BAG = (byte)0xD3;
 
 	
 

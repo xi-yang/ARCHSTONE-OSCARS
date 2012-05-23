@@ -139,7 +139,12 @@ public class WriteResult {
 			topoBuilder.addLink(linkOri);
 		}
 		
-		pceData.setTopology(topoBuilder.getTopology());		
+		pceData.setTopology(topoBuilder.getTopology());
+		
+		//Do not need domain now
+		while(pceData.getTopology().getDomain().size()!=0){
+			CtrlPlaneDomainContent domain = pceData.getTopology().getDomain().remove(0);
+		}
 	}
 	
 	
@@ -153,7 +158,13 @@ public class WriteResult {
 		
 		for(ReplyMessageContent replyMessage : replyMessageList){			
 			writePath(replyMessage,pathList);			
-		}		
+		}
+		
+		if(pceData.getUserRequestConstraint()!=null){
+			if(pceData.getUserRequestConstraint().getPathInfo()!=null){
+				pceData.getUserRequestConstraint().getPathInfo().setPathType("ServiceTopology");				
+			}
+		}
 		
 	}
 	
