@@ -98,6 +98,12 @@ public class TcePCE {
 		int totalReadLength = 0;
 		int messageLength = -1;
 		byte[] replyApiBuff;
+		boolean msgLenGetFlag = false;
+		int lastResidualLen = 0;
+		byte[] lastResidual = new byte[0];
+		byte[] msg;
+		byte[] newRead;
+		boolean msgEndFlag = false;
 		
 		ArrayList<ReplyMessageContent> replyMessageList = new ArrayList<ReplyMessageContent>();
 		
@@ -105,24 +111,71 @@ public class TcePCE {
 			
 			totalReadLength = totalReadLength + length;			
 			buffer.write(buff, 0, length);
-			if(totalReadLength >= 24){
+			if((totalReadLength+lastResidualLen) >= 24 && msgLenGetFlag == false){
 				messageLength = this.getLength(buffer.toByteArray());
+				msgLenGetFlag = true;
 			}
-			if(totalReadLength == messageLength + 24){
+			if((totalReadLength+lastResidualLen) >= messageLength + 24){
 				//break;
 				replyApiBuff = buffer.toByteArray();
+				
+				newRead = new byte[totalReadLength+lastResidualLen];
+				System.arraycopy(lastResidual, 0, newRead, 0, lastResidualLen);
+				System.arraycopy(replyApiBuff, 0, newRead, lastResidualLen, totalReadLength);
+				
+				msg = new byte[messageLength+24];
+				lastResidualLen = lastResidualLen+totalReadLength-messageLength-24;
+				lastResidual = new byte[lastResidualLen]; 
+				
+				System.arraycopy(newRead, 0, msg, 0, messageLength+24);
+				System.arraycopy(newRead, messageLength+24, lastResidual, 0, lastResidualLen);
+				
+				msgLenGetFlag = false;
+				
 				RetrieveReply retrieveMsg = new RetrieveReply();
-				boolean messageEndFlag = retrieveMsg.checkApiMsg(replyApiBuff);
-				ReplyMessageContent replyMessage = retrieveMsg.decodeReplyMessage(replyApiBuff);
+				msgEndFlag = retrieveMsg.checkApiMsg(msg);
+				ReplyMessageContent replyMessage = retrieveMsg.decodeReplyMessage(msg);
 				replyMessageList.add(replyMessage);
 				
-				if(messageEndFlag == true){
-					break;
+				if(replyMessage.getErrorMessage() != null){
+					msgEndFlag = true;
 				}
 				
-				if(replyMessage.getErrorMessage() != null){
+				while(msgEndFlag == false){					
+					if(lastResidualLen >= 24 && msgLenGetFlag == false){
+						messageLength = this.getLength(lastResidual);
+						msgLenGetFlag = true;
+					}else{
+						break;
+					}
+					
+					if(lastResidualLen >= messageLength + 24){
+						msg = new byte[messageLength+24];
+						lastResidualLen = lastResidualLen-messageLength-24;
+						newRead = lastResidual;
+						lastResidual = new byte[lastResidualLen];
+						
+						System.arraycopy(newRead, 0, msg, 0, messageLength+24);
+						System.arraycopy(newRead, messageLength+24, lastResidual, 0, lastResidualLen);
+						
+						msgLenGetFlag = false;
+						
+						retrieveMsg = new RetrieveReply();
+						msgEndFlag = retrieveMsg.checkApiMsg(msg);
+						replyMessage = retrieveMsg.decodeReplyMessage(msg);
+						replyMessageList.add(replyMessage);
+						
+						if(replyMessage.getErrorMessage() != null){
+							msgEndFlag = true;
+						}
+					}else{
+						break;
+					}					
+				}					
+				
+				if(msgEndFlag == true){
 					break;
-				}
+				}			
 				
 				buffer = new ByteArrayOutputStream(); //generate a new stream buffer
 				totalReadLength = 0; //reset length
