@@ -1,7 +1,6 @@
 package net.es.oscars.pce.tce;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneAdcapContent;
 import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapContent;
@@ -615,6 +614,9 @@ public class RetrieveReply {
 		linkSet = replyPath.getReplyLinkContent();	
 		
 		int bagInfoNum = 0;
+		
+		HashMap<String, String> linkToHop = new HashMap<String, String>();
+		
 
 		while(pathEndFlag){
 			type = buff[offset++];
@@ -629,6 +631,10 @@ public class RetrieveReply {
 				offset = offset + length;
 
 				replyLink.setName(linkName);
+				String hopId = new String(UUID.randomUUID().toString());
+				replyLink.setId(hopId); //use id for hop id
+				
+				linkToHop.put(linkName, hopId);
 
 			}else if(type == CodeNumber.PCE_REMOTE_LINK){
 				length = this.decodeLength(priDecoder, buff);
@@ -991,6 +997,14 @@ public class RetrieveReply {
 					length = this.decodeLength(priDecoder, buff);
 					String bagId = priDecoder.decodeString(buff, offset, length);
 					offset = offset + length;
+					if(singleBagInfo.getType() == null){
+						throw new OSCARSServiceException("BandwidthAvailabilityGraphInfo type is null");
+					}else if(singleBagInfo.getType().equals("hop")){
+						bagId = linkToHop.get(bagId);
+						if(bagId == null){
+							throw new OSCARSServiceException("Link ID is not found");
+						}
+					}					
 					singleBagInfo.setId(bagId);
 				}
 

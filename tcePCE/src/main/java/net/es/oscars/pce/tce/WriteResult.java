@@ -369,7 +369,8 @@ public class WriteResult {
 		for(int i=0;i<linksReply.size();i++){
 			linkContentReply = linksReply.get(i);
 			HopField hopField = new HopField();
-			String hopId = new String(UUID.randomUUID().toString());
+			//String hopId = new String(UUID.randomUUID().toString());
+			String hopId = linkContentReply.getId(); //link id store hop id
 			hopField.setHopId(hopId);
 			LinkField linkResult = new LinkField();			
 			writeLinkDetail(linkContentReply, linkResult);
