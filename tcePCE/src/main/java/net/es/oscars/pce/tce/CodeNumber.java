@@ -113,6 +113,8 @@ public class CodeNumber {
 	public static final byte PCE_OPT_BAG_SEG_NUM = (byte)0xD2;
 	
 	public static final byte PCE_OPT_REQ_LINK_BAG = (byte)0xD3;
+	public static final byte PCE_OPT_BAG_TYPE = (byte)0xD4;
+	public static final byte PCE_OPT_BAG_ID = (byte)0xD5;
 
 	
 

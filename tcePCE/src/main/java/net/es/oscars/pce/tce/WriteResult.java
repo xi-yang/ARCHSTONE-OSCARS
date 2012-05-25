@@ -192,7 +192,7 @@ public class WriteResult {
 		List<Lifetime> lifetime = path.getLifetime();
 		List<Lifetime> oriLifetime = oriPath.getLifetime();
 						
-		if(lifetime != null || lifetime.size()!=0){
+		if(lifetime != null && lifetime.size()!=0){
 			writeLifetime(lifetime, oriLifetime);
 		}
 		
@@ -204,7 +204,9 @@ public class WriteResult {
 			CtrlPlaneHopContent singleHop = new CtrlPlaneHopContent();
 			writeHop(link, singleHop);
 			hop.add(singleHop);
-		}	
+		}
+		
+		oriPath.setId(path.getId());
 		
 	}
 	
@@ -321,7 +323,7 @@ public class WriteResult {
 	
 	protected void writePath(ReplyPathContent pathReply, CoSchedulePathField coSchedulePathField){
 		String CoSchedulePathId = UUID.randomUUID().toString();
-		
+		//String CoSchedulePathId = pathReply.getId();
 		coSchedulePathField.setId(CoSchedulePathId);
 		
 		PathInfoField pathInfo = null;		
@@ -333,7 +335,7 @@ public class WriteResult {
 		
 		if(linksReply.size()!=0){
 			pathInfo = new PathInfoField();
-			writeLink(linksReply, pathInfo);
+			writeLink(linksReply, pathReply.getId(), pathInfo);
 		}
 		
 		List<BagInfoField> bagInfoField = coSchedulePathField.getBagInfoField();
@@ -342,10 +344,11 @@ public class WriteResult {
 			ReplyBagInfoContent singleBagInfo = bagInfo.get(i);
 			List<ReplyBagSegmentContent> bagSeg = singleBagInfo.getReplyBagSegmentContent();
 			String bagId = singleBagInfo.getId();
+			String bagType = singleBagInfo.getType();
 			
 			BagInfoField singleBagInfoField = new BagInfoField();
 			
-			writeBag(bagSeg, bagId, singleBagInfoField);
+			writeBag(bagSeg, bagId, bagType, singleBagInfoField);
 			
 			bagInfoField.add(singleBagInfoField);			
 		}		
@@ -354,9 +357,9 @@ public class WriteResult {
 		
 	}
 	
-	protected void writeLink(List<ReplyLinkContent> linksReply, PathInfoField pathInfo){
-		String pathId = UUID.randomUUID().toString();
-		
+	protected void writeLink(List<ReplyLinkContent> linksReply, String pathId, PathInfoField pathInfo){
+		//pathId = UUID.randomUUID().toString();
+				
 		pathInfo.setPathId(pathId);
 		
 		ReplyLinkContent linkContentReply = null;
@@ -377,9 +380,10 @@ public class WriteResult {
 		
 	}
 	
-	protected void writeBag(List<ReplyBagSegmentContent> bagsReply, String bagId, BagInfoField bagInfoField){
+	protected void writeBag(List<ReplyBagSegmentContent> bagsReply, String bagId, String bagType, BagInfoField bagInfoField){
 		
 		bagInfoField.setId(bagId);
+		bagInfoField.setType(bagType);
 		
 		List<BagSegmentField> bagSegment = bagInfoField.getBagSegment();
 		

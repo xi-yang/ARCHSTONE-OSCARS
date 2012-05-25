@@ -139,8 +139,12 @@ public class BuildXml {
 			
 				Element bagInfoNode = document.createElement("bagInfo");
 				coSchedulePathNode.appendChild(bagInfoNode);
-
+				
 				BagInfoField singleBagInfoField = bagInfo.get(j);
+				
+				bagInfoNode.setAttribute("type", singleBagInfoField.getType());
+				bagInfoNode.setAttribute("id", singleBagInfoField.getId());
+				
 				List<BagSegmentField> bagSegment = singleBagInfoField.getBagSegment();
 				int bagSize = bagSegment.size();
 				for(int k=0;k<bagSize;k++){

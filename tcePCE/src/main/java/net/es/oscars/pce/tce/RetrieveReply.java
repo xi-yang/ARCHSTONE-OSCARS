@@ -974,6 +974,25 @@ public class RetrieveReply {
 				length = this.decodeLength(priDecoder, buff);
 				int bagSegNum = priDecoder.decodeInteger(buff, offset, length);
 				offset = offset + length;
+				
+				type = buff[offset++];
+				if(type == CodeNumber.PCE_OPT_BAG_TYPE){
+					length = this.decodeLength(priDecoder, buff);
+					String bagType = priDecoder.decodeString(buff, offset, length);
+					offset = offset + length;
+					if(!bagType.equals("path") && !bagType.equals("hop")){
+						throw new OSCARSServiceException("Unknow bandwidthAvailabilityGraphInfo type");
+					}
+					singleBagInfo.setType(bagType);					
+				}
+				
+				type = buff[offset++];
+				if(type == CodeNumber.PCE_OPT_BAG_ID){
+					length = this.decodeLength(priDecoder, buff);
+					String bagId = priDecoder.decodeString(buff, offset, length);
+					offset = offset + length;
+					singleBagInfo.setId(bagId);
+				}
 
 				for(int j=0;j<bagSegNum;j++){
 					ReplyBagSegmentContent bagSegment = new ReplyBagSegmentContent();

@@ -8,6 +8,7 @@ import java.util.List;
 public class ReplyBagInfoContent {	
 	
 	protected String id;
+	protected String type;
 	protected List<ReplyBagSegmentContent> bagSeg;
 	
 	public String getId(){
@@ -23,5 +24,13 @@ public class ReplyBagInfoContent {
 			bagSeg = new ArrayList<ReplyBagSegmentContent>();
 		}
 		return this.bagSeg;
+	}
+	
+	public String getType(){
+		return this.type;
+	}
+	
+	public void setType(String value){
+		this.type = value;
 	}
 }
