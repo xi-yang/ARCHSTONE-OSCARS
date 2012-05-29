@@ -12,8 +12,8 @@
              {name: 'To Date', field: 'endDate', width: "20em"},
              {name: 'End Time', field: 'endTime', width: "20em"},
         ];
-    var tceQueryResultGrid = [
-             {name: 'ID', field: 'id', width: "10em"},
+    var tceQueryResultLayout = [
+             {name: 'Path ID', field: 'id', width: "10em"},
              {name: 'Path Hops', field: 'hopText', width: "40em"},
              {name: 'Schedules', field: 'scheduleText', width: "40em"},
         ];
@@ -154,9 +154,11 @@
       autoWidth="true" autoHeight="true"  elasticView="1">
 </div>
 </form>
-<div id="tceQueryResultGrid" dojoType="dojox.grid.DataGrid"
-      structure="tceQueryResultLayout" autoWidth="true" autoHeight="true"
-      elasticView="1">
+
+<div id="tceQueryResultHeader" class="text"></div>
+<div id="tceQueryResultGrid" dojoType="dojox.grid.DataGrid" 
+      structure="tceQueryResultLayout" selectionMode="single" 
+      autoWidth="true" autoHeight="true"  elasticView="1">
 </div>
 
 <div style="display:none" id="hiddenPathId"></div>
@@ -170,14 +172,16 @@
 
 <div dojoType="dijit.Dialog" id="pathSelectionDialog" 
      style="display:none; width:100em;"
-     title="Path hops and available schedules"
+     title="Path details - hops and schedules"
      execute="oscars.TceQuery.reserveSelectedPath(arguments[0]);">
     <div id="pathSelectionDialogPathId" class="text"></div>
     <div id="pathSelectionDialogHopsGrid" dojoType="dojox.grid.DataGrid" 
           structure="tcePathHopsLayout" selectionMode="single" 
           autoWidth="true" autoHeight="true"  elasticView="1">
     </div>
-    <div align="center">Select a schedule for reservation</div>
+    <br/>
+    <div>Click on to select a schedule for reservation</div>
+    <br/>
     <div id="pathSelectionDialogScheduleGrid" dojoType="dojox.grid.DataGrid" 
           structure="tcePathScheduleLayout" selectionMode="single" 
           autoWidth="true" autoHeight="true"  elasticView="1">

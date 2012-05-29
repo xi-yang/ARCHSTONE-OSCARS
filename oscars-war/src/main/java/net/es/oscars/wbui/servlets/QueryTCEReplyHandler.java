@@ -50,7 +50,6 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
             replyMap.put("success", Boolean.TRUE);
             replyMap.put("status", "PCEData replied for TCE Query");
             replyMap.put("method", method);
-
             ArrayList<HashMap<String,Object>> pathList = new ArrayList<HashMap<String,Object>>();
             CtrlPlaneTopologyContent topology = pceDataContent.getTopology();
             List<CtrlPlanePathContent> paths = topology.getPath();
@@ -66,6 +65,7 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
                 String schedulsText = pathSchedules2String(path);
                 pathMap.put("scheduleText", schedulsText);
                 getVlans(path, pathMap);
+                pathList.add(pathMap);
             }
             replyMap.put("pathData", pathList);
         }
@@ -87,12 +87,12 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
     }   
     
     private List<HashMap<String,Object>> getPathHops(CtrlPlanePathContent path) {
-        ArrayList<HashMap<String,Object>> scheduleList = null;
+        ArrayList<HashMap<String,Object>> hopList = null;
         ArrayList<CtrlPlaneHopContent> hops = (ArrayList<CtrlPlaneHopContent>) path.getHop();
         if (hops.size() > 0) {
-            scheduleList = new ArrayList<HashMap<String,Object>>();
+            hopList = new ArrayList<HashMap<String,Object>>();
             for (CtrlPlaneHopContent ctrlHop : hops) {
-                HashMap<String,String> linkObj = new HashMap<String,String>();
+                HashMap<String,Object> linkObj = new HashMap<String,Object>();
                 CtrlPlaneLinkContent link = ctrlHop.getLink();
                 linkObj.put("id", link.getId());
                 linkObj.put("bandwidth", link.getCapacity());
@@ -106,16 +106,17 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
                     linkObj.put("suggestedVlan", specInfo.getSuggestedVLANRange());
                     // TODO: more layer-specific info to add
                 }
+                hopList.add(linkObj);
             }            
         }
-        return scheduleList;
+        return hopList;
     }
 
     private List<HashMap<String,Object>> getSchedules(CtrlPlanePathContent path) {
-        ArrayList<HashMap<String,Object>> hopList = null;
+        ArrayList<HashMap<String,Object>> scheduleList = null;
         ArrayList<Lifetime> lfts = (ArrayList<Lifetime>) path.getLifetime();
         if (lfts.size() > 0) {
-            ArrayList<HashMap<String,Object>> scheduleList = new ArrayList<HashMap<String,Object>>();
+            scheduleList = new ArrayList<HashMap<String,Object>>();
             int i = 0;
             for (Lifetime lft : lfts) {
                 i++;
@@ -136,7 +137,7 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
                 scheduleList.add(lftObj);
             }
         }
-        return hopList;
+        return scheduleList;
     }
     
     private void getVlans(CtrlPlanePathContent path, HashMap<String,Object> pathMap) {

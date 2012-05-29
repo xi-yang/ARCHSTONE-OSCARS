@@ -37,7 +37,8 @@ oscars.TceQuery.handleReply = function (responseObject, ioArgs) {
     if (!oscars.Form.resetStatus(responseObject)) {
         return;
     }
-
+    var pathGridHeader = dojo.byId("tceQueryResultHeader");
+    pathGridHeader.innerHTML="<br><br>Feasible path/schedule list - Click on a row to reveal details.<br><br>";
     var pathGrid = dijit.byId("tceQueryResultGrid");
     var data = {
         identifier: 'id',
@@ -50,7 +51,7 @@ oscars.TceQuery.handleReply = function (responseObject, ioArgs) {
     oscarsState.pathGridInitialized = true;
     var oscarsStatus = dojo.byId("oscarsStatus");
     oscarsStatus.className = "success";
-    oscarsStatus.innerHTML = "TCEQuery reply path list";
+    oscarsStatus.innerHTML = "TCEQuery reply - Path list";
     dojo.connect(pathGrid, "onRowClick", oscars.TceQuery.onPathRowSelect);
 };
 
@@ -62,20 +63,20 @@ oscars.TceQuery.onPathRowSelect = function (/*Event*/ evt) {
     var pathGrid = dijit.byId("tceQueryResultGrid");
     // get path id
     var item = evt.grid.selection.getFirstSelected();
-    var pathId = dijit.byId("hiddenPathId");
+    var pathId = dojo.byId("hiddenPathId");
     pathId.innerHTML = pathGrid.store.getValues(item, "id");
-    var pathBandwidth = dijit.byId("hiddenPathBandwidth");
+    var pathBandwidth = dojo.byId("hiddenPathBandwidth");
     pathBandwidth.innerHTML = pathGrid.store.getValues(item, "bandwidth");
-    var pathSrcVlan = dijit.byId("hiddenPathSrcVlan");
+    var pathSrcVlan = dojo.byId("hiddenPathSrcVlan");
     pathSrcVlan.innerHTML = pathGrid.store.getValues(item, "srcVlan");
-    var pathDstVlan = dijit.byId("hiddenPathDstVlan");
+    var pathDstVlan = dojo.byId("hiddenPathDstVlan");
     pathDstVlan.innerHTML = pathGrid.store.getValues(item, "dstVlan");
     var pathDialog = dijit.byId("pathSelectionDialog");
     pathDialog.show();
     var pathIdText = dojo.byId("pathSelectionDialogPathId");
     pathIdText.innerHTML = "<br>Path : <b>" + pathId.innerHTML + "</b><br>";
     // init pathHopsGrid
-    var pathHopsGrid = dojo.byId("pathSelectionDialogHopsGrid");
+    var pathHopsGrid = dijit.byId("pathSelectionDialogHopsGrid");
     var hopsData = pathGrid.store.getValues(item, "hops");
     var data1 = {
         identifier: 'id',
@@ -94,6 +95,7 @@ oscars.TceQuery.onPathRowSelect = function (/*Event*/ evt) {
     };
     var store2 = new dojo.data.ItemFileWriteStore({data: data2});
     pathScheduleGrid.setStore(store2);
+    console.log(hopsData, scheduleData);
     dojo.connect(pathScheduleGrid, "onRowClick", oscars.TceQuery.onPathScheduleSelect);
 };
 
@@ -103,10 +105,10 @@ oscars.TceQuery.onPathScheduleSelect = function (/*Event*/ evt) {
     // get schedule id
     item = evt.grid.selection.getFirstSelected();
     // record selection on rowClick
-    var schduleStartDate = dijit.byId("hiddenScheduleStartDate");
-    var schduleStartTime = dijit.byId("hiddenScheduleStartTime");
-    var schduleEndDate = dijit.byId("hiddenScheduleEndDate");
-    var schduleEndTime = dijit.byId("hiddenScheduleEndTime");
+    var schduleStartDate = dojo.byId("hiddenScheduleStartDate");
+    var schduleStartTime = dojo.byId("hiddenScheduleStartTime");
+    var schduleEndDate = dojo.byId("hiddenScheduleEndDate");
+    var schduleEndTime = dojo.byId("hiddenScheduleEndTime");
     schduleStartDate.innerHTML = pathGrid.store.getValues(item, "startDate");
     schduleStartTime.innerHTML = pathGrid.store.getValues(item, "startTime");
     schduleEndDate.innerHTML = pathGrid.store.getValues(item, "endDate");
@@ -172,9 +174,9 @@ oscars.TceQuery.tabSelected = function (
     /* domNode */ oscarsStatus) {
     oscarsStatus.innerHTML = "TCE query form";
     var pathGrid = dijit.byId("tceQueryResultGrid");
-    if (pathGrid && !oscarsState.pathGridInitialized) {
+    if (pathGrid && oscarsState.pathGridInitialized) {
         oscarsStatus.className = "success";
-        oscarsStatus.innerHTML = "TCEQuery reply path list";
+        oscarsStatus.innerHTML = "TCEQuery reply - Path list";
     }
 };
 
