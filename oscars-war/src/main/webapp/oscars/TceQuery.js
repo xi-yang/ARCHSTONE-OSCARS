@@ -65,8 +65,6 @@ oscars.TceQuery.onPathRowSelect = function (/*Event*/ evt) {
     var item = evt.grid.selection.getFirstSelected();
     var pathId = dojo.byId("hiddenPathId");
     pathId.innerHTML = pathGrid.store.getValues(item, "id");
-    var pathBandwidth = dojo.byId("hiddenPathBandwidth");
-    pathBandwidth.innerHTML = pathGrid.store.getValues(item, "bandwidth");
     var pathSrcVlan = dojo.byId("hiddenPathSrcVlan");
     pathSrcVlan.innerHTML = pathGrid.store.getValues(item, "srcVlan");
     var pathDstVlan = dojo.byId("hiddenPathDstVlan");
@@ -77,17 +75,19 @@ oscars.TceQuery.onPathRowSelect = function (/*Event*/ evt) {
     pathIdText.innerHTML = "<br>Path : <b>" + pathId.innerHTML + "</b><br>";
     // init pathHopsGrid
     var pathHopsGrid = dijit.byId("pathSelectionDialogHopsGrid");
-    var hopsData = pathGrid.store.getValues(item, "hops");
+    var hopsData = eval('(' + pathGrid.store.getValues(item, "hops")+')');
+    var pathBandwidth = dojo.byId("hiddenPathBandwidth");
+    pathBandwidth.innerHTML = hopsData[0].bandwidth;
     var data1 = {
         identifier: 'id',
         label: 'id',
         items: hopsData
     };
-    var store1 = new dojo.data.ItemFileWriteStore({data: data2});
+    var store1 = new dojo.data.ItemFileWriteStore({data: data1});
     pathHopsGrid.setStore(store1);
     // init pathScheduleGrid
     var pathScheduleGrid = dijit.byId("pathSelectionDialogScheduleGrid");
-    var scheduleData = pathGrid.store.getValues(item, "schedules");
+    var scheduleData = eval('(' + pathGrid.store.getValues(item, "schedules")+')');
     var data2 = {
         identifier: 'id',
         label: 'id',
@@ -95,7 +95,6 @@ oscars.TceQuery.onPathRowSelect = function (/*Event*/ evt) {
     };
     var store2 = new dojo.data.ItemFileWriteStore({data: data2});
     pathScheduleGrid.setStore(store2);
-    console.log(hopsData, scheduleData);
     dojo.connect(pathScheduleGrid, "onRowClick", oscars.TceQuery.onPathScheduleSelect);
 };
 
@@ -109,10 +108,10 @@ oscars.TceQuery.onPathScheduleSelect = function (/*Event*/ evt) {
     var schduleStartTime = dojo.byId("hiddenScheduleStartTime");
     var schduleEndDate = dojo.byId("hiddenScheduleEndDate");
     var schduleEndTime = dojo.byId("hiddenScheduleEndTime");
-    schduleStartDate.innerHTML = pathGrid.store.getValues(item, "startDate");
-    schduleStartTime.innerHTML = pathGrid.store.getValues(item, "startTime");
-    schduleEndDate.innerHTML = pathGrid.store.getValues(item, "endDate");
-    schduleEndTime.innerHTML = pathGrid.store.getValues(item, "endTime");
+    schduleStartDate.innerHTML = pathScheduleGrid.store.getValues(item, "startDate");
+    schduleStartTime.innerHTML = pathScheduleGrid.store.getValues(item, "startTime");
+    schduleEndDate.innerHTML = pathScheduleGrid.store.getValues(item, "endDate");
+    schduleEndTime.innerHTML = pathScheduleGrid.store.getValues(item, "endTime");
 };
 
 // go reservationCreate
@@ -122,9 +121,9 @@ oscars.TceQuery.reserveSelectedPath = function (dialogFields) {
 
     // fill reservationCrate tab
     oscars.ReservationCreate.resetFields();
-    var node = dijit.byId("hiddenPathId");
+    var node = dojo.byId("hiddenPathId");
     dijit.byId("reservationDescription").setValue("Reservation for "+node.innerHTML);
-    node = dojo.byId("hiddenPathBandwdidth");
+    node = dojo.byId("hiddenPathBandwidth");
     dijit.byId("bandwidth").setValue(node.innerHTML);
     node = dojo.byId("tceSource");
     dijit.byId("source").setValue(node.value);
@@ -133,7 +132,7 @@ oscars.TceQuery.reserveSelectedPath = function (dialogFields) {
     // tagged VLAN only
     var taggedSrcVlan = dojo.byId("taggedSrcVlan");
     taggedSrcVlan.selectedIndex = 0;
-    var taggedDstVlan = dojo.byId("taggedDstVlan");
+    var taggedDstVlan = dojo.byId("taggedDestVlan");
     taggedDstVlan.selectedIndex = 0;
     // set src VLAN
     node = dojo.byId("hiddenPathSrcVlan");
@@ -154,14 +153,15 @@ oscars.TceQuery.reserveSelectedPath = function (dialogFields) {
     }
     // set schedule
     node = dojo.byId("hiddenScheduleStartDate");
-    dijit.byId("startDate").setValue(node.innerHTML)
+    dijit.byId("startDate").attr('value', new Date(node.innerHTML));
     node = dojo.byId("hiddenScheduleStartTime");
-    dijit.byId("startTime").setValue(node.innerHTML)
+    dijit.byId("startTime").attr('value', node.innerHTML)
     node = dojo.byId("hiddenScheduleEndDate");
-    dijit.byId("endDate").setValue(node.innerHTML)
+    dijit.byId("endDate").attr('value', new Date(node.innerHTML));
     node = dojo.byId("hiddenScheduleEndTime");
-    dijit.byId("endTime").setValue(node.innerHTML)
+    dijit.byId("endTime").attr('value', node.innerHTML)
     // TODO: set explicit path ??
+
     // switch to reservationCrate tab
     var mainTabContainer = dijit.byId("mainTabContainer");
     var reservationCreatePane = dijit.byId("reservationCreatePane");
@@ -195,21 +195,21 @@ oscars.TceQuery.resetFields = function () {
     }
     var node = dojo.byId("hiddenTceSchedules");
     node.value = "";
-    node = dijit.byId("hiddenPathId");
+    node = dojo.byId("hiddenPathId");
     node.innerHTML = "";
-    node = dijit.byId("hiddenPathBandwidth");
+    node = dojo.byId("hiddenPathBandwidth");
     node.innerHTML = "";
-    node = dijit.byId("hiddenPathSrcVlan");
+    node = dojo.byId("hiddenPathSrcVlan");
     node.innerHTML = "";
-    node = dijit.byId("hiddenPathDstVlan");
+    node = dojo.byId("hiddenPathDstVlan");
     node.innerHTML = "";
-    node = dijit.byId("hiddenScheduleStartDate");
+    node = dojo.byId("hiddenScheduleStartDate");
     node.innerHTML = "";
-    node = dijit.byId("hiddenScheduleStartTime");
+    node = dojo.byId("hiddenScheduleStartTime");
     node.innerHTML = "";
-    node = dijit.byId("hiddenScheduleEndDate");
+    node = dojo.byId("hiddenScheduleEndDate");
     node.innerHTML = "";
-    node = dijit.byId("hiddenScheduleEndTime");
+    node = dojo.byId("hiddenScheduleEndTime");
     node.innerHTML = "";
 };
 

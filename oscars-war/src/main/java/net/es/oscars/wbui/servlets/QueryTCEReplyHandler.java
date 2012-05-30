@@ -7,7 +7,7 @@ package net.es.oscars.wbui.servlets;
 import java.io.*;
 import java.util.*;
 
-import net.sf.json.JSONObject;
+import net.sf.json.*;
 
 import net.es.oscars.pce.tce.client.*;
 import net.es.oscars.pce.soap.gen.v06.*;
@@ -50,18 +50,18 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
             replyMap.put("success", Boolean.TRUE);
             replyMap.put("status", "PCEData replied for TCE Query");
             replyMap.put("method", method);
-            ArrayList<HashMap<String,Object>> pathList = new ArrayList<HashMap<String,Object>>();
+            ArrayList<HashMap<String,String>> pathList = new ArrayList<HashMap<String,String>>();
             CtrlPlaneTopologyContent topology = pceDataContent.getTopology();
             List<CtrlPlanePathContent> paths = topology.getPath();
             for (CtrlPlanePathContent path: paths) {
-                HashMap<String,Object> pathMap = new HashMap<String,Object>();
+                HashMap<String,String> pathMap = new HashMap<String,String>();
                 pathMap.put("id", path.getId());
-                List<HashMap<String,Object>> hopList = getPathHops(path);
-                pathMap.put("hops", hopList);
+                List<HashMap<String,String>> hopList = getPathHops(path);
+                pathMap.put("hops", JSONArray.fromObject(hopList).toString());
                 String hopsText = pathHops2String(path);
                 pathMap.put("hopText", hopsText);
-                List<HashMap<String,Object>> scheduleList = getSchedules(path);
-                pathMap.put("schedules", scheduleList);
+                List<HashMap<String,String>> scheduleList = getSchedules(path);
+                pathMap.put("schedules", JSONArray.fromObject(scheduleList).toString());
                 String schedulsText = pathSchedules2String(path);
                 pathMap.put("scheduleText", schedulsText);
                 getVlans(path, pathMap);
@@ -86,16 +86,17 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
         this.isReady = true;
     }   
     
-    private List<HashMap<String,Object>> getPathHops(CtrlPlanePathContent path) {
-        ArrayList<HashMap<String,Object>> hopList = null;
+    private List<HashMap<String,String>> getPathHops(CtrlPlanePathContent path) {
+        ArrayList<HashMap<String,String>> hopList = null;
         ArrayList<CtrlPlaneHopContent> hops = (ArrayList<CtrlPlaneHopContent>) path.getHop();
         if (hops.size() > 0) {
-            hopList = new ArrayList<HashMap<String,Object>>();
+            hopList = new ArrayList<HashMap<String,String>>();
             for (CtrlPlaneHopContent ctrlHop : hops) {
-                HashMap<String,Object> linkObj = new HashMap<String,Object>();
+                HashMap<String,String> linkObj = new HashMap<String,String>();
                 CtrlPlaneLinkContent link = ctrlHop.getLink();
                 linkObj.put("id", link.getId());
-                linkObj.put("bandwidth", link.getCapacity());
+                //linkObj.put("bandwidth", Long.toString(Long.valueOf(link.getMaximumReservableCapacity())/1000000));
+                linkObj.put("bandwidth", link.getMaximumReservableCapacity());
                 linkObj.put("remoteLinkId", link.getRemoteLinkId());
                 CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors().get(0);
                 linkObj.put("swcapType", swcap.getSwitchingcapType());
@@ -112,15 +113,15 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
         return hopList;
     }
 
-    private List<HashMap<String,Object>> getSchedules(CtrlPlanePathContent path) {
-        ArrayList<HashMap<String,Object>> scheduleList = null;
+    private List<HashMap<String,String>> getSchedules(CtrlPlanePathContent path) {
+        ArrayList<HashMap<String,String>> scheduleList = null;
         ArrayList<Lifetime> lfts = (ArrayList<Lifetime>) path.getLifetime();
         if (lfts.size() > 0) {
-            scheduleList = new ArrayList<HashMap<String,Object>>();
+            scheduleList = new ArrayList<HashMap<String,String>>();
             int i = 0;
             for (Lifetime lft : lfts) {
                 i++;
-                HashMap<String,Object> lftObj = new HashMap<String,Object>();
+                HashMap<String,String> lftObj = new HashMap<String,String>();
                 lftObj.put("id", Integer.toBinaryString(i));
                 Date start = new Date(Long.valueOf(lft.getStart().getValue())*1000);
                 Date end = new Date(Long.valueOf(lft.getEnd().getValue())*1000);
@@ -140,7 +141,7 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
         return scheduleList;
     }
     
-    private void getVlans(CtrlPlanePathContent path, HashMap<String,Object> pathMap) {
+    private void getVlans(CtrlPlanePathContent path, HashMap<String,String> pathMap) {
         ArrayList<CtrlPlaneHopContent> hops = (ArrayList<CtrlPlaneHopContent>) path.getHop();
         if (hops.size() == 0) {
             pathMap.put("srcVlan", "any");
@@ -174,7 +175,7 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
             StringBuilder sb = new StringBuilder();
             for (CtrlPlaneHopContent ctrlHop : hops) {
                 CtrlPlaneLinkContent link = ctrlHop.getLink();
-                sb.append(" " + link.getId() + ":");
+                sb.append("[" + link.getId() + "] ");
                 // VLAN etc.
             }
             pathStr = sb.toString();

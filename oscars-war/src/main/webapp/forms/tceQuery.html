@@ -18,7 +18,7 @@
              {name: 'Schedules', field: 'scheduleText', width: "40em"},
         ];
     var tcePathHopsLayout = [
-             {name: 'ID', field: 'id', width: "20em"},
+             {name: 'ID', field: 'id', width: "10em"},
              {name: 'Switching Type', field: 'swcapType', width: "10em"},
              {name: 'Encoding Type', field: 'encoding', width: "10em"},
              {name: 'Bandwidth', field: 'bandwidth', width: "10em"},
@@ -171,7 +171,7 @@
 <div style="display:none" id="hiddenScheduleEndTime"></div>
 
 <div dojoType="dijit.Dialog" id="pathSelectionDialog" 
-     style="display:none; width:100em;"
+     style="display:none; width:60em;"
      title="Path details - hops and schedules"
      execute="oscars.TceQuery.reserveSelectedPath(arguments[0]);">
     <div id="pathSelectionDialogPathId" class="text"></div>
