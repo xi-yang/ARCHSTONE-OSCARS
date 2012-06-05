@@ -252,6 +252,8 @@ public class WriteResult {
 		long capability = linkRes.getCapacity();						
 		linkOri.setCapacity(Long.toString(capability));
 		
+		linkOri.setCapacity(Long.toString(maximumReservableCapacity));
+		
 		List<CtrlPlaneSwcapContent> switchingCapabilityDescriptors = linkOri.getSwitchingCapabilityDescriptors();
 		while(switchingCapabilityDescriptors.size() != 0){
 			switchingCapabilityDescriptors.remove(0);
@@ -260,6 +262,7 @@ public class WriteResult {
 		List<CtrlPlaneSwcapContent> switCapDescriptors = linkRes.getSwitchingCapabilityDescriptors();
 		
 		for(int switListIndex=0;switListIndex<switCapDescriptors.size();switListIndex++){
+			switCapDescriptors.get(switListIndex).setCapacity(Long.toString(maximumReservableCapacity));
 			switchingCapabilityDescriptors.add(switCapDescriptors.get(switListIndex));
 			if((switCapDescriptors.get(switListIndex)).getSwitchingCapabilitySpecificInfo().getVendorSpecificInfo()!=null){
 				System.out.println("vendor in write find"+switListIndex);
