@@ -95,12 +95,11 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
                 HashMap<String,String> linkObj = new HashMap<String,String>();
                 CtrlPlaneLinkContent link = ctrlHop.getLink();
                 linkObj.put("id", link.getId());
-                //linkObj.put("bandwidth", Long.toString(Long.valueOf(link.getMaximumReservableCapacity())/1000000));
                 linkObj.put("bandwidth", link.getMaximumReservableCapacity());
                 linkObj.put("remoteLinkId", link.getRemoteLinkId());
                 CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors().get(0);
                 linkObj.put("swcapType", swcap.getSwitchingcapType());
-                linkObj.put("encoding", swcap.getSwitchingcapType());
+                linkObj.put("encoding", swcap.getEncodingType());
                 CtrlPlaneSwitchingCapabilitySpecificInfo specInfo = swcap.getSwitchingCapabilitySpecificInfo();
                 if (specInfo != null) {
                     linkObj.put("vlanRange", specInfo.getVlanRangeAvailability());
@@ -128,7 +127,7 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
                 SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
                 String startStr = formatter.format(start);
                 String startDateTime[] = startStr.split(" ");
-                String endStr = formatter.format(start);
+                String endStr = formatter.format(end);
                 String endDateTime[] = endStr.split(" ");
                 lftObj.put("startDate", startDateTime[0]);
                 lftObj.put("startTime", startDateTime[1]);

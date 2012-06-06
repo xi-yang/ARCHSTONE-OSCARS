@@ -157,7 +157,7 @@ public class QueryTCE extends HttpServlet {
         if ((strParam != null) && !strParam.trim().equals("")) {
             bandwidth = strParam.trim();
             lbw = Long.valueOf(bandwidth);
-            //bandwidth = Long.toString(lbw*1000000);
+            bandwidth = Long.toString(lbw*1000000);
         } else {
             throw new OSCARSServiceException("error:  bandwidth is a required parameter");
         }
@@ -166,14 +166,14 @@ public class QueryTCE extends HttpServlet {
         if ((strParam != null) && !strParam.trim().equals("")) {
             maxBandwidth = strParam.trim();
             lmax = Long.valueOf(maxBandwidth);
-            //maxBandwidth = Long.toString(lmax*1000000);
+            maxBandwidth = Long.toString(lmax*1000000);
         } 
         String minBandwidth = "0";
         strParam = request.getParameter("minBandwidth");
         if ((strParam != null) && !strParam.trim().equals("")) {
             minBandwidth = strParam.trim();
             lmin = Long.valueOf(minBandwidth);
-            //minBandwidth = Long.toString(lmin*1000000);
+            minBandwidth = Long.toString(lmin*1000000);
         } 
         if (lmax > 0 && lmax < lbw) {
             throw new OSCARSServiceException("'max. bandwidth' must be either 0 or greater than 'bandwidth'");
