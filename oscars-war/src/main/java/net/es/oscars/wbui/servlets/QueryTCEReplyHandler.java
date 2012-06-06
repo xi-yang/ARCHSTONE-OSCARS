@@ -95,7 +95,7 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
                 HashMap<String,String> linkObj = new HashMap<String,String>();
                 CtrlPlaneLinkContent link = ctrlHop.getLink();
                 linkObj.put("id", link.getId());
-                linkObj.put("bandwidth", Long.toBinaryString(Long.valueOf(link.getMaximumReservableCapacity())/1000000));
+                linkObj.put("bandwidth", Long.toString(Long.valueOf(link.getMaximumReservableCapacity())/1000000));
                 linkObj.put("remoteLinkId", link.getRemoteLinkId());
                 CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors().get(0);
                 linkObj.put("swcapType", swcap.getSwitchingcapType());
