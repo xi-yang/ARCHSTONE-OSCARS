@@ -206,6 +206,33 @@ public class WriteResult {
 			hop.add(singleHop);
 		}
 		
+		for(int i=0;i<hop.size();i++){
+			CtrlPlaneHopContent singleHop = null;
+			if(i==hop.size()-1){
+				//last hop
+				singleHop = hop.get(i);
+				List<CtrlPlaneNextHopContent> nextHop = singleHop.getNextHop();
+				for(int j=0;j<nextHop.size();j++){
+					CtrlPlaneNextHopContent singleNextHop = nextHop.remove(0);
+				}
+				CtrlPlaneNextHopContent singleNextHop = new CtrlPlaneNextHopContent();
+				//set value to the next hop ID
+				singleNextHop.setValue(null);
+				nextHop.add(singleNextHop);
+			}else{
+				singleHop = hop.get(i);
+				List<CtrlPlaneNextHopContent> nextHop = singleHop.getNextHop();
+				for(int j=0;j<nextHop.size();j++){
+					CtrlPlaneNextHopContent singleNextHop = nextHop.remove(0);
+				}
+				CtrlPlaneNextHopContent singleNextHop = new CtrlPlaneNextHopContent();
+				//set value to the next hop ID
+				singleNextHop.setValue(hop.get(i+1).getId());
+				nextHop.add(singleNextHop);
+			}
+			
+		}
+		
 		oriPath.setId(path.getId());
 		
 	}
