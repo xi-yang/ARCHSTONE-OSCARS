@@ -100,6 +100,10 @@ public class BuildXml {
 				Element hopNode = document.createElement("hop");
 				hopNode.setAttribute("id", hopField.getHopId());
 				pathNode.appendChild(hopNode);
+				Element nextHopNode = document.createElement("nextHop");
+				Text nextHopValue = document.createTextNode(hopField.getNextHop());
+				nextHopNode.appendChild(nextHopValue);
+				hopNode.appendChild(nextHopNode);
 				LinkField link = hopField.getLink();
 				Element linkNode = document.createElement("link");
 				linkNode.setAttribute("id", link.getLinkId());

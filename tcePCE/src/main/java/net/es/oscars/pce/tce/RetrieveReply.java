@@ -615,6 +615,7 @@ public class RetrieveReply {
 		
 		int bagInfoNum = 0;
 		
+		//key is link name, value is hop id
 		HashMap<String, String> linkToHop = new HashMap<String, String>();
 		
 
@@ -1000,6 +1001,7 @@ public class RetrieveReply {
 					if(singleBagInfo.getType() == null){
 						throw new OSCARSServiceException("BandwidthAvailabilityGraphInfo type is null");
 					}else if(singleBagInfo.getType().equals("hop")){
+						//convert link name to hop id
 						bagId = linkToHop.get(bagId);
 						if(bagId == null){
 							throw new OSCARSServiceException("Link ID is not found");

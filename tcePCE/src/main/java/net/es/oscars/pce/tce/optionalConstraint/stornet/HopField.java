@@ -4,6 +4,7 @@ public class HopField {
 	
 	protected String hopId;
 	protected LinkField link;
+	protected String nextHop;
 	
 	public String getHopId(){
 		return this.hopId;
@@ -19,6 +20,14 @@ public class HopField {
 	
 	public void setLink(LinkField value){
 		this.link = value;
+	}
+	
+	public String getNextHop(){
+		return this.nextHop;
+	}
+	
+	public void setNextHop(String value){
+		this.nextHop = value;
 	}
 
 }

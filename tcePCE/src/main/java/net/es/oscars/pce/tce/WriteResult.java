@@ -247,7 +247,8 @@ public class WriteResult {
 	protected void writeHop(ReplyLinkContent linkRes, CtrlPlaneHopContent hopContent){		
 		CtrlPlaneLinkContent linkOri = new CtrlPlaneLinkContent();	
 		
-		String hopId = UUID.randomUUID().toString();
+		//String hopId = UUID.randomUUID().toString();
+		String hopId = linkRes.getId();
 		hopContent.setId(hopId);
 
 		writeLink(linkRes, linkOri);
@@ -352,6 +353,7 @@ public class WriteResult {
 	}
 	
 	protected void writePath(ReplyPathContent pathReply, CoSchedulePathField coSchedulePathField){
+		//still use random ID for optional constraints now
 		String CoSchedulePathId = UUID.randomUUID().toString();
 		//String CoSchedulePathId = pathReply.getId();
 		coSchedulePathField.setId(CoSchedulePathId);
@@ -407,7 +409,16 @@ public class WriteResult {
 			hopField.setLink(linkResult);
 			
 			hop.add(hopField);			
-		}		
+		}
+		
+		for(int i=0;i<hop.size();i++){
+			HopField hopField = hop.get(i);
+			if(i!=hop.size()-1){
+				hopField.setNextHop(hop.get(i+1).getHopId());
+			}else{
+				hopField.setNextHop("");
+			}			
+		}
 		
 	}
 	
