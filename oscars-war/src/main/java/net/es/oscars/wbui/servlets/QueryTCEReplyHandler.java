@@ -121,7 +121,7 @@ public class QueryTCEReplyHandler  extends TCECallbackHandler {
             for (Lifetime lft : lfts) {
                 i++;
                 HashMap<String,String> lftObj = new HashMap<String,String>();
-                lftObj.put("id", Integer.toBinaryString(i));
+                lftObj.put("id", Integer.toString(i));
                 Date start = new Date(Long.valueOf(lft.getStart().getValue())*1000);
                 Date end = new Date(Long.valueOf(lft.getEnd().getValue())*1000);
                 SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
