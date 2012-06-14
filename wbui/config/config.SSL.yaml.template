@@ -1,6 +1,7 @@
 ---
 http:
     warFile:	'/oscars-war/oscars-war-OSCARS_VERSION.war'
+#    tceUrl:     'http://localhost:9020/tcePCE'
 
 wbui:
     userName: 'oscars'

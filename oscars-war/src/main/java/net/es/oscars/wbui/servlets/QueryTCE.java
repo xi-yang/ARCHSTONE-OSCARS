@@ -82,8 +82,6 @@ public class QueryTCE extends HttpServlet {
             return;
         }
 
-        URL hostUrl = new URL("http://localhost:9020/tcePCE");
-        URL wsdlUrl = new URL("file://" + System.getenv("OSCARS_HOME") + "/PCERuntimeService/api/pce-0.6.wsdl");
         try {
             ((QueryTCEReplyHandler)apiClient.getReplyHandler()).setServletWriter(out);
             CtrlPlaneTopologyContent topology = new CtrlPlaneTopologyContent();

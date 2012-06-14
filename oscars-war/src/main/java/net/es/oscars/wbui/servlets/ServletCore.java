@@ -398,7 +398,11 @@ public class ServletCore {
     private void initTceClient() throws OSCARSServiceException {
         // Instantiates Coordinator client
         try {
-            URL hostUrl = new URL("http://localhost:9020/tcePCE");
+            Map http = (Map) config.get("http");
+            String tceUrl = (String) http.get("tceUrl");
+            if (tceUrl == null)
+                tceUrl = "http://localhost:9020/tcePCE";
+            URL hostUrl = new URL(tceUrl);
             URL wsdlUrl = new URL("file://" + System.getenv("OSCARS_HOME") + "/PCERuntimeService/api/pce-0.6.wsdl");
             this.tceClient = TCEApiClient.getClient(hostUrl, wsdlUrl, "WBUI-QueryTCE");
             QueryTCEReplyHandler replyHandler = new QueryTCEReplyHandler();
