@@ -151,8 +151,12 @@ oscars.TceQuery.reserveSelectedPath = function (dialogFields) {
         cb.setAttribute('checked', false);
         dijit.byId("destVlan").setValue(node.innerHTML);
     }
+
     // set schedule
     node = dojo.byId("hiddenScheduleStartDate");
+    if (!node.innerHTML) {
+        return; 
+    }
     dijit.byId("startDate").attr('value', new Date(node.innerHTML));
     node = dojo.byId("hiddenScheduleStartTime");
     dijit.byId("startTime").attr('value', node.innerHTML)
@@ -160,6 +164,7 @@ oscars.TceQuery.reserveSelectedPath = function (dialogFields) {
     dijit.byId("endDate").attr('value', new Date(node.innerHTML));
     node = dojo.byId("hiddenScheduleEndTime");
     dijit.byId("endTime").attr('value', node.innerHTML)
+
     // TODO: set explicit path ??
 
     // switch to reservationCrate tab
@@ -193,12 +198,10 @@ oscars.TceQuery.resetFields = function () {
         scheduleGrid.setStore(null);
         oscarsStatus.numTceSchdules = 0;
     }
-    oscarsStatus.innerHTML = "TCEQuery - Test";
     var pathGrid = dijit.byId("tceQueryResultGrid");
     if (pathGrid && oscarsState.pathGridInitialized) {
         pathGrid.setStore(null);
         oscarsState.pathGridInitialized = false;
-        oscarsStatus.innerHTML = "TCEQuery - Reset";
     }
     var node = dojo.byId("hiddenTceSchedules");
     node.value = "";
