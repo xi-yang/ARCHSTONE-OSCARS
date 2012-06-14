@@ -193,6 +193,13 @@ oscars.TceQuery.resetFields = function () {
         scheduleGrid.setStore(null);
         oscarsStatus.numTceSchdules = 0;
     }
+    oscarsStatus.innerHTML = "TCEQuery - Test";
+    var pathGrid = dijit.byId("tceQueryResultGrid");
+    if (pathGrid && oscarsState.pathGridInitialized) {
+        pathGrid.setStore(null);
+        oscarsState.pathGridInitialized = false;
+        oscarsStatus.innerHTML = "TCEQuery - Reset";
+    }
     var node = dojo.byId("hiddenTceSchedules");
     node.value = "";
     node = dojo.byId("hiddenPathId");
