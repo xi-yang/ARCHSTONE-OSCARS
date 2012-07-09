@@ -27,7 +27,7 @@ import net.es.oscars.utils.svc.ServiceNames;
  *
  */
 @javax.jws.WebService(
-        serviceName = ServiceNames.SVC_PSS,
+        serviceName = ServiceNames.SVC_PSS_STUB,
         targetNamespace = "http://oscars.es.net/OSCARS/pss",
         portName = "PSSPort",
         endpointInterface = "net.es.oscars.pss.soap.gen.PSSPortType")
@@ -35,7 +35,7 @@ import net.es.oscars.utils.svc.ServiceNames;
 public class StubPSSSoapHandler implements PSSPortType {
 
     private static final Logger log = Logger.getLogger(StubPSSSoapHandler.class.getName());
-    private static final String moduleName = ModuleName.PSS;
+    private static final String moduleName = ModuleName.PSS_STUB;
 
     public void setup(SetupReqContent setupReq) {
         String event = "setup";

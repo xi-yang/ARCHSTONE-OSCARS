@@ -11,10 +11,10 @@ import net.es.oscars.logging.ModuleName;
 import net.es.oscars.pss.soap.gen.PSSService;
 import net.es.oscars.pss.soap.gen.PSSPortType;
 
-@OSCARSNetLoggerize( moduleName = ModuleName.PSS)
+@OSCARSNetLoggerize( moduleName = ModuleName.PSS_STUB)
 @OSCARSService (
         implementor = "net.es.oscars.pss.stub.common.StubPSSSoapHandler",
-        serviceName = ServiceNames.SVC_PSS,
+        serviceName = ServiceNames.SVC_PSS_STUB,
         config = ConfigDefaults.CONFIG
 )
 public class StubPSSSoapServer extends OSCARSSoapService<PSSService, PSSPortType> {
@@ -28,6 +28,6 @@ public class StubPSSSoapServer extends OSCARSSoapService<PSSService, PSSPortType
     }
 
     private StubPSSSoapServer() throws OSCARSServiceException {
-        super(ServiceNames.SVC_PSS);
+        super(ServiceNames.SVC_PSS_STUB);
     }
 }

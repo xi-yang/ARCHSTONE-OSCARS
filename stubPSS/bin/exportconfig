@@ -6,7 +6,7 @@
 #
 #
 
-SERVICE=PSSService
+SERVICE=StubPSS
 MODULE=stubPSS
 
 source $OSCARS_DIST/utils/bin/configLib.sh

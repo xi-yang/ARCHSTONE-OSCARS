@@ -23,21 +23,23 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 public class Invoker {
-    private static ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+    private static ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS_STUB);
     private static String context = ConfigDefaults.CTX_PRODUCTION;
-    private static  Logger LOG = null;
+    private static Logger LOG = null;
     private static String mode = "server";
-
+    private static String moduleName = ModuleName.PSS_STUB;
+    
     public static void main(String[] args) throws Exception {
 
         parseArgs( args);
         cc.setContext(context);
-        cc.setServiceName(ServiceNames.SVC_PSS); 
+        cc.setServiceName(ServiceNames.SVC_PSS_STUB); 
         try {
             System.out.println("loading manifest from ./config/"+ConfigDefaults.MANIFEST);
-            cc.loadManifest(ServiceNames.SVC_PSS,  ConfigDefaults.MANIFEST); // manifest.yaml
+            cc.loadManifest(ServiceNames.SVC_PSS_STUB,  ConfigDefaults.MANIFEST); // manifest.yaml
             String configFilePath = cc.getFilePath(ConfigDefaults.CONFIG);
             cc.setLog4j();
+            ConfigHolder.getInstance().setServiceName(ServiceNames.SVC_PSS_STUB);
             ConfigHolder.loadConfig(configFilePath);
             // need to do this after the log4j.properties file has been set
             LOG = Logger.getLogger(Invoker.class);
@@ -47,7 +49,7 @@ public class Invoker {
         }
         OSCARSNetLogger netLogger = OSCARSNetLogger.getTlogger();
         String event = "StubPSSinit";
-        netLogger.init(ModuleName.PSS, "0000");
+        netLogger.init(moduleName, "0000");
         LOG.debug("CXF config at: "+cc.getFilePath(ConfigDefaults.CXF_SERVER));
         StubPSSSoapServer.setSSLBusConfiguration(
                 new URL("file:" + cc.getFilePath(ConfigDefaults.CXF_SERVER)));
