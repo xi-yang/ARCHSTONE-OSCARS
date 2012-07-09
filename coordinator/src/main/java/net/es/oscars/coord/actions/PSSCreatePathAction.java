@@ -7,7 +7,7 @@ import net.es.oscars.coord.soap.gen.PSSReplyContent;
 import net.es.oscars.coord.actions.CoordAction;
 
 import net.es.oscars.coord.workers.PSSWorker;
-import net.es.oscars.utils.clients.PSSClient;
+import net.es.oscars.utils.clients.ArchPSSClient;
 import net.es.oscars.utils.sharedConstants.PSSConstants;
 import net.es.oscars.utils.sharedConstants.StateEngineValues;
 import net.es.oscars.utils.soap.OSCARSServiceException;
@@ -35,7 +35,7 @@ public class PSSCreatePathAction extends CoordAction <SetupReqContent, PSSReplyC
     public void execute()  {
         try {
             PSSWorker pssWorker = PSSWorker.getInstance();
-            PSSClient pssClient = pssWorker.getPSSClient();
+            ArchPSSClient pssClient = pssWorker.getPSSClient();
 
             Object[] req = {this.getRequestData()};
             pssClient.invoke(PSSConstants.PSS_SETUP,req);

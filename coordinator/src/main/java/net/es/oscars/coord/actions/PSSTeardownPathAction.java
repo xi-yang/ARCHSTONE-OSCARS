@@ -6,7 +6,7 @@ import net.es.oscars.coord.req.CoordRequest;
 import net.es.oscars.coord.actions.CoordAction;
 
 import net.es.oscars.coord.workers.PSSWorker;
-import net.es.oscars.utils.clients.PSSClient;
+import net.es.oscars.utils.clients.ArchPSSClient;
 import net.es.oscars.utils.soap.OSCARSServiceException;
 import net.es.oscars.utils.sharedConstants.PSSConstants;
 import net.es.oscars.utils.sharedConstants.StateEngineValues;
@@ -33,7 +33,7 @@ public class PSSTeardownPathAction extends CoordAction <TeardownReqContent, PSSR
         // Send a query to the PSS to tear down a path
         try {
             PSSWorker pssWorker = PSSWorker.getInstance();
-            PSSClient pssClient = pssWorker.getPSSClient();
+            ArchPSSClient pssClient = pssWorker.getPSSClient();
 
             Object[] req = {this.getRequestData()};
             pssClient.invoke(PSSConstants.PSS_TEARDOWN,req);

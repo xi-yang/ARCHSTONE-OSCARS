@@ -9,12 +9,12 @@ import net.es.oscars.logging.OSCARSNetLogger;
 import net.es.oscars.utils.config.ContextConfig;
 import net.es.oscars.utils.svc.ServiceNames;
 import net.es.oscars.utils.soap.OSCARSServiceException;
-import net.es.oscars.utils.clients.PSSClient;
+import net.es.oscars.utils.clients.ArchPSSClient;
 import net.es.oscars.coord.common.Coordinator;
 
 public class PSSWorker extends ModuleWorker {
 
-    private PSSClient   pssClient    = null;
+    private ArchPSSClient   pssClient    = null;
     private URL         pssHost      = null;
     private Coordinator coordinator = null;
     
@@ -34,7 +34,7 @@ public class PSSWorker extends ModuleWorker {
         this.reconnect();
     }
     
-    public PSSClient getPSSClient() {
+    public ArchPSSClient getPSSClient() {
         return this.pssClient;
     }
 
@@ -45,10 +45,10 @@ public class PSSWorker extends ModuleWorker {
         // Instantiates PSS client
         try {
             ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_COORD);
-            URL pssWsdl = cc.getWSDLPath(ServiceNames.SVC_PSS,null);
+            URL pssWsdl = cc.getWSDLPath(ServiceNames.SVC_PSS_ARCH,null);
             LOG.debug(netLogger.getMsg("PSSWorker.reconnect", "pssHost is " + this.pssHost +
                                 " pssWsdl is at " + pssWsdl.toString()));
-            this.pssClient = PSSClient.getClient(this.pssHost,pssWsdl);
+            this.pssClient = ArchPSSClient.getClient(this.pssHost,pssWsdl);
         } catch (Exception e) {
             LOG.error(netLogger.error("PSSWorker", ErrSev.MINOR, "caught exception " + e.getMessage()));
             throw new OSCARSServiceException (e);

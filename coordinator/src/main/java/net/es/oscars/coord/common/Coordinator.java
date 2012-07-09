@@ -170,7 +170,7 @@ public class Coordinator {
                     ConfigDefaults.CONFIG);
             this.rmMap = (HashMap<String,Object>)ConfigHelper.getConfiguration(configFilename);
 
-            configFilename = cc.getFilePath(ServiceNames.SVC_PSS,cc.getContext(),
+            configFilename = cc.getFilePath(ServiceNames.SVC_PSS_ARCH,cc.getContext(),
                     ConfigDefaults.CONFIG);
             this.pssMap = (HashMap<String,Object>)ConfigHelper.getConfiguration(configFilename);
             
