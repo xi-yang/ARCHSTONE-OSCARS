@@ -35,7 +35,7 @@ startService() {
    srcDir=$4
    Config=$(sh $OSCARS_DIST/bin/parseManifest.sh $serviceDir $service $CONTEXT | sed "s/'//g")
    if [ $debug ]; then
-       echo "Starting $service Using configuration $Config"
+       echo "Starting $service Using configuration $Config context $CONTEXT"
    fi
    Conf=$(echo $Config | awk -F/ '$1~//{print $3}')
    Yaml=$(echo $Config | awk -F/ '$1~//{print $4}' | sed "s/'//g")
@@ -142,7 +142,9 @@ startnullAgg() {
 startPSS() {
     DRAGONPSS="DRAGON"
     EOMPLSPSS="EOMPLS"
+    ARCHPSS="ARCH"
     OPENFLOWPSS="OPENFLOW"
+    STUBPSS="STUB"
     #Get PSS choice, but keep stubPSS the default
     whichPSS="STUB"
     Config=$(sh $OSCARS_DIST/bin/parseManifest.sh Utils Utils $CONTEXT )
@@ -161,6 +163,8 @@ startPSS() {
     #Now start based on choice obtained
     if [ "$whichPSS" == "$DRAGONPSS" ]; then
         startDragonPSS
+    elif [ "$whichPSS" == "$ARCHPSS" ]; then
+        startArchPSS
     elif [ "$whichPSS" == "$EOMPLSPSS" ]; then
         startEomplsPSS
     elif [ "$whichPSS" == "$OPENFLOWPSS" ]; then
@@ -171,20 +175,25 @@ startPSS() {
 }
 
 startStubPSS(){
-    startService "PSSService" "PSSService" "stubPSS" "stubPSS"
+    startService "StubPSS" "StubPSS" "stubPSS" "stubPSS"
 }
 
 startDragonPSS(){
-    startService "PSSService" "PSSService" "dragonPSS" "dragonPSS"
+    startService "DragonPSS" "DragonPSS" "dragonPSS" "dragonPSS"
 }
 
 startEomplsPSS(){
-    startService "PSSService" "PSSService" "eomplsPSS" "eomplsPSS"
+    startService "EoMPLSPSS" "EoMPLSPSS" "eomplsPSS" "eomplsPSS"
 }
 
 startOpenflowPSS(){
-    startService "PSSService" "PSSService" "openflowPSS" "openflowPSS"
+    startService "OpenflowPSS" "OpenflowPSS" "openflowPSS" "openflowPSS"
 }
+
+startArchPSS(){
+    startService "ArchPSS" "ArchPSS" "archPSS" "archPSS"
+}
+
 
 startLookup(){
     startService "LookupService" "LookupService" "lookup" "lookup"
@@ -301,9 +310,10 @@ while [ ! -z $1 ]
     nullAgg)  startnullAgg;;
     PSS)      startPSS;;
     stubPSS) startPSS;; #TBD- remove generic used for testing startStubPSS;;
-    dragonPSS)startDragonPSS;;
-    eomplsPSS)startEomplsPSS;;
-    openflowPSS)startOpenflowPSS;;
+    dragonPSS) startDragonPSS;;
+    archPSS) startArchPSS;;
+    eomplsPSS) startEomplsPSS;;
+    openflowPSS) startOpenflowPSS;;
     lookup)   startLookup;;
     wbui)     startWBUI;;
     notifyBridge)     startNotificationBridge;;
