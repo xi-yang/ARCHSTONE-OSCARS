@@ -11,9 +11,9 @@ import org.ho.yaml.Yaml;
 import net.es.oscars.pss.api.DeviceAddressResolver;
 import net.es.oscars.pss.beans.PSSException;
 import net.es.oscars.pss.beans.config.GenericConfig;
+import net.es.oscars.pss.config.ConfigHolder;
 import net.es.oscars.utils.config.ConfigException;
 import net.es.oscars.utils.config.ContextConfig;
-import net.es.oscars.utils.svc.ServiceNames;
 
 public class YAMLDeviceResolver implements DeviceAddressResolver{
     private GenericConfig config = null;
@@ -54,7 +54,7 @@ public class YAMLDeviceResolver implements DeviceAddressResolver{
         if (configFileName == null) {
             throw new PSSException("required configFile parameter not set");
         }
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ConfigHolder.getInstance().getServiceName());
         try {
             String configFilePath = cc.getFilePath(configFileName);
             InputStream propFile =  new FileInputStream(new File(configFilePath));

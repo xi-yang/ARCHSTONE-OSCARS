@@ -22,13 +22,14 @@ public class SchedulerTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testScheduler() throws ConfigException, PSSException {
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS_STUB);
         cc.loadManifest(new File("src/test/resources/"+ConfigDefaults.MANIFEST));
         cc.setContext(ConfigDefaults.CTX_TESTING);
-        cc.setServiceName(ServiceNames.SVC_PSS);
+        cc.setServiceName(ServiceNames.SVC_PSS_STUB);
         String configFilePath = cc.getFilePath(ConfigDefaults.CONFIG);
 
         // actually load the config
+        ConfigHolder.getInstance().setServiceName(ServiceNames.SVC_PSS_STUB);
         ConfigHolder.loadConfig(configFilePath);
         
 

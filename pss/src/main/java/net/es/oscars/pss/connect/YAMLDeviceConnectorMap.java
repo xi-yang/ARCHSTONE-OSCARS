@@ -15,10 +15,10 @@ import net.es.oscars.pss.api.ConnectorDirectory;
 import net.es.oscars.pss.api.DeviceConnectorMap;
 import net.es.oscars.pss.beans.PSSException;
 import net.es.oscars.pss.beans.config.GenericConfig;
+import net.es.oscars.pss.config.ConfigHolder;
 import net.es.oscars.pss.util.ClassFactory;
 import net.es.oscars.utils.config.ConfigException;
 import net.es.oscars.utils.config.ContextConfig;
-import net.es.oscars.utils.svc.ServiceNames;
 
 public class YAMLDeviceConnectorMap implements DeviceConnectorMap {
     private HashMap<String, String> deviceConnectors;
@@ -53,7 +53,7 @@ public class YAMLDeviceConnectorMap implements DeviceConnectorMap {
         if (configFileName == null) {
             throw new PSSException("required configFile parameter not set");
         }
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ConfigHolder.getInstance().getServiceName());
         try {
             String configFilePath = cc.getFilePath(configFileName);
             InputStream propFile =  new FileInputStream(new File(configFilePath));

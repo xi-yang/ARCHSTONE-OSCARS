@@ -25,7 +25,7 @@ import net.es.oscars.utils.svc.ServiceNames;
  *
  */
 @javax.jws.WebService(
-        serviceName = ServiceNames.SVC_PSS,
+        serviceName = ServiceNames.SVC_PSS_STUB,
         targetNamespace = "http://oscars.es.net/OSCARS/pss",
         portName = "PSSPort",
         endpointInterface = "net.es.oscars.pss.soap.gen.PSSPortType")

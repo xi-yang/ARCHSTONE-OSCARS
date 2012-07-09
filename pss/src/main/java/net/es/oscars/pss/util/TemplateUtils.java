@@ -9,9 +9,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import net.es.oscars.pss.beans.PSSException;
+import net.es.oscars.pss.config.ConfigHolder;
 import net.es.oscars.utils.config.ConfigException;
 import net.es.oscars.utils.config.ContextConfig;
-import net.es.oscars.utils.svc.ServiceNames;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
@@ -22,7 +22,7 @@ public class TemplateUtils {
     
     @SuppressWarnings("rawtypes")
     public static String generateConfig(Map root, String templateFile) throws PSSException {
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ConfigHolder.getInstance().getServiceName());
         String templateDir;
         try {
             templateDir = cc.getFilePath("templateDir");

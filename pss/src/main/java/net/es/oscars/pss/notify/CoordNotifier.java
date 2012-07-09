@@ -9,11 +9,11 @@ import net.es.oscars.pss.api.Notifier;
 import net.es.oscars.pss.beans.PSSAction;
 import net.es.oscars.pss.beans.PSSException;
 import net.es.oscars.pss.beans.config.GenericConfig;
+import net.es.oscars.pss.config.ConfigHolder;
 import net.es.oscars.pss.enums.ActionStatus;
 import net.es.oscars.pss.enums.ActionType;
 import net.es.oscars.utils.sharedConstants.PSSConstants;
 import net.es.oscars.utils.clients.CoordClient;
-import net.es.oscars.utils.svc.ServiceNames;
 import net.es.oscars.utils.topology.PathTools;
 
 /**
@@ -24,7 +24,6 @@ import net.es.oscars.utils.topology.PathTools;
  */
 public class CoordNotifier implements Notifier {
     private Logger log = Logger.getLogger(CoordNotifier.class);
-    // private GenericConfig config = null;
     /**
      * Checks the status of the PSSAction and sends
      * a PSSReply message to the Coordinator with the results of the action
@@ -61,7 +60,7 @@ public class CoordNotifier implements Notifier {
                 if (action.getFaultReport() != null) {
                     // Fill in any missing bits
                     if (action.getFaultReport().getModuleName() == null) {
-                        action.getFaultReport().setModuleName(ServiceNames.SVC_PSS);
+                        action.getFaultReport().setModuleName(ConfigHolder.getInstance().getServiceName());
                     }
                     if (action.getFaultReport().getTimestamp() == 0L) {
                         action.getFaultReport().setTimestamp(System.currentTimeMillis()/1000L);
@@ -100,19 +99,6 @@ public class CoordNotifier implements Notifier {
     
 
     public void setConfig(GenericConfig config) throws PSSException {
-        /*
-        if (config == null) {
-            throw new PSSException("null config");
-        } else if (config.getParams() == null) {
-            throw new PSSException("no config parameters set");
-        }
-        
-        this.config = config;
-        String domainSuffix = config.getParams().get("coordUrl");
-        if (domainSuffix == null) {
-            throw new PSSException("required coordUrl parameter not set");
-        }
-        */
     }
 
 }

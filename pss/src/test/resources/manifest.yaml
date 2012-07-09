@@ -1,5 +1,5 @@
 ---
-PSSService:
+StubPSS:
     UNITTEST:
         config.yaml:        'OSCARS_DIST/pss/src/test/resources/config.yaml'
         server-cxf.xml:     'OSCARS_DIST/pss/src/test/resources/server-cxf-http.xml'

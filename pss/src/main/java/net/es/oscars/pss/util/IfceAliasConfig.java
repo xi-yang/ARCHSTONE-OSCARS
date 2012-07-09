@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.es.oscars.pss.beans.PSSException;
+import net.es.oscars.pss.config.ConfigHolder;
 import net.es.oscars.utils.config.ConfigDefaults;
 import net.es.oscars.utils.config.ConfigException;
 import net.es.oscars.utils.config.ContextConfig;
-import net.es.oscars.utils.svc.ServiceNames;
 
 import org.apache.log4j.Logger;
 import org.ho.yaml.Yaml;
@@ -22,10 +22,10 @@ public class IfceAliasConfig {
 
     @SuppressWarnings("unchecked")
     public static void configure() throws PSSException {
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ConfigHolder.getInstance().getServiceName());
         Map<String, Map<String, String>> ifceAliasConfig;
         try {
-            cc.loadManifest(ServiceNames.SVC_PSS,  ConfigDefaults.MANIFEST); // manifest.yaml
+            cc.loadManifest(ConfigHolder.getInstance().getServiceName(),  ConfigDefaults.MANIFEST); // manifest.yaml
             String configFilePath = cc.getFilePath("config-ifce-aliases.yaml");
             log.debug("loading ifce aliases from "+configFilePath);
             InputStream propFile = new FileInputStream(new File(configFilePath));

@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.es.oscars.pss.beans.PSSException;
+import net.es.oscars.pss.config.ConfigHolder;
 import net.es.oscars.utils.config.ConfigDefaults;
 import net.es.oscars.utils.config.ConfigException;
 import net.es.oscars.utils.config.ContextConfig;
-import net.es.oscars.utils.svc.ServiceNames;
 
 import org.apache.log4j.Logger;
 import org.ho.yaml.Yaml;
@@ -23,10 +23,10 @@ public class VlanGroupConfig {
 
     @SuppressWarnings("unchecked")
     public static void configure() throws PSSException {
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ConfigHolder.getInstance().getServiceName());
         Map<String, Map<String, String>> vlanGroupConfig;
         try {
-            cc.loadManifest(ServiceNames.SVC_PSS,  ConfigDefaults.MANIFEST); // manifest.yaml
+            cc.loadManifest(ConfigHolder.getInstance().getServiceName(),  ConfigDefaults.MANIFEST); // manifest.yaml
             String configFilePath = cc.getFilePath("config-vlan-groups.yaml");
             log.debug("loading vlan groups from "+configFilePath);
 
