@@ -10,7 +10,13 @@ public class ServiceNames {
     public static final String SVC_COORD        = "CoordService";
     public static final String SVC_PCERUNTIME   = "PCERuntimeService";
     public static final String SVC_PCE          = "PCEService";
-    public static final String SVC_PSS          = "PSSService";
+
+    public static final String SVC_PSS_ARCH     = "ArchPSS";
+    public static final String SVC_PSS_DRAGON   = "DragonPSS";
+    public static final String SVC_PSS_EOMPLS   = "EoMPLSPSS";
+    public static final String SVC_PSS_OPENFLOW = "OpenflowPSS";
+    public static final String SVC_PSS_STUB     = "StubPSS";
+    
     public static final String SVC_RM           = "ResourceManagerService";
     public static final String SVC_NOTIFY       = "NotificationBridgeService";
     public static final String SVC_TOPO         = "TopoBridgeService";
@@ -25,7 +31,7 @@ public class ServiceNames {
     public static final String SVC_UTILS        = "Utils";
     public static final String SVC_WSNBROKER    = "WSNBrokerService";
     //Added for ION
-    public static final String SVC_IONUI	="IONUIService";
+    public static final String SVC_IONUI        = "IONUIService";
     //Added for TCE
     public static final String SVC_PCE_TCE      = "TcePCE";
 }

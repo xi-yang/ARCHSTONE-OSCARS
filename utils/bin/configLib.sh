@@ -12,7 +12,11 @@ SVC_LOOKUP=LookupService
 SVC_NOTIFY=NotificationBridgeService
 SVC_WSNBROKER=WSNBrokerService
 SVC_PCE=PCEService
-SVC_PSS=PSSService
+SVC_PSS_DRAGON=DragonPSS
+SVC_PSS_EOMPLS=EoMPLSPSS
+SVC_PSS_OPENFLOW=OpenflowPSS
+SVC_PSS_STUB=StubPSS
+SVC_PSS_ARCH=ArchPSS
 SVC_RM=ResourceManagerService
 SVC_TOPO=TopoBridgeService
 SVC_WBUI=WBUIService
@@ -72,7 +76,15 @@ verifySvcName () {
             ;;
         $SVC_PCE)
             ;;
-        $SVC_PSS)
+        $SVC_PSS_DRAGON)
+            ;;
+        $SVC_PSS_STUB)
+            ;;
+        $SVC_PSS_OPENFLOW)
+            ;;
+        $SVC_PSS_ARCH)
+            ;;
+        $SVC_PSS_EOMPLS)
             ;;
         $SVC_RM)
             ;;

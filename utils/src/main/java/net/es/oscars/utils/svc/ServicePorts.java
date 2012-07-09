@@ -16,7 +16,14 @@ public class ServicePorts {
     public static final Integer SVC_COORD           = 9003;
     public static final Integer SVC_LOOKUP          = 9014;
     public static final Integer SVC_NOTIFY          = 9012;
-    public static final Integer SVC_PSS             = 9050;
+    
+    public static final Integer SVC_PSS_ARCH        = 9050;
+    public static final Integer SVC_PSS_EOMPLS      = 9051;
+    public static final Integer SVC_PSS_OPENFLOW    = 9052;
+    public static final Integer SVC_PSS_DRAGON      = 9053;
+    public static final Integer SVC_PSS_STUB        = 9054;
+
+    
     public static final Integer SVC_RM              = 9006;
     public static final Integer SVC_TOPO            = 9019;
     public static final Integer SVC_WBUI            = 8080;

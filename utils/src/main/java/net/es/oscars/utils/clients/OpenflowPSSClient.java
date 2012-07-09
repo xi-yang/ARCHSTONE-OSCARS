@@ -12,7 +12,6 @@ import net.es.oscars.pss.soap.gen.PSSService;
 import net.es.oscars.utils.config.ConfigDefaults;
 import net.es.oscars.utils.config.ConfigException;
 import net.es.oscars.utils.config.ContextConfig;
-import net.es.oscars.utils.config.SharedConfig;
 import net.es.oscars.utils.soap.OSCARSServiceException;
 import net.es.oscars.utils.soap.OSCARSService;
 import net.es.oscars.utils.soap.OSCARSSoapService;
@@ -25,20 +24,20 @@ import org.apache.log4j.Logger;
  * @author haniotak
  *
  */
-@OSCARSNetLoggerize(moduleName = ModuleName.PSS)
+@OSCARSNetLoggerize(moduleName = ModuleName.PSS_OPENFLOW)
 @OSCARSService (
         implementor = "net.es.oscars.pss.soap.gen.PSSService",
         namespace   = "http://oscars.es.net/OSCARS/pss",
-        serviceName = ServiceNames.SVC_PSS
+        serviceName = ServiceNames.SVC_PSS_OPENFLOW
 )
-public class PSSClient extends OSCARSSoapService<PSSService, PSSPortType>  {
-    static private Logger LOG = Logger.getLogger(PSSClient.class);
+public class OpenflowPSSClient extends OSCARSSoapService<PSSService, PSSPortType>  {
+    static private Logger LOG = Logger.getLogger(OpenflowPSSClient.class);
 
-    private PSSClient (URL host, URL wsdlFile) throws OSCARSServiceException {
+    private OpenflowPSSClient (URL host, URL wsdlFile) throws OSCARSServiceException {
         super (host, wsdlFile, PSSPortType.class);
     }
 
-    static public PSSClient getClient (URL host, URL wsdl)
+    static public OpenflowPSSClient getClient (URL host, URL wsdl)
         throws MalformedURLException, OSCARSServiceException {
 
         ContextConfig cc = ContextConfig.getInstance();
@@ -51,11 +50,11 @@ public class PSSClient extends OSCARSSoapService<PSSService, PSSPortType>  {
                 throw new ConfigException("ContextConfig not initialized");
             }
         } catch (ConfigException e) {
-            LOG.error(netLogger.error("PSSClient.getClient", ErrSev.MAJOR, " caughtException: " + e.getMessage()));
+            LOG.error(netLogger.error("OpenflowPSSClient.getClient", ErrSev.MAJOR, " caughtException: " + e.getMessage()));
             e.printStackTrace();
             throw new OSCARSServiceException(e.getMessage());
         }
-        PSSClient client = new PSSClient (host, wsdl);
+        OpenflowPSSClient client = new OpenflowPSSClient (host, wsdl);
         return client;
     }
 
