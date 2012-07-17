@@ -11,7 +11,14 @@ public class ModuleName {
     public static final String COORD = "Coordinator"; 
     public static final String PCERUNTIME = "PCERuntime";
     public static final String PCE = "PCE"; 
-    public static final String PSS = "PSS"; 
+
+    public static final String PSS_ARCH     = "PSS_ARCH"; 
+    public static final String PSS_MULTI    = "PSS_MULTI"; 
+    public static final String PSS_STUB     = "PSS_STUB"; 
+    public static final String PSS_DRAGON   = "PSS_DRAGON"; 
+    public static final String PSS_EOMPLS   = "PSS_EOMPLS"; 
+    public static final String PSS_OPENFLOW = "PSS_OPENFLOW"; 
+
     public static final String LOOKUP = "net.es.oscars.Lookup"; 
     static public final String NOTIFY = "net.es.oscars.NotificationBridge"; 
     public static final String WSNBROKER = "net.es.oscars.WSNBroker";
