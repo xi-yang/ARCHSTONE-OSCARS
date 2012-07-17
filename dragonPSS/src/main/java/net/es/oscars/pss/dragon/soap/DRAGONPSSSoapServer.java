@@ -14,7 +14,7 @@ import net.es.oscars.pss.beans.PSSException;
 
 @OSCARSService (
         implementor = "net.es.oscars.pss.soap.PSSSoapHandler",
-        serviceName = ServiceNames.SVC_PSS,
+        serviceName = ServiceNames.SVC_PSS_DRAGON,
         config = ConfigDefaults.CONFIG
 )
 
@@ -29,7 +29,7 @@ public class DRAGONPSSSoapServer extends OSCARSSoapService<PSSService, PSSPortTy
     }
 
     private DRAGONPSSSoapServer() throws OSCARSServiceException {
-        super(ServiceNames.SVC_PSS);
+        super(ServiceNames.SVC_PSS_DRAGON);
         PSSScheduler sched = PSSScheduler.getInstance();
         try {
             sched.setWorkflowInspector(WorkflowInspectorJob.class);

@@ -6,7 +6,7 @@
 #
 #
 
-SERVICE=PSSService
+SERVICE=DragonPSS
 MODULE=dragonPSS
 
 source $OSCARS_DIST/utils/bin/configLib.sh

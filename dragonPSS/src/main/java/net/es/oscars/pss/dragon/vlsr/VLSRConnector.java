@@ -64,7 +64,7 @@ public class VLSRConnector implements Connector {
     private boolean tunnelMode = false; // TODO: config in yaml
 
     public VLSRConnector() {
-        netLogger.init(ModuleName.PSS, "0000");
+        netLogger.init(ModuleName.PSS_DRAGON, "0000");
     }
 
     public DragonCSA getCsa() {
