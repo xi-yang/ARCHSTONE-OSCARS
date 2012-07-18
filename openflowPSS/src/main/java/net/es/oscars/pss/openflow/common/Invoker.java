@@ -25,7 +25,7 @@ import joptsimple.OptionSpec;
 
 public class Invoker {
 
-    private static ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+    private static ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS_OPENFLOW);
     private static String context = ConfigDefaults.CTX_PRODUCTION;
     private static  Logger LOG = null;
     private static String mode = "server";
@@ -34,10 +34,10 @@ public class Invoker {
 
         parseArgs( args);
         cc.setContext(context);
-        cc.setServiceName(ServiceNames.SVC_PSS); 
+        cc.setServiceName(ServiceNames.SVC_PSS_OPENFLOW); 
         try {
-            System.out.println("loading manifest from " + ServiceNames.SVC_PSS + "/"+ConfigDefaults.MANIFEST);
-            cc.loadManifest(ServiceNames.SVC_PSS, ConfigDefaults.MANIFEST); // manifest.yaml
+            System.out.println("loading manifest from " + ServiceNames.SVC_PSS_OPENFLOW + "/"+ConfigDefaults.MANIFEST);
+            cc.loadManifest(ServiceNames.SVC_PSS_OPENFLOW, ConfigDefaults.MANIFEST); // manifest.yaml
             String configFilePath = cc.getFilePath(ConfigDefaults.CONFIG);
             System.out.println("loading config from "+configFilePath);
             cc.setLog4j();
@@ -54,7 +54,7 @@ public class Invoker {
         }
         OSCARSNetLogger netLogger = OSCARSNetLogger.getTlogger();
         String event = "OpenFlowPSSinit";
-        netLogger.init(ModuleName.PSS, "0000");
+        netLogger.init(ModuleName.PSS_OPENFLOW, "0000");
         LOG.debug("CXF config at: "+cc.getFilePath(ConfigDefaults.CXF_SERVER));
         OpenFlowPSSSoapServer.setSSLBusConfiguration(
                 new URL("file:" + cc.getFilePath(ConfigDefaults.CXF_SERVER)));

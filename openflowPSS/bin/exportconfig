@@ -6,7 +6,7 @@
 #
 #
 
-SERVICE=PSSService
+SERVICE=OpenflowPSS
 MODULE=openflowPSS
 
 source $OSCARS_DIST/utils/bin/configLib.sh

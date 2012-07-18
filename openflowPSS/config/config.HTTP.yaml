@@ -1,7 +1,7 @@
 ---
 
 soap:
-    publishTo:  'http://localhost:9050/OSCARS/PSSService'
+    publishTo:  'http://localhost:9052/OSCARS/OpenflowPSS'
 
 
 circuitService:

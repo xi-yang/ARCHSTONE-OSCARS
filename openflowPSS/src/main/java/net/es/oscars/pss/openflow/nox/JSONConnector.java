@@ -49,7 +49,7 @@ public class JSONConnector implements Connector {
     private String noxUrl = "https://localhost:11122/ws.v1/OSCARS";
     
     public JSONConnector() {
-        netLogger.init(ModuleName.PSS, "0000");
+        netLogger.init(ModuleName.PSS_OPENFLOW, "0000");
     }
 
     public void setConfig(GenericConfig connectorConfig) throws PSSException {
