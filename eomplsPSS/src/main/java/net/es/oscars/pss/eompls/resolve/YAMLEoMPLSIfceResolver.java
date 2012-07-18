@@ -63,7 +63,7 @@ public class YAMLEoMPLSIfceResolver implements EoMPLSIfceAddressResolver{
         }
         ifceAddresses = new HashMap<URNParserResult, String>();
         
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS_EOMPLS);
         try {
             String configFilePath = cc.getFilePath(configFileName);
             InputStream propFile =  new FileInputStream(new File(configFilePath));

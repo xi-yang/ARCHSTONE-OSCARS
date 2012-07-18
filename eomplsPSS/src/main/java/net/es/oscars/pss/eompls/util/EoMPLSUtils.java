@@ -112,7 +112,7 @@ public class EoMPLSUtils {
     
     @SuppressWarnings("rawtypes")
     public static String generateConfig(Map root, String templateFile) throws PSSException {
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS_EOMPLS);
         String templateDir;
         try {
             String context = cc.getContext();

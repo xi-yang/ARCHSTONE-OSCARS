@@ -54,7 +54,7 @@ public class YAMLEoMPLSDeviceResolver implements EoMPLSDeviceAddressResolver{
         if (configFileName == null) {
             throw new PSSException("required configFile parameter not set");
         }
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS_EOMPLS);
         try {
             String configFilePath = cc.getFilePath(configFileName);
             InputStream propFile =  new FileInputStream(new File(configFilePath));

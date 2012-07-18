@@ -1,6 +1,6 @@
 ---
 soap:
-    publishTo:  'https://localhost:9050/OSCARS/PSSService'
+    publishTo:  'https://localhost:9051/OSCARS/EoMPLSPSS'
 
 circuitService:
     id:                 'eompls'
@@ -26,8 +26,6 @@ verify:
 
 notify:
     impl:               'net.es.oscars.pss.notify.CoordNotifier'
-    params: 
-        coordUrl:       'https://localhost:9003/OSCARS/Coord'
 
 connectorDirectory:
     impl:               'net.es.oscars.pss.connect.YAMLConnectorDirectory'

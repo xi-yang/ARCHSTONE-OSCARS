@@ -1,7 +1,7 @@
 ---
 
 soap:
-    publishTo:          'http://localhost:9050/testPSS'
+    publishTo:          'http://localhost:9051/testEoMPLSPSS'
 
 
 circuitService:

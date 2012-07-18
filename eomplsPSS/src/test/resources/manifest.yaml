@@ -1,5 +1,5 @@
 ---
-PSSService:
+EoMPLSPSS:
     UNITTEST:
         templateDir:        'OSCARS_DIST/eomplsPSS/config/templates'
         

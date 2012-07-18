@@ -26,7 +26,7 @@
    </cxf:bus>
 
   <httpj:engine-factory>
-   <httpj:engine port="9190">
+   <httpj:engine port="9051">
    </httpj:engine>
   </httpj:engine-factory>
 </beans>

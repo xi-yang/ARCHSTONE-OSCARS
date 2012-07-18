@@ -27,7 +27,7 @@ import joptsimple.OptionSpec;
 
 public class Invoker {
 
-    private static ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+    private static ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS_EOMPLS);
     private static String context = ConfigDefaults.CTX_PRODUCTION;
     private static  Logger LOG = null;
     private static String mode = "server";
@@ -36,13 +36,14 @@ public class Invoker {
 
         parseArgs( args);
         cc.setContext(context);
-        cc.setServiceName(ServiceNames.SVC_PSS); 
+        cc.setServiceName(ServiceNames.SVC_PSS_EOMPLS); 
         try {
-            cc.loadManifest(ServiceNames.SVC_PSS,  ConfigDefaults.MANIFEST); // manifest.yaml
+            cc.loadManifest(ServiceNames.SVC_PSS_EOMPLS,  ConfigDefaults.MANIFEST); // manifest.yaml
             String configFilePath = cc.getFilePath(ConfigDefaults.CONFIG);
             System.out.println("loading config from "+configFilePath);
             cc.setLog4j();
             // need to do this after the log4j.properties file has been set
+            ConfigHolder.getInstance().setServiceName(ServiceNames.SVC_PSS_EOMPLS);
             ConfigHolder.loadConfig(configFilePath);
 
             LOG = Logger.getLogger(Invoker.class);
@@ -59,8 +60,8 @@ public class Invoker {
             System.exit(-1);
         }
         OSCARSNetLogger netLogger = OSCARSNetLogger.getTlogger();
-        String event = "StubPSSinit";
-        netLogger.init(ModuleName.PSS, "0000");
+        String event = "EoMPLSPSSinit";
+        netLogger.init(ModuleName.PSS_EOMPLS, "0000");
         LOG.debug("CXF config at: "+cc.getFilePath(ConfigDefaults.CXF_SERVER));
         EoMPLSPSSSoapServer.setSSLBusConfiguration(
                 new URL("file:" + cc.getFilePath(ConfigDefaults.CXF_SERVER)));

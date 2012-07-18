@@ -6,7 +6,7 @@
 #
 #
 
-SERVICE=PSSService
+SERVICE=EoMPLSPSS
 MODULE=eomplsPSS
 
 source $OSCARS_DIST/utils/bin/configLib.sh

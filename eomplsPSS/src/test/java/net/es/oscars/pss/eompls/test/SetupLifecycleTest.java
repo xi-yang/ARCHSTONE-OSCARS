@@ -35,13 +35,14 @@ public class SetupLifecycleTest {
     public void testSetup() throws ConfigException, PSSException {
         PathTools.setLocalDomainId("foo.net");
         
-        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS);
+        ContextConfig cc = ContextConfig.getInstance(ServiceNames.SVC_PSS_EOMPLS);
         cc.loadManifest(new File("src/test/resources/"+ConfigDefaults.MANIFEST));
         cc.setContext(ConfigDefaults.CTX_TESTING);
-        cc.setServiceName(ServiceNames.SVC_PSS);
+        cc.setServiceName(ServiceNames.SVC_PSS_EOMPLS);
 
         try {
             String configFn = cc.getFilePath("config.yaml");
+            ConfigHolder.getInstance().setServiceName(ServiceNames.SVC_PSS_EOMPLS);
             ConfigHolder.loadConfig(configFn);
             ClassFactory.getInstance().configure();
         

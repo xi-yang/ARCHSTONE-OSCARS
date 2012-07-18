@@ -14,7 +14,7 @@ import net.es.oscars.pss.soap.gen.PSSPortType;
 
 @OSCARSService (
         implementor = "net.es.oscars.pss.soap.PSSSoapHandler",
-        serviceName = ServiceNames.SVC_PSS,
+        serviceName = ServiceNames.SVC_PSS_EOMPLS,
         config = ConfigDefaults.CONFIG
 )
 
@@ -29,7 +29,7 @@ public class EoMPLSPSSSoapServer extends OSCARSSoapService<PSSService, PSSPortTy
     }
 
     private EoMPLSPSSSoapServer() throws OSCARSServiceException {
-        super(ServiceNames.SVC_PSS);
+        super(ServiceNames.SVC_PSS_EOMPLS);
         PSSScheduler sched = PSSScheduler.getInstance();
         try {
             sched.setWorkflowInspector(WorkflowInspectorJob.class);
